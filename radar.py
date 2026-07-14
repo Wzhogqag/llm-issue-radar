@@ -59,6 +59,28 @@ def is_bot(login: str, user_type: str) -> bool:
     return False
 
 
+def issue_key(repo: str, number: int) -> str:
+    return f"{repo}#{number}"
+
+
+def load_seen() -> dict[str, str]:
+    """Load {issue_key: first_seen_iso}. Missing/corrupt file → empty dict."""
+    if not STATE_PATH.exists():
+        return {}
+    try:
+        raw = json.loads(STATE_PATH.read_text())
+        return raw if isinstance(raw, dict) else {}
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_seen(seen: dict[str, str], gc_before: datetime) -> None:
+    """Write seen.json, dropping entries older than gc_before."""
+    cutoff = gc_before.isoformat()
+    kept = {k: v for k, v in seen.items() if v >= cutoff}
+    STATE_PATH.write_text(json.dumps(kept, indent=2, sort_keys=True) + "\n")
+
+
 # ---------- data model ----------
 
 @dataclass
@@ -77,6 +99,7 @@ class Issue:
     comments: int
     url: str
     is_pr: bool = False
+    is_new: bool = False  # not present in previous seen.json
     kind: str = "other"  # Bug / RFC / Feature / Perf / other / no-prefix
     category: str = "uncategorized"
     flags: list[str] = field(default_factory=list)
@@ -270,6 +293,8 @@ def _score(issue: Issue, cutoff_days: int) -> float:
     body_low = issue.body.lower()
     if any(m in body_low for m in REPRO_MARKERS):
         score += 0.1
+    if issue.is_new:
+        score += 10.0  # sort new items to the top within their category
     return score
 
 
@@ -328,7 +353,9 @@ def write_digest(issues: list[Issue], categories: list[dict], per_section_limit:
     for i in issues:
         per_repo_counts[i.repo] = per_repo_counts.get(i.repo, 0) + 1
     repo_summary = ", ".join(f"{k}: {v}" for k, v in sorted(per_repo_counts.items()))
-    lines.append(f"**{len(issues)} issues** — {repo_summary}")
+    new_total = sum(1 for i in issues if i.is_new)
+    new_suffix = f" — 🆕 **{new_total} new** since last run" if new_total else ""
+    lines.append(f"**{len(issues)} issues** — {repo_summary}{new_suffix}")
     lines.append("")
 
     # Table of contents.
@@ -379,6 +406,21 @@ def main() -> int:
             f"after_pr_check={len(after_pr)}"
         )
         all_issues.extend(after_pr)
+
+    # Mark new-since-last-run and refresh state.
+    seen = load_seen()
+    now_iso = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    new_count = 0
+    for i in all_issues:
+        key = issue_key(i.repo, i.number)
+        if key not in seen:
+            i.is_new = True
+            i.flags.insert(0, "🆕")
+            seen[key] = now_iso
+            new_count += 1
+    gc_before = datetime.now(timezone.utc) - timedelta(days=cfg["limits"]["max_age_days"] * 2)
+    save_seen(seen, gc_before)
+    print(f"seen.json: {new_count} new, {len(seen)} tracked total")
 
     all_issues = classify(all_issues, cfg["categories"])
     all_issues = rank(all_issues, cfg["limits"]["max_age_days"])
