@@ -13,6 +13,12 @@
     "per_section_limit": 10
   },
 
+  "kinds": {
+    "_comment": "Title-prefix taxonomy. Prefix match is case-insensitive, and unknown prefixes are labeled 'other'. exclude drops the issue in filter_noise; the rest carry through so Phase 4 can weight them.",
+    "exclude": ["Usage", "CI Failure", "Doc", "Docs"],
+    "keep": ["Bug", "Bugfix", "RFC", "Feature", "Perf", "Performance"]
+  },
+
   "categories": [
     {
       "id": "scheduler",

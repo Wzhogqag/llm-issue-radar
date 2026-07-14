@@ -11,6 +11,7 @@ Standard library + `gh` CLI only — no pip dependencies.
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from dataclasses import dataclass, field
@@ -76,8 +77,34 @@ class Issue:
     comments: int
     url: str
     is_pr: bool = False
+    kind: str = "other"  # Bug / RFC / Feature / Perf / other / no-prefix
     category: str = "uncategorized"
     flags: list[str] = field(default_factory=list)
+
+
+PREFIX_RE = re.compile(r"^\s*\[([^\]]+)\]")
+
+
+def parse_kind(title: str, exclude: set[str], keep: set[str]) -> tuple[str, bool]:
+    """Return (kind, is_excluded).
+
+    Prefix matching is case-insensitive. A title without any [Prefix] is
+    labeled "no-prefix" and passes through (SGLang templates are lax).
+    Prefixes in `exclude` return is_excluded=True; the caller drops the issue.
+    Prefixes in `keep` are canonicalized to Title-case; anything else → "other".
+    """
+    m = PREFIX_RE.match(title or "")
+    if not m:
+        return "no-prefix", False
+    raw = m.group(1).strip()
+    low = raw.lower()
+    excl_low = {e.lower() for e in exclude}
+    if low in excl_low:
+        return raw, True
+    keep_low = {k.lower(): k for k in keep}
+    if low in keep_low:
+        return keep_low[low], False
+    return "other", False
 
 
 # ---------- stages ----------
@@ -119,10 +146,17 @@ def fetch_issues(repo: str, limit: int) -> list[Issue]:
     return issues
 
 
-def filter_noise(issues: list[Issue], max_age_days: int) -> list[Issue]:
-    """Stage 2: drop PRs, bots, assigned, stale.
+def filter_noise(
+    issues: list[Issue],
+    max_age_days: int,
+    exclude_kinds: list[str],
+    keep_kinds: list[str],
+) -> list[Issue]:
+    """Stage 2: drop PRs, bots, assigned, stale, and excluded issue kinds.
 
-    Returns the remaining Issues in their input order.
+    Also tags each surviving issue with its parsed `kind` (Bug / RFC / …) and
+    adds an ⚠no-prefix flag when the title has no [Prefix] — useful signal
+    for readers deciding how much to trust the issue's shape.
     """
     cutoff = datetime.now(timezone.utc) - timedelta(days=max_age_days)
     kept: list[Issue] = []
@@ -135,6 +169,12 @@ def filter_noise(issues: list[Issue], max_age_days: int) -> list[Issue]:
             continue
         if i.updated_at < cutoff:
             continue
+        kind, is_excluded = parse_kind(i.title, set(exclude_kinds), set(keep_kinds))
+        if is_excluded:
+            continue
+        i.kind = kind
+        if kind == "no-prefix":
+            i.flags.append("⚠no-prefix")
         kept.append(i)
     return kept
 
@@ -206,7 +246,10 @@ def write_digest(issues: list[Issue], categories: list[dict], per_section_limit:
             lines.append(f"## {repo} — {len(items)} issues")
             lines.append("")
             for i in items[:per_section_limit]:
-                lines.append(f"- [#{i.number}]({i.url}) {i.title}")
+                badges = f"[{i.kind}]"
+                if i.flags:
+                    badges += " " + " ".join(i.flags)
+                lines.append(f"- {badges} [#{i.number}]({i.url}) {i.title}")
             lines.append("")
 
     OUTPUT_PATH.write_text("\n".join(lines))
@@ -217,10 +260,15 @@ def write_digest(issues: list[Issue], categories: list[dict], per_section_limit:
 
 def main() -> int:
     cfg = load_config()
+    kinds = cfg.get("kinds", {})
+    exclude_kinds = kinds.get("exclude", [])
+    keep_kinds = kinds.get("keep", [])
     all_issues: list[Issue] = []
     for repo in cfg["repos"]:
         raw = fetch_issues(repo, cfg["limits"]["per_repo_issue_limit"])
-        after_noise = filter_noise(raw, cfg["limits"]["max_age_days"])
+        after_noise = filter_noise(
+            raw, cfg["limits"]["max_age_days"], exclude_kinds, keep_kinds
+        )
         after_pr = drop_issues_with_open_pr(
             after_noise, repo, cfg["limits"]["max_pr_checks_per_repo"]
         )
