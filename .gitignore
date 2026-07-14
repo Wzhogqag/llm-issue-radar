@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Runtime state that CI will regenerate; commit only intentional snapshots.
+seen.json.local
+*.log

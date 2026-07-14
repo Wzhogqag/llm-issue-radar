@@ -1,0 +1,78 @@
+{
+  "_comment": "Watchlist and classification rules. Keywords are case-insensitive; paths are substring matches against issue body.",
+
+  "repos": [
+    "vllm-project/vllm",
+    "sgl-project/sglang"
+  ],
+
+  "limits": {
+    "per_repo_issue_limit": 60,
+    "max_pr_checks_per_repo": 15,
+    "max_age_days": 180,
+    "per_section_limit": 10
+  },
+
+  "categories": [
+    {
+      "id": "scheduler",
+      "title": "Scheduler / Batching",
+      "keywords": ["scheduler", "batching", "continuous batch", "chunked prefill", "preempt", "swap out"],
+      "paths": ["v1/core/sched", "core/scheduler", "engine/step"]
+    },
+    {
+      "id": "kv-cache",
+      "title": "KV Cache / Connector / PD Disagg",
+      "keywords": ["kv cache", "kv connector", "kv transfer", "prefix cache", "block manager", "pd disagg", "prefill decode", "nixl", "mooncake", "lmcache"],
+      "paths": ["kv_transfer", "kv_cache", "block_manager", "core/kv_cache_manager"]
+    },
+    {
+      "id": "attention",
+      "title": "Attention Backend",
+      "keywords": ["attention backend", "flashattention", "flashinfer", "triton attention", "mla", "sliding window", "sink attention", "radixattention"],
+      "paths": ["attention/backends", "attention/ops", "v1/attention"]
+    },
+    {
+      "id": "quantization",
+      "title": "Quantization",
+      "keywords": ["quantization", "fp8", "int4", "int8", "awq", "gptq", "gguf", "marlin", "smoothquant"],
+      "paths": ["model_executor/layers/quantization", "quantization"]
+    },
+    {
+      "id": "distributed",
+      "title": "Distributed / TP / PP / EP",
+      "keywords": ["tensor parallel", "pipeline parallel", "expert parallel", "all-reduce", "allreduce", "nccl", "ray", "torchrun"],
+      "paths": ["distributed/", "worker/multiproc", "executor/"]
+    },
+    {
+      "id": "model-integration",
+      "title": "New Model Integration",
+      "keywords": ["support", "add model", "new model", "not supported", "model architecture"],
+      "paths": ["model_executor/models/"]
+    },
+    {
+      "id": "sampling-speculative",
+      "title": "Sampling / Speculative Decoding",
+      "keywords": ["speculative", "eagle", "medusa", "mtp", "draft model", "sampling", "logprobs", "top_k", "top_p", "temperature"],
+      "paths": ["v1/sample", "spec_decode", "sampling_params"]
+    },
+    {
+      "id": "serving-api",
+      "title": "Serving / OpenAI API / Streaming",
+      "keywords": ["openai api", "chat completion", "streaming", "tokenize", "tool calling", "function calling", "sse"],
+      "paths": ["entrypoints/openai", "entrypoints/api_server", "srt/openai_api"]
+    },
+    {
+      "id": "performance",
+      "title": "Performance / Memory / OOM",
+      "keywords": ["oom", "memory leak", "slower", "regression", "throughput drop", "latency spike", "cuda graph"],
+      "paths": []
+    },
+    {
+      "id": "build-install",
+      "title": "Build / Install / Platform",
+      "keywords": ["cannot install", "build fail", "cmake", "ninja", "rocm", "cpu backend", "tpu", "xpu", "arm"],
+      "paths": ["CMakeLists.txt", "setup.py", "requirements/", "docker"]
+    }
+  ]
+}
