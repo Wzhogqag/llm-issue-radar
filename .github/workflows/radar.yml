@@ -2,9 +2,8 @@ name: radar
 
 on:
   workflow_dispatch: {}
-  # Daily cron will be enabled in Phase 5 once the pipeline is proven end-to-end.
-  # schedule:
-  #   - cron: "17 13 * * *"
+  schedule:
+    - cron: "17 13 * * *"  # daily at 13:17 UTC (= 21:17 Beijing); off-hour minute to avoid runner scheduling contention
 
 permissions:
   contents: write

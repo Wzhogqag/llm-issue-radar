@@ -29,7 +29,7 @@ python3 radar.py
 ```
 
 **In GitHub Actions** — see [`.github/workflows/radar.yml`](.github/workflows/radar.yml).
-The daily cron will be turned on once the pipeline is validated end-to-end.
+Runs daily at 13:17 UTC and can be triggered manually from the Actions tab.
 
 ## Configuration
 
@@ -47,4 +47,5 @@ are case-insensitive substring matches; path patterns match against issue body.
 
 ## Status
 
-Scaffold. See phase checklist in the setup log.
+Live. The digest at [`RADAR.md`](RADAR.md) is refreshed daily by GitHub Actions.
+See commit history for what changed between runs.
