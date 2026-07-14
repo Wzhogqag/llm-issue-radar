@@ -50,6 +50,19 @@ It prints meta, cross-referenced PRs (open + closed prior attempts),
 repro signal, maintainer discussion, and a one-line verdict — read-only,
 no writes.
 
+## Weekly trends
+
+Once a week (Sundays at 13:47 UTC) `weekly.py` diffs the first and last
+`RADAR.md` snapshots in the past 7 days from git history and emits
+[`WEEKLY.md`](WEEKLY.md) with:
+
+- movement table (start / end / Δ / appeared / vanished per category)
+- newly appeared issues, grouped by category
+- vanished issues (closed, PR merged, or dropped by activity — worth
+  spot-checking)
+
+Run manually against your local checkout: `python3 weekly.py`.
+
 ## Design notes
 
 - **Standard library only.** The GitHub REST endpoints are small enough to hit
