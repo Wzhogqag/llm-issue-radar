@@ -175,6 +175,8 @@ def filter_noise(
         i.kind = kind
         if kind == "no-prefix":
             i.flags.append("⚠no-prefix")
+        if i.author_association in ("MEMBER", "OWNER", "COLLABORATOR"):
+            i.flags.append("⚠maintainer-authored")
         kept.append(i)
     return kept
 
@@ -214,15 +216,92 @@ def drop_issues_with_open_pr(
 
 
 def classify(issues: list[Issue], categories: list[dict]) -> list[Issue]:
-    """Stage 4: assign each issue a category via keyword + path match."""
-    # TODO(Phase 4): score against category rules; pick best-match
+    """Stage 4: assign each issue a category via keyword + path match.
+
+    For each category:
+        score = 2 * (keyword hits in title) + (keyword hits in body) + 3 * (path hits in body)
+    Titles count double per hit; paths count triple (they're precise signals).
+    Ties resolved by category order in config.json. Score 0 → uncategorized.
+    """
+    for i in issues:
+        title_low = i.title.lower()
+        body_low = i.body.lower()
+        best_score = 0
+        best_cat = "uncategorized"
+        for cat in categories:
+            score = 0
+            for kw in cat.get("keywords", []):
+                kw_low = kw.lower()
+                if kw_low in title_low:
+                    score += 2
+                if kw_low in body_low:
+                    score += 1
+            for path in cat.get("paths", []):
+                if path.lower() in body_low:
+                    score += 3
+            if score > best_score:
+                best_score = score
+                best_cat = cat["id"]
+        i.category = best_cat
     return issues
 
 
-def rank(issues: list[Issue]) -> list[Issue]:
-    """Stage 5: order by freshness × approachability × repro signal."""
-    # TODO(Phase 4): score and sort
+KIND_WEIGHT = {
+    "Bug": 1.0,
+    "Bugfix": 1.0,
+    "Perf": 1.0,
+    "Performance": 1.0,
+    "Feature": 0.8,
+    "other": 0.7,
+    "RFC": 0.6,
+    "no-prefix": 0.5,
+}
+
+REPRO_MARKERS = ("traceback", "repro", "steps to reproduce", "```")
+
+
+def _score(issue: Issue, cutoff_days: int) -> float:
+    age_days = (datetime.now(timezone.utc) - issue.updated_at).days
+    freshness = max(0.0, min(1.0, (cutoff_days - age_days) / cutoff_days))
+    kind_w = KIND_WEIGHT.get(issue.kind, 0.5)
+    score = freshness * kind_w
+    if "⚠maintainer-authored" in issue.flags:
+        score -= 0.2
+    body_low = issue.body.lower()
+    if any(m in body_low for m in REPRO_MARKERS):
+        score += 0.1
+    return score
+
+
+def rank(issues: list[Issue], cutoff_days: int) -> list[Issue]:
+    """Stage 5: order by freshness × kind-weight × repro signal, minus flag penalties."""
+    issues.sort(key=lambda i: _score(i, cutoff_days), reverse=True)
     return issues
+
+
+def _format_issue_line(i: Issue) -> str:
+    badges = f"[{i.kind}]"
+    if i.flags:
+        badges += " " + " ".join(i.flags)
+    return f"- {badges} [#{i.number}]({i.url}) {i.title}"
+
+
+def _render_category_section(
+    title: str,
+    items: list[Issue],
+    per_section_limit: int,
+) -> list[str]:
+    lines = [f"## {title}", ""]
+    by_repo: dict[str, list[Issue]] = {}
+    for i in items:
+        by_repo.setdefault(i.repo, []).append(i)
+    for repo in sorted(by_repo):  # deterministic; alphabetic groups sglang above vllm
+        lines.append(f"### {repo}")
+        lines.append("")
+        for i in by_repo[repo][:per_section_limit]:
+            lines.append(_format_issue_line(i))
+        lines.append("")
+    return lines
 
 
 def write_digest(issues: list[Issue], categories: list[dict], per_section_limit: int) -> None:
@@ -236,21 +315,43 @@ def write_digest(issues: list[Issue], categories: list[dict], per_section_limit:
     if not issues:
         lines.append("No matching issues after filtering.")
         lines.append("")
-    else:
-        by_repo: dict[str, list[Issue]] = {}
-        for i in issues:
-            by_repo.setdefault(i.repo, []).append(i)
-        lines.append(f"**{len(issues)} issues** across {len(by_repo)} repos, uncategorized (Phase 3 output).")
-        lines.append("")
-        for repo, items in by_repo.items():
-            lines.append(f"## {repo} — {len(items)} issues")
-            lines.append("")
-            for i in items[:per_section_limit]:
-                badges = f"[{i.kind}]"
-                if i.flags:
-                    badges += " " + " ".join(i.flags)
-                lines.append(f"- {badges} [#{i.number}]({i.url}) {i.title}")
-            lines.append("")
+        OUTPUT_PATH.write_text("\n".join(lines))
+        print(f"wrote {OUTPUT_PATH} (0 issues)")
+        return
+
+    by_cat: dict[str, list[Issue]] = {}
+    for i in issues:
+        by_cat.setdefault(i.category, []).append(i)
+
+    # Summary line: totals per repo, then per category (in config order).
+    per_repo_counts = {}
+    for i in issues:
+        per_repo_counts[i.repo] = per_repo_counts.get(i.repo, 0) + 1
+    repo_summary = ", ".join(f"{k}: {v}" for k, v in sorted(per_repo_counts.items()))
+    lines.append(f"**{len(issues)} issues** — {repo_summary}")
+    lines.append("")
+
+    # Table of contents.
+    lines.append("## Contents")
+    lines.append("")
+    for cat in categories:
+        cid = cat["id"]
+        if cid in by_cat:
+            lines.append(f"- [{cat['title']}](#{cat['title'].lower().replace(' ', '-').replace('/', '')}) — {len(by_cat[cid])}")
+    if "uncategorized" in by_cat:
+        lines.append(f"- [Uncategorized](#uncategorized) — {len(by_cat['uncategorized'])}")
+    lines.append("")
+
+    # Categories in config order.
+    for cat in categories:
+        cid = cat["id"]
+        if cid not in by_cat:
+            continue
+        lines.extend(_render_category_section(cat["title"], by_cat[cid], per_section_limit))
+
+    # Uncategorized last.
+    if "uncategorized" in by_cat:
+        lines.extend(_render_category_section("Uncategorized", by_cat["uncategorized"], per_section_limit))
 
     OUTPUT_PATH.write_text("\n".join(lines))
     print(f"wrote {OUTPUT_PATH} ({len(issues)} issues)")
@@ -280,7 +381,7 @@ def main() -> int:
         all_issues.extend(after_pr)
 
     all_issues = classify(all_issues, cfg["categories"])
-    all_issues = rank(all_issues)
+    all_issues = rank(all_issues, cfg["limits"]["max_age_days"])
     write_digest(all_issues, cfg["categories"], cfg["limits"]["per_section_limit"])
     return 0
 

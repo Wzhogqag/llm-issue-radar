@@ -23,13 +23,13 @@
     {
       "id": "scheduler",
       "title": "Scheduler / Batching",
-      "keywords": ["scheduler", "batching", "continuous batch", "chunked prefill", "preempt", "swap out"],
+      "keywords": ["scheduler", "batching", "continuous batch", "chunked prefill", "preempt", "swap out", "waiting queue", "eviction", "block-free", "prefix cache", "lru"],
       "paths": ["v1/core/sched", "core/scheduler", "engine/step"]
     },
     {
       "id": "kv-cache",
       "title": "KV Cache / Connector / PD Disagg",
-      "keywords": ["kv cache", "kv connector", "kv transfer", "prefix cache", "block manager", "pd disagg", "prefill decode", "nixl", "mooncake", "lmcache"],
+      "keywords": ["kv cache", "kv connector", "kv transfer", "block manager", "pd disagg", "prefill decode", "nixl", "mooncake", "lmcache", "hybrid kv"],
       "paths": ["kv_transfer", "kv_cache", "block_manager", "core/kv_cache_manager"]
     },
     {
@@ -41,13 +41,13 @@
     {
       "id": "quantization",
       "title": "Quantization",
-      "keywords": ["quantization", "fp8", "int4", "int8", "awq", "gptq", "gguf", "marlin", "smoothquant"],
+      "keywords": ["quantization", "fp8", "fp4", "nvfp4", "int4", "int8", "awq", "gptq", "gguf", "marlin", "smoothquant", "w4a8", "w4afp8", "compressed-tensors"],
       "paths": ["model_executor/layers/quantization", "quantization"]
     },
     {
       "id": "distributed",
       "title": "Distributed / TP / PP / EP",
-      "keywords": ["tensor parallel", "pipeline parallel", "expert parallel", "all-reduce", "allreduce", "nccl", "ray", "torchrun"],
+      "keywords": ["tensor parallel", "pipeline parallel", "expert parallel", "all-reduce", "allreduce", "nccl", "ray", "torchrun", "dp attention"],
       "paths": ["distributed/", "worker/multiproc", "executor/"]
     },
     {
@@ -59,7 +59,7 @@
     {
       "id": "sampling-speculative",
       "title": "Sampling / Speculative Decoding",
-      "keywords": ["speculative", "eagle", "medusa", "mtp", "draft model", "sampling", "logprobs", "top_k", "top_p", "temperature"],
+      "keywords": ["speculative", "eagle", "medusa", "mtp", "draft model", "sampling", "logprobs", "top_k", "top_p", "temperature", "spec decode"],
       "paths": ["v1/sample", "spec_decode", "sampling_params"]
     },
     {
@@ -71,13 +71,13 @@
     {
       "id": "performance",
       "title": "Performance / Memory / OOM",
-      "keywords": ["oom", "memory leak", "slower", "regression", "throughput drop", "latency spike", "cuda graph"],
+      "keywords": ["oom", "memory leak", "slower", "regression", "throughput drop", "latency spike", "cuda graph", "performance degradation"],
       "paths": []
     },
     {
       "id": "build-install",
       "title": "Build / Install / Platform",
-      "keywords": ["cannot install", "build fail", "cmake", "ninja", "rocm", "cpu backend", "tpu", "xpu", "arm"],
+      "keywords": ["cannot install", "cannot build", "cmake", "ninja", "rocm", "cpu backend", "tpu", "xpu", "aarch64", "manylinux"],
       "paths": ["CMakeLists.txt", "setup.py", "requirements/", "docker"]
     }
   ]
