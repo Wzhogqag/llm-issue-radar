@@ -7,7 +7,7 @@
   ],
 
   "limits": {
-    "per_repo_issue_limit": 60,
+    "per_repo_issue_limit": 100,
     "max_pr_checks_per_repo": 15,
     "max_age_days": 180,
     "per_section_limit": 10

@@ -21,6 +21,42 @@ CONFIG_PATH = Path(__file__).parent / "config.json"
 OUTPUT_PATH = Path(__file__).parent / "RADAR.md"
 STATE_PATH = Path(__file__).parent / "seen.json"
 
+BOT_LOGIN_SUFFIXES = ("[bot]",)
+BOT_LOGIN_EXACT = {"dependabot", "renovate", "pre-commit-ci", "github-actions"}
+
+
+def gh_api(path: str, paginate: bool = False, timeout: int = 30) -> list | dict:
+    """Call `gh api <path>`; returns parsed JSON. Set paginate=True for list endpoints."""
+    cmd = ["gh", "api"]
+    if paginate:
+        cmd += ["--paginate", "--slurp"]  # --slurp merges paginated arrays into one
+    cmd.append(path)
+    try:
+        proc = subprocess.run(
+            cmd, capture_output=True, text=True, check=True, timeout=timeout
+        )
+    except subprocess.TimeoutExpired:
+        print(f"gh api timed out ({timeout}s): {path}", file=sys.stderr)
+        raise
+    except subprocess.CalledProcessError as e:
+        print(f"gh api failed: {path}\n{e.stderr}", file=sys.stderr)
+        raise
+    data = json.loads(proc.stdout) if proc.stdout.strip() else []
+    if paginate and isinstance(data, list) and data and isinstance(data[0], list):
+        # --slurp returns a list of pages, each a list of items; flatten.
+        return [item for page in data for item in page]
+    return data
+
+
+def is_bot(login: str, user_type: str) -> bool:
+    if user_type == "Bot":
+        return True
+    if any(login.endswith(s) for s in BOT_LOGIN_SUFFIXES):
+        return True
+    if login.lower() in BOT_LOGIN_EXACT:
+        return True
+    return False
+
 
 # ---------- data model ----------
 
@@ -31,13 +67,15 @@ class Issue:
     title: str
     body: str
     author: str
-    author_type: str  # User / Bot / MEMBER / OWNER
+    author_type: str  # User / Bot / Organization
+    author_association: str  # NONE / CONTRIBUTOR / MEMBER / OWNER / COLLABORATOR
     labels: list[str]
     assignees: list[str]
     created_at: datetime
     updated_at: datetime
     comments: int
     url: str
+    is_pr: bool = False
     category: str = "uncategorized"
     flags: list[str] = field(default_factory=list)
 
@@ -49,21 +87,90 @@ def load_config() -> dict:
 
 
 def fetch_issues(repo: str, limit: int) -> list[Issue]:
-    """Stage 1: pull open issues via `gh` REST list endpoint."""
-    # TODO(Phase 3): implement gh api repos/{repo}/issues?state=open&per_page=...
-    return []
+    """Stage 1: pull open issues via `gh` REST list endpoint.
+
+    The /issues endpoint returns both issues and PRs — we keep everything here
+    and let filter_noise drop the PRs. per_page is capped at 100; for our
+    two-repo scope, `limit` easily fits in a single page.
+    """
+    per_page = min(100, limit)
+    raw = gh_api(f"repos/{repo}/issues?state=open&per_page={per_page}", paginate=False)
+    assert isinstance(raw, list)
+    issues: list[Issue] = []
+    for r in raw[:limit]:
+        issues.append(
+            Issue(
+                repo=repo,
+                number=r["number"],
+                title=r["title"] or "",
+                body=r.get("body") or "",
+                author=(r.get("user") or {}).get("login", ""),
+                author_type=(r.get("user") or {}).get("type", ""),
+                author_association=r.get("author_association", "NONE"),
+                labels=[lb["name"] for lb in r.get("labels", [])],
+                assignees=[a["login"] for a in r.get("assignees", [])],
+                created_at=datetime.fromisoformat(r["created_at"].replace("Z", "+00:00")),
+                updated_at=datetime.fromisoformat(r["updated_at"].replace("Z", "+00:00")),
+                comments=r.get("comments", 0),
+                url=r["html_url"],
+                is_pr=r.get("pull_request") is not None,
+            )
+        )
+    return issues
 
 
 def filter_noise(issues: list[Issue], max_age_days: int) -> list[Issue]:
-    """Stage 2: drop PRs, bots, assigned, stale, template-only."""
-    # TODO(Phase 3): implement drop rules
-    return issues
+    """Stage 2: drop PRs, bots, assigned, stale.
+
+    Returns the remaining Issues in their input order.
+    """
+    cutoff = datetime.now(timezone.utc) - timedelta(days=max_age_days)
+    kept: list[Issue] = []
+    for i in issues:
+        if i.is_pr:
+            continue
+        if is_bot(i.author, i.author_type):
+            continue
+        if i.assignees:
+            continue
+        if i.updated_at < cutoff:
+            continue
+        kept.append(i)
+    return kept
 
 
-def drop_issues_with_open_pr(issues: list[Issue], repo: str, max_checks: int) -> list[Issue]:
-    """Stage 3: consult each issue's timeline; skip if an open PR is cross-referenced."""
-    # TODO(Phase 3): use gh api repos/{repo}/issues/{n}/timeline
-    return issues
+def drop_issues_with_open_pr(
+    issues: list[Issue], repo: str, max_checks: int
+) -> list[Issue]:
+    """Stage 3: skip issues that already have an open PR cross-referenced.
+
+    Timeline calls are expensive (one per issue), so we cap at max_checks. Beyond
+    the cap, issues pass through unchecked — we'd rather include a few duplicates
+    than exhaust rate limits.
+    """
+    checked = 0
+    kept: list[Issue] = []
+    for i in issues:
+        if checked >= max_checks:
+            kept.append(i)
+            continue
+        checked += 1
+        try:
+            events = gh_api(f"repos/{repo}/issues/{i.number}/timeline?per_page=100")
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            kept.append(i)  # on error, keep it — better than silent drop
+            continue
+        assert isinstance(events, list)
+        has_open_pr = any(
+            ev.get("event") == "cross-referenced"
+            and (ev.get("source") or {}).get("type") == "issue"
+            and ((ev.get("source") or {}).get("issue") or {}).get("pull_request")
+            and ((ev.get("source") or {}).get("issue") or {}).get("state") == "open"
+            for ev in events
+        )
+        if not has_open_pr:
+            kept.append(i)
+    return kept
 
 
 def classify(issues: list[Issue], categories: list[dict]) -> list[Issue]:
@@ -85,8 +192,23 @@ def write_digest(issues: list[Issue], categories: list[dict], per_section_limit:
     lines.append("")
     lines.append(f"_Last run: {datetime.now(timezone.utc).isoformat(timespec='minutes')}_")
     lines.append("")
-    lines.append("No issues yet — this is a scaffold. Phase 3 wires up fetching.")
-    lines.append("")
+
+    if not issues:
+        lines.append("No matching issues after filtering.")
+        lines.append("")
+    else:
+        by_repo: dict[str, list[Issue]] = {}
+        for i in issues:
+            by_repo.setdefault(i.repo, []).append(i)
+        lines.append(f"**{len(issues)} issues** across {len(by_repo)} repos, uncategorized (Phase 3 output).")
+        lines.append("")
+        for repo, items in by_repo.items():
+            lines.append(f"## {repo} — {len(items)} issues")
+            lines.append("")
+            for i in items[:per_section_limit]:
+                lines.append(f"- [#{i.number}]({i.url}) {i.title}")
+            lines.append("")
+
     OUTPUT_PATH.write_text("\n".join(lines))
     print(f"wrote {OUTPUT_PATH} ({len(issues)} issues)")
 
@@ -98,9 +220,16 @@ def main() -> int:
     all_issues: list[Issue] = []
     for repo in cfg["repos"]:
         raw = fetch_issues(repo, cfg["limits"]["per_repo_issue_limit"])
-        raw = filter_noise(raw, cfg["limits"]["max_age_days"])
-        raw = drop_issues_with_open_pr(raw, repo, cfg["limits"]["max_pr_checks_per_repo"])
-        all_issues.extend(raw)
+        after_noise = filter_noise(raw, cfg["limits"]["max_age_days"])
+        after_pr = drop_issues_with_open_pr(
+            after_noise, repo, cfg["limits"]["max_pr_checks_per_repo"]
+        )
+        print(
+            f"{repo}: fetched={len(raw)} "
+            f"after_noise={len(after_noise)} "
+            f"after_pr_check={len(after_pr)}"
+        )
+        all_issues.extend(after_pr)
 
     all_issues = classify(all_issues, cfg["categories"])
     all_issues = rank(all_issues)
