@@ -36,6 +36,20 @@ Runs daily at 13:17 UTC and can be triggered manually from the Actions tab.
 Watchlist, category rules, and limits live in [`config.json`](config.json). Keywords
 are case-insensitive substring matches; path patterns match against issue body.
 
+## Deep-diving a candidate
+
+Before spending real time on an issue from the digest, get a quick read on
+whether it's worth investigating with `verify.py`:
+
+```bash
+python3 verify.py vllm-project/vllm 48489
+python3 verify.py https://github.com/sgl-project/sglang/issues/31071
+```
+
+It prints meta, cross-referenced PRs (open + closed prior attempts),
+repro signal, maintainer discussion, and a one-line verdict — read-only,
+no writes.
+
 ## Design notes
 
 - **Standard library only.** The GitHub REST endpoints are small enough to hit
