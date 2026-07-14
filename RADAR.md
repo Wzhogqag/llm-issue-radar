@@ -1,17 +1,17 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-07-14T08:48+00:00_
+_Last run: 2026-07-14T09:06+00:00_
 
-**27 issues** — sgl-project/sglang: 10, vllm-project/vllm: 17
+**31 issues** — sgl-project/sglang: 11, vllm-project/vllm: 20
 
 ## Contents
 
 - [Scheduler / Batching](#scheduler--batching) — 2
 - [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
-- [Quantization](#quantization) — 9
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
-- [New Model Integration](#new-model-integration) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
+- [Quantization](#quantization) — 10
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 3
+- [New Model Integration](#new-model-integration) — 2
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
 - [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
 - [Performance / Memory / OOM](#performance--memory--oom) — 1
 - [Build / Install / Platform](#build--install--platform) — 4
@@ -44,6 +44,7 @@ _Last run: 2026-07-14T08:48+00:00_
 - [Bug] [#48590](https://github.com/vllm-project/vllm/issues/48590) [Bug]: LoRA `lora_expand` Triton kernel outputs NaN on Hopper (sm_90) with `block_n=128`, producing garbled LoRA output
 - [Bug] [#48508](https://github.com/vllm-project/vllm/issues/48508) [Bug]: humming is_layer_skipped ignores compressed-tensors "re:" patterns (ignored layers get quantized; real vs dummy load diverge)
 - [Bug] [#48493](https://github.com/vllm-project/vllm/issues/48493) [Bug]: `SWIGLUOAI_UNINTERLEAVE requires clamp_limit` blocks MiniMax-M3 AWQ/GPTQ INT4
+- [Bug] [#48492](https://github.com/vllm-project/vllm/issues/48492) [Bug]: Missing quant_config in MTP eh_proj causes severe silent precision loss during W8A8 quantization
 - [Bug] [#48491](https://github.com/vllm-project/vllm/issues/48491) [Bug]: cuBLAS NVFP4 GEMM silently rejects M < 128, impacts speech model decode
 - [Bug] [#48477](https://github.com/vllm-project/vllm/issues/48477) [Bug]: Qwen3.5-122B-A10B-FP8 serve crashes on nightly/0.25 (CUBLAS_STATUS_EXECUTION_FAILED at profile_run); no version serves FP8 hybrid GDN + DFlash together
 - [RFC] [#48480](https://github.com/vllm-project/vllm/issues/48480) [RFC]: Make Triton kernel unit tests hardware-agnostic and cover untested kernels
@@ -55,11 +56,16 @@ _Last run: 2026-07-14T08:48+00:00_
 - [Bug] [#31133](https://github.com/sgl-project/sglang/issues/31133) [Bug] MiniMax sparse prefill: OOB GPU write when max_seqlen_k < seq_lens.max() (silent topk corruption / Xid 31 / NCCL watchdog kills)
 - [no-prefix] ⚠no-prefix [#31116](https://github.com/sgl-project/sglang/issues/31116) DP attention + prefill CUDA graph + return_routed_experts (gated path): two fixes ready — is enabling it wanted?
 
+### vllm-project/vllm
+
+- [no-prefix] ⚠no-prefix [#48591](https://github.com/vllm-project/vllm/issues/48591) 还不支持[Usage]: vllm 0.25版本在tp=8并行的时候走dflash 和dspark 命中 attention后端的时候出现错误报错定位 CUDA error (/workspace/.deps/vllm-flash-attn-src/hopper/flash_api.cpp:697): invalid configuration argument 8个worker(TP0-TP7)
+
 ## New Model Integration
 
 ### sgl-project/sglang
 
 - [Feature] [#31127](https://github.com/sgl-project/sglang/issues/31127) [Feature] any plan to support suffix decoding?
+- [no-prefix] ⚠no-prefix [#31175](https://github.com/sgl-project/sglang/issues/31175) Add native OLMo3 (Olmo3ForCausalLM) support by reusing the Olmo2 implementation
 
 ## Sampling / Speculative Decoding
 
@@ -69,6 +75,7 @@ _Last run: 2026-07-14T08:48+00:00_
 
 ### vllm-project/vllm
 
+- [Bug] [#48592](https://github.com/vllm-project/vllm/issues/48592) [Bug]: v0.25.0 torchcodec not compatible with cu129 wheel
 - [Bug] [#48503](https://github.com/vllm-project/vllm/issues/48503) [Bug]: Gemma 4 MTP speculative decoding crashes during CUDA graph capture (`_suppress_token_ids` is a Python list, not a device tensor)
 - [Bug] [#48494](https://github.com/vllm-project/vllm/issues/48494) [Bug][Spec Decode] num_speculative_tokens_per_batch_size + MTP speculator fails full CUDA graph decode capture (InputBatch.make_dummy assert)
 
