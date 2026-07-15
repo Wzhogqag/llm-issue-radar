@@ -24,12 +24,18 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 radar.py
 
+      - name: Refresh tracking
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 tracking.py
+
       - name: Commit digest + state
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add RADAR.md
           [ -f seen.json ] && git add seen.json || true
+          [ -f TRACKING.md ] && git add TRACKING.md || true
           if git diff --cached --quiet; then
             echo "No change to commit."
           else
