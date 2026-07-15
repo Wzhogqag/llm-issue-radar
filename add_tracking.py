@@ -88,12 +88,12 @@ def insert_keys(new_keys: list[tuple[str, int]]) -> list[tuple[str, int]]:
     if not added:
         return []
 
-    # Keep existing lines verbatim; append new ones at the end of the config block.
-    body_lines = config_body.rstrip("\n").splitlines()
-    # Drop trailing blank/empty-hyphen placeholder lines.
-    while body_lines and body_lines[-1].strip() in ("", "-"):
-        body_lines.pop()
-    body_lines.extend(to_append)
+    # New keys go to the TOP of the config block (newest first). Existing
+    # lines are preserved in their original order below.
+    body_lines = config_body.strip("\n").splitlines()
+    # Drop placeholder / blank lines anywhere in the block.
+    body_lines = [ln for ln in body_lines if ln.strip() not in ("", "-")]
+    body_lines = to_append + body_lines
     new_body = "\n" + "\n".join(body_lines) + "\n"
 
     TRACKING_PATH.write_text(
