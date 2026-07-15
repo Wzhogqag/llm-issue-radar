@@ -126,8 +126,16 @@ def refresh_and_push(added: list[tuple[str, int]]) -> None:
     msg = f"tracking: add {joined}"
     run(["git", "commit", "-m", msg])
     print("pushing...")
-    run(["git", "push"])
-    print("done.")
+    try:
+        run(["git", "push"])
+        print("done.")
+    except subprocess.CalledProcessError:
+        print(
+            "\npush failed — commit is local. Retry manually:\n"
+            "    git -C {} push".format(REPO_ROOT),
+            file=sys.stderr,
+        )
+        sys.exit(2)
 
 
 def main() -> int:
