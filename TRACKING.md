@@ -1,13 +1,15 @@
 <!-- TRACKING: add/remove issue keys below (auto-refreshed below the marker) -->
+
 - vllm-project/vllm#48489
 - vllm-project/vllm#48485
+- vllm-project/vllm#48504
 <!-- END TRACKING CONFIG -->
 
 <!-- AUTOGEN: everything below is regenerated on each run -->
 
 # Tracking
 
-_2 issues tracked. Refreshed 2026-07-15 06:10 UTC._
+_3 issues tracked. Refreshed 2026-07-15 00:18 PDT._
 
 ## vllm-project/vllm#48489  [Bug]: Deferred block-free path loses per-group eviction ordering for hybrid KV cache configs
 
@@ -26,4 +28,12 @@ _2 issues tracked. Refreshed 2026-07-15 06:10 UTC._
 - 2026-07-13 10:45 🆕 opened by @chaunceyjiang — as `COLLABORATOR`
 - 2026-07-13 10:45 🏷 labeled by @chaunceyjiang — `RFC`
 - 2026-07-13 15:42 🔗 cross-referenced by @github-actions[bot] — issue [https://github.com/CNTRL-tek91/issue-radar/issues/1](https://github.com/CNTRL-tek91/issue-radar/issues/1) (open)
+- ⏳ **still open**
+
+## vllm-project/vllm#48504  [RFC]: Read-only NIXL GDS connector for filesystem KV-cache loads
+
+⏳ Status: **open** — <https://github.com/vllm-project/vllm/issues/48504>
+
+- 2026-07-13 16:19 🆕 opened by @maheshrbapatu — as `NONE`
+- 2026-07-14 18:59 🔗 cross-referenced by @maheshrbapatu — PR [https://github.com/maheshrbapatu/vllm/pull/2](https://github.com/maheshrbapatu/vllm/pull/2) (open)
 - ⏳ **still open**
