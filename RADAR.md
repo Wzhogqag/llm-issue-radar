@@ -1,85 +1,86 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-07-16T13:59+00:00_
+_Last run: 2026-07-17T13:57+00:00_
 
-**23 issues** — sgl-project/sglang: 6, vllm-project/vllm: 17 — 🆕 **23 new** since last run
+**24 issues** — sgl-project/sglang: 8, vllm-project/vllm: 16 — 🆕 **23 new** since last run
 
 ## Contents
 
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
-- [Quantization](#quantization) — 3
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
-- [New Model Integration](#new-model-integration) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 4
-- [Build / Install / Platform](#build--install--platform) — 8
+- [Scheduler / Batching](#scheduler--batching) — 1
+- [Attention Backend](#attention-backend) — 1
+- [Quantization](#quantization) — 11
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 3
+- [Build / Install / Platform](#build--install--platform) — 2
+- [Uncategorized](#uncategorized) — 1
 
-## KV Cache / Connector / PD Disagg
+## Scheduler / Batching
 
 ### sgl-project/sglang
 
-- [Feature] 🆕 [#31458](https://github.com/sgl-project/sglang/issues/31458) [Feature] RFC: SGLang KV Indexer for Distributed KV Cache Placement Metadata
+- [no-prefix] 🆕 ⚠no-prefix [#31473](https://github.com/sgl-project/sglang/issues/31473) Optimistic prefill can reach a cross-stage capacity stall
 
-### vllm-project/vllm
+## Attention Backend
 
-- [RFC] 🆕 [#48743](https://github.com/vllm-project/vllm/issues/48743) [RFC]: Return extracted hidden states in the generation response
+### sgl-project/sglang
+
+- [Feature] 🆕 [#31578](https://github.com/sgl-project/sglang/issues/31578) [Feature] Native SM120 (Blackwell) support for flash_mla_sparse_fwd (DeepSeek-V4 sparse-attention prefill)
 
 ## Quantization
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#31490](https://github.com/sgl-project/sglang/issues/31490) [Bug] GSM8K accuracy regression on DeepSeek-V4-Flash-FP8 (dp8ep8, gfx950) traced to #29275 "Fix gfx95 bpreshuffle FP8 activation scale layout"
+- [Feature] 🆕 [#31570](https://github.com/sgl-project/sglang/issues/31570) [Feature] [NPU] Implement CI test for different quantization prefixes (w1/2/3; gate/up/down_proj)
+- [other] 🆕 ⚠maintainer-authored [#31504](https://github.com/sgl-project/sglang/issues/31504) [Proposal] Fuse static FP8 activation quantization into producer kernels (norm / activation / allreduce epilogue)
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#48809](https://github.com/vllm-project/vllm/issues/48809) [Bug]: The Deepseek v4 model compiles kenrel during the inference process
-- [Bug] 🆕 [#48803](https://github.com/vllm-project/vllm/issues/48803) [Bug]: "There are significant spike issues in TTFT" with Kimi-K2.6-NVFP4
-- [Bug] 🆕 [#48752](https://github.com/vllm-project/vllm/issues/48752) [Bug]: sample_tokens RPC timeout with GLM-5.2-FP8 + DSpark speculative decoding, TP=8 across 2 nodes (Blackwell GB200)
+- [Bug] 🆕 [#48946](https://github.com/vllm-project/vllm/issues/48946) [Bug][XPU]: gpt-oss-120b (MXFP4 MoE, TP=2) corrupt under piecewise XPU graph capture on Data Center GPU Max 1100 (PVC); compile-mode correct
+- [Bug] 🆕 [#48904](https://github.com/vllm-project/vllm/issues/48904) [Bug]: VLLM_MARLIN_INPUT_DTYPE=int8 silently ignored for auto-round (INC) checkpoints
+- [Bug] 🆕 [#48898](https://github.com/vllm-project/vllm/issues/48898) [Bug]: ModelOpt NVFP4 dense model outputs garbage on SM120 (RTX 6000D/RTX PRO 6000): FlashInferCutlass and native Cutlass NVFP4 kernels both incorrect, only Marlin correct
+- [Bug] 🆕 [#48895](https://github.com/vllm-project/vllm/issues/48895) [Bug]: moe_wna16_marlin_gemm applies wrong per-row topk weights (mul_topk_weights=True) at gpt-oss NVFP4 MoE shapes — corrupt output
+- [Bug] 🆕 [#48945](https://github.com/vllm-project/vllm/issues/48945) [Bug]: Ministral is broken with --kv-cache-dtype fp8 in 0.25.1
+- [Feature] 🆕 [#48921](https://github.com/vllm-project/vllm/issues/48921) [Feature]: FlashInfer-CUTLASS NVFP4 MoE lacks SWIGLUSTEP activation (blocks Step-3.7-Flash-NVFP4 at TP=8)
+- [RFC] 🆕 [#48941](https://github.com/vllm-project/vllm/issues/48941) [RFC] Recursive Tensor Collector: Fix CUDA Graph Invalidation After Weight Reload
+- [no-prefix] 🆕 ⚠no-prefix [#48862](https://github.com/vllm-project/vllm/issues/48862) LoRA Triton kernel crashes with NVFP4 (modelopt_fp4) quantization - CUDA illegal memory access
 
 ## Distributed / TP / PP / EP
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#48827](https://github.com/vllm-project/vllm/issues/48827) [Bug]: enable_multithread_load silently disables EP weight filtering (local_expert_ids never reaches multi_thread_safetensors_weights_iterator)
-- [Bug] 🆕 [#48801](https://github.com/vllm-project/vllm/issues/48801) [Bug]: vLLM+LMCache GLM-5.2 inference causes engine RPCTimeout
-
-## New Model Integration
-
-### vllm-project/vllm
-
-- [Feature] 🆕 [#48747](https://github.com/vllm-project/vllm/issues/48747) [Feature]: Can we add base PCP support for hybrid attention?
+- [Bug] 🆕 [#31568](https://github.com/sgl-project/sglang/issues/31568) [Bug] Unused/unnecessary tl.constexpr params causing Triton cache-key pollution in KV-cache and FLA kernels
 
 ## Sampling / Speculative Decoding
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#31384](https://github.com/sgl-project/sglang/issues/31384) [Bug] glm5.2 tep dp=2 cause speculative eagle error
-
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#48848](https://github.com/vllm-project/vllm/issues/48848) [Bug]: Gemma4 MTP speculative decoding crashes at engine init on 0.25.1 — "a and b must have same reduction dim" (regression from 0.21.0)
-- [Bug] 🆕 [#48749](https://github.com/vllm-project/vllm/issues/48749) [Bug]: [MRV2] MTP speculative decoding crashes with cudaErrorStreamCaptureUnsupported during CUDA graph capture
+- [Bug] 🆕 [#48919](https://github.com/vllm-project/vllm/issues/48919) [Bug]: CPU offloading fails with block_size=256 + speculative decoding due to eagle group block_size mismatch
+- [Bug] 🆕 [#48894](https://github.com/vllm-project/vllm/issues/48894) [Bug]: EAGLE-3 + prompts >2048 tokens: device-side assert (Triton `index < 2048`) in inductor-compiled eagle_head kernels; eager works, cudagraph_mode=NONE still crashes (v0.24.0)
+- [Bug] 🆕 [#48853](https://github.com/vllm-project/vllm/issues/48853) [Bug]: FastIncrementalDetokenizer leaks full prompt text into streamed output when prompt ends with an incomplete UTF-8 token
+- [Bug] [#48848](https://github.com/vllm-project/vllm/issues/48848) [Bug]: Gemma4 MTP speculative decoding crashes at engine init on 0.25.1 — "a and b must have same reduction dim" (regression from 0.21.0)
 
 ## Serving / OpenAI API / Streaming
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#31459](https://github.com/sgl-project/sglang/issues/31459) [Bug] Model Gateway silently rewrites MCP tool_choice="required" to "auto"
-- [Perf] 🆕 [#31424](https://github.com/sgl-project/sglang/issues/31424) [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
-- [no-prefix] 🆕 ⚠no-prefix [#31356](https://github.com/sgl-project/sglang/issues/31356) Provide a factory to build the OpenAI ASGI app bound to an in-process Engine
-
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#48753](https://github.com/vllm-project/vllm/issues/48753) [Bug]: Qwen3/Qwen3-Coder tool parser strips meaningful whitespace from string parameter values (breaks exact-match edit tools)
+- [Bug] 🆕 [#48931](https://github.com/vllm-project/vllm/issues/48931) [Bug] DeepSeek-V4 tool-call parser leaks raw DSML into content when the model omits the `<｜DSML｜tool_calls>` START token (long context)
+- [Bug] 🆕 [#48874](https://github.com/vllm-project/vllm/issues/48874) [Bug]: Anthropic /v1/messages renders system-role messages inside `messages` positionally into the chat template (breaks Claude Code >=2.1.2xx tool calling)
+- [no-prefix] 🆕 ⚠no-prefix [#48863](https://github.com/vllm-project/vllm/issues/48863) reasoning: null content when include_reasoning=False + json_schema response_format (introduced v0.23.1)
 
 ## Build / Install / Platform
 
 ### sgl-project/sglang
 
-- [no-prefix] 🆕 ⚠no-prefix [#31347](https://github.com/sgl-project/sglang/issues/31347) JIT hadamard/DSA-indexer kernel compile races on shared NFS tvm-ffi cache — ESTALE link failure on multi-node cold start
+- [Bug] 🆕 [#31545](https://github.com/sgl-project/sglang/issues/31545) [Bug][ROCm] MI355X: CUDA-graph decode kernels are captured but async-deferred into one post-marker burst — per-step timing unrecoverable (torch profiler)
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#48831](https://github.com/vllm-project/vllm/issues/48831) [Bug]: V1 Engine Produces Incorrect Scores for Qwen3-Reranker-0.6B on Long Sequences (>8K tokens)
-- [Bug] 🆕 [#48823](https://github.com/vllm-project/vllm/issues/48823) [Bug]: Failed to initialize FlashInfer All Reduce workspace: CUDA driver error: invalid device ordinal
-- [Bug] 🆕 [#48808](https://github.com/vllm-project/vllm/issues/48808) [Bug]: DP request distribution becomes imbalanced under long-context workload on H20 GPU
-- [Bug] 🆕 [#48786](https://github.com/vllm-project/vllm/issues/48786) [Bug]: Qwen3.5-35B FP8 kv cache is slower than BF16 kv cache on SM90 (Hopper)
-- [Bug] 🆕 [#48745](https://github.com/vllm-project/vllm/issues/48745) [Bug]: Spurious EngineDeadError traceback logged during graceful shutdown (AsyncLLM.shutdown cancels output_handler after engine teardown)
-- [Bug] 🆕 [#48744](https://github.com/vllm-project/vllm/issues/48744) [Bug]: Gemma-4-26B-A4B-it MoE fails to deploy on XPU backend (vLLM v0.21.0)
-- [Feature] 🆕 [#48826](https://github.com/vllm-project/vllm/issues/48826) [Feature]: Migration plan for ROCm 7.14 / TheRock production release (containers + wheels)
+- [Bug] 🆕 [#48840](https://github.com/vllm-project/vllm/issues/48840) [Bug]: AssertionError: graph_pool_id is not set under graph capture when VLLM_USE_NCCL_SYMM_MEM=1 with ModelRunner V2
+
+## Uncategorized
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#31505](https://github.com/sgl-project/sglang/issues/31505) [Bug] how to use hicache l2(dram) to muti host(muti inference instances ,not pd ) share kvcache offload ?
