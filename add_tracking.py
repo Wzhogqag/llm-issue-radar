@@ -106,6 +106,41 @@ def run(cmd: list[str], **kw) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, cwd=REPO_ROOT, check=True, text=True, **kw)
 
 
+def sync_with_remote() -> None:
+    print("syncing with remote (pull --rebase)...")
+    result = subprocess.run(
+        ["git", "pull", "--rebase", "--autostash"],
+        cwd=REPO_ROOT, text=True,
+    )
+    if result.returncode != 0:
+        print(
+            "\npull --rebase failed — likely a conflict in TRACKING.md.\n"
+            "  resolve manually, then run:\n"
+            f"    git -C {REPO_ROOT} add TRACKING.md\n"
+            f"    git -C {REPO_ROOT} rebase --continue\n"
+            f"    git -C {REPO_ROOT} push",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
+
+def push_with_retry(max_retries: int = 3) -> None:
+    for attempt in range(1, max_retries + 1):
+        result = subprocess.run(["git", "push"], cwd=REPO_ROOT, text=True)
+        if result.returncode == 0:
+            print("done.")
+            return
+        if attempt < max_retries:
+            print(f"push failed (attempt {attempt}/{max_retries}), syncing...")
+            sync_with_remote()
+    print(
+        f"\npush failed after {max_retries} attempts — commit is local. Retry manually:\n"
+        f"    git -C {REPO_ROOT} push",
+        file=sys.stderr,
+    )
+    sys.exit(2)
+
+
 def refresh_and_push(added: list[tuple[str, int]]) -> None:
     if not added:
         print("nothing to add")
@@ -125,17 +160,9 @@ def refresh_and_push(added: list[tuple[str, int]]) -> None:
     joined = ", ".join(f"{r}#{n}" for r, n in added)
     msg = f"tracking: add {joined}"
     run(["git", "commit", "-m", msg])
+    sync_with_remote()
     print("pushing...")
-    try:
-        run(["git", "push"])
-        print("done.")
-    except subprocess.CalledProcessError:
-        print(
-            "\npush failed — commit is local. Retry manually:\n"
-            "    git -C {} push".format(REPO_ROOT),
-            file=sys.stderr,
-        )
-        sys.exit(2)
+    push_with_retry()
 
 
 def main() -> int:
