@@ -9,7 +9,7 @@
 
 # Tracking
 
-_4 issues tracked. Refreshed 2026-07-20 14:00 UTC._
+_4 issues tracked. Refreshed 2026-07-21 13:59 UTC._
 
 ## sgl-project/sglang#31424  [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
 
@@ -34,7 +34,6 @@ _4 issues tracked. Refreshed 2026-07-20 14:00 UTC._
 
 - 2026-07-13 10:45 🆕 opened by @chaunceyjiang — as `COLLABORATOR`
 - 2026-07-13 10:45 🏷 labeled by @chaunceyjiang — `RFC`
-- 2026-07-13 15:42 🔗 cross-referenced by @github-actions[bot] — issue [https://github.com/CNTRL-tek91/issue-radar/issues/1](https://github.com/CNTRL-tek91/issue-radar/issues/1) (open)
 - ⏳ **still open**
 
 ## vllm-project/vllm#48504  [RFC]: Read-only NIXL GDS connector for filesystem KV-cache loads
