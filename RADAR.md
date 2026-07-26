@@ -1,33 +1,33 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-07-25T13:56+00:00_
+_Last run: 2026-07-26T13:53+00:00_
 
-**33 issues** — sgl-project/sglang: 15, vllm-project/vllm: 18 — 🆕 **15 new** since last run
+**24 issues** — sgl-project/sglang: 10, vllm-project/vllm: 14 — 🆕 **13 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 4
+- [Scheduler / Batching](#scheduler--batching) — 3
 - [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
-- [Attention Backend](#attention-backend) — 3
-- [Quantization](#quantization) — 6
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
-- [New Model Integration](#new-model-integration) — 3
+- [Attention Backend](#attention-backend) — 2
+- [Quantization](#quantization) — 5
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
+- [New Model Integration](#new-model-integration) — 2
 - [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 4
-- [Build / Install / Platform](#build--install--platform) — 4
-- [Uncategorized](#uncategorized) — 3
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
+- [Performance / Memory / OOM](#performance--memory--oom) — 1
+- [Build / Install / Platform](#build--install--platform) — 2
+- [Uncategorized](#uncategorized) — 2
 
 ## Scheduler / Batching
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#32331](https://github.com/sgl-project/sglang/issues/32331) [Bug] UnifiedRadixCache prefill crash: TypeError: object of type 'NoneType' has no len() in full_component.commit_hicache_transfer (LOAD_BACK), high concurrency on B200
-- [no-prefix] 🆕 ⚠no-prefix [#32356](https://github.com/sgl-project/sglang/issues/32356) DeepSeek-V4 DSpark TP=8 can permanently stall under HiCache long-prefix load
-- [RFC] [#32271](https://github.com/sgl-project/sglang/issues/32271) [RFC][Feature] Topology-transparent multi-NIC HTTP ingress with a single logical scheduling queue
+- [no-prefix] 🆕 ⚠no-prefix [#32433](https://github.com/sgl-project/sglang/issues/32433) Question: unit mismatch in evict_from_tree_cache for SWATokenToKVPoolAllocator?
+- [Bug] [#32356](https://github.com/sgl-project/sglang/issues/32356) [Bug] DeepSeek-V4 DSpark TP=8 can permanently stall under HiCache long-prefix load
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#49809](https://github.com/vllm-project/vllm/issues/49809) [Bug][KV Offload][P2P] EngineCore crash reconnecting to peer: stale closed ZmqConnection remains registered
+- [Bug] [#49809](https://github.com/vllm-project/vllm/issues/49809) [Bug][KV Offload][P2P] EngineCore crash reconnecting to peer: stale dead ZmqConnection remains registered
 
 ## KV Cache / Connector / PD Disagg
 
@@ -38,85 +38,73 @@ _Last run: 2026-07-25T13:56+00:00_
 
 ## Attention Backend
 
-### sgl-project/sglang
-
-- [no-prefix] ⚠no-prefix [#32283](https://github.com/sgl-project/sglang/issues/32283) CUDA coredump in FlashInfer `RadixTopKRenormProbKernel_MultiCTA`
-
 ### vllm-project/vllm
 
-- [other] 🆕 [#49708](https://github.com/vllm-project/vllm/issues/49708) [Model Validation] SmolLM2-360M-Instruct batch invariance
-- [other] 🆕 ⚠maintainer-authored [#49735](https://github.com/vllm-project/vllm/issues/49735) [Tracking Issue]: `sm_107` enablement for Rubin GPUs and the Vera Rubin platform
+- [Bug] 🆕 [#49851](https://github.com/vllm-project/vllm/issues/49851) [Bug]: Multimodal models fail to load on ROCm/RDNA4 (gfx1201) — `CUDA error: invalid argument` in `vit_torch_sdpa_wrapper` encoder attention
+- [Bug] 🆕 [#49810](https://github.com/vllm-project/vllm/issues/49810) [Bug]: PCP (#46570) broken for non-compress models (GLM-5.2, compress_ratio=1) — multiple crash paths
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#32378](https://github.com/sgl-project/sglang/issues/32378) [Bug] mooncake with sglang:dev with glm-5.2-w4afp8 with pd error
-- [other] 🆕 [#32377](https://github.com/sgl-project/sglang/issues/32377) [GLM-5.2 FP4 Bug] tvm.error.InternalError in trtllm_bf16_moe on Blackwell (SM100) during speculative decoding (EAGLE) with GLM-5.2-NVFP4
+- [Bug] 🆕 [#32426](https://github.com/sgl-project/sglang/issues/32426) [Bug] In version v0.5.16, the sakamakismile/Ornith-1.0-35B-NVFP4 model generates garbled characters.
+- [Bug] [#32378](https://github.com/sgl-project/sglang/issues/32378) [Bug] mooncake with sglang:dev with glm-5.2-w4afp8 with pd error
 - [Bug] [#32311](https://github.com/sgl-project/sglang/issues/32311) [Bug] deepseek v4 flash hang on 4rtx 6000 pro with limited host ram
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#49730](https://github.com/vllm-project/vllm/issues/49730) [Bug][Qwen 3.5 4B][H100]: Performance of DFlash is lower than expected
-- [Bug] [#49716](https://github.com/vllm-project/vllm/issues/49716) [Bug]: int8_per_token_head KV cache corrupts Gemma-4 (hybrid attention) output under load on Triton
-- [Performance] [#49723](https://github.com/vllm-project/vllm/issues/49723) [Performance]: Modelopt quantized model goes slower in fp8 than BF16 on B200 (sm100) using vLLM 0.25.1
+- [Bug] 🆕 [#49844](https://github.com/vllm-project/vllm/issues/49844) [Bug]: PP=2 + GlmMoeDsa: inductor compile combined with CUDA-graph capture produces garbage output; either alone is clean (v0.24 & v0.26)
+- [Bug] 🆕 [#49783](https://github.com/vllm-project/vllm/issues/49783) [Bug]: DeepGEMM 2.6.x UE8M0 assert - vLLM passes uninitialized FP32 scale-factor padding to the packing kernel
 
 ## Distributed / TP / PP / EP
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#32286](https://github.com/sgl-project/sglang/issues/32286) [Bug] MiniMax-M3 tool-call parser: top-level `oneOf` parameters schema not resolved (numbers become strings, arrays leak raw tags)
-
 ### vllm-project/vllm
 
-- [RFC] [#49702](https://github.com/vllm-project/vllm/issues/49702) [RFC]: Add an EPLB Platform Backend interface for out-of-tree accelerators
+- [Bug] 🆕 [#49826](https://github.com/vllm-project/vllm/issues/49826) [Bug]: Cross-node Pipeline Parallelism (PP) fails with "invalid device ordinal" at PyNccl warmup on ROCm (AMD RDNA4 / R9700), reproducible on first inference even after context-corruption workaround
 
 ## New Model Integration
 
-### sgl-project/sglang
-
-- [Feature] [#32291](https://github.com/sgl-project/sglang/issues/32291) [Feature] cp layer split only support layer first , but mooncacke can not support layer first
-
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#49752](https://github.com/vllm-project/vllm/issues/49752) [RFC]: vLLM Agentic Coding Readiness Survey
-- [RFC] [#49705](https://github.com/vllm-project/vllm/issues/49705) [RFC]: Support router-driven mixtures of multiple LoRA adapters
+- [Feature] 🆕 [#49816](https://github.com/vllm-project/vllm/issues/49816) [Feature]: per gpu gpu-memory-utilization
+- [RFC] [#49752](https://github.com/vllm-project/vllm/issues/49752) [RFC]: vLLM Agentic Coding Readiness Survey
 
 ## Sampling / Speculative Decoding
 
 ### vllm-project/vllm
 
-- [Bug] [#49694](https://github.com/vllm-project/vllm/issues/49694) [Bug]: ngram_gpu spec decode + structured outputs (xgrammar) + async scheduling: verifier accepts grammar-illegal draft tokens → "Failed to advance FSM", HTTP 500s and silent truncation under concurrency
-- [Bug] [#49711](https://github.com/vllm-project/vllm/issues/49711) [Bug]: poolside_v1 reports zero Responses reasoning_tokens for prompt-opened thinking spans
+- [Bug] 🆕 [#49874](https://github.com/vllm-project/vllm/issues/49874) [Bug]: vllm+tilert+glm-5.1 error
+- [Feature] 🆕 [#49848](https://github.com/vllm-project/vllm/issues/49848) [Feature]: MTP speculative decoding under pipeline parallelism — one real blocker (PP+async single-token assumption), everything else is guards
 
 ## Serving / OpenAI API / Streaming
 
 ### sgl-project/sglang
 
 - [Feature] [#32312](https://github.com/sgl-project/sglang/issues/32312) [Feature] [Kernel] cursor warp decode kernel for low latency small batch MOE inference
-- [RFC] [#32300](https://github.com/sgl-project/sglang/issues/32300) [RFC] Add CI Infrastructure for the SGLang MLU Backend
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#49765](https://github.com/vllm-project/vllm/issues/49765) [RFC]: Native Disaggregated Pull-Based Queue Worker Interface and Heuristic Pull Router
-- [Bug] [#49724](https://github.com/vllm-project/vllm/issues/49724) [Bug]: Responses custom tools are coerced to function_call on non-Harmony Qwen routes
+- [RFC] [#49765](https://github.com/vllm-project/vllm/issues/49765) [RFC]: Native Disaggregated Pull-Based Queue Worker Interface and Heuristic Pull Router
+
+## Performance / Memory / OOM
+
+### sgl-project/sglang
+
+- [RFC] 🆕 [#32432](https://github.com/sgl-project/sglang/issues/32432) [RFC] Define Metadata, Workspace, and Stream-Ownership Contracts for Dynamic CUDA Graph Replay
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#49804](https://github.com/vllm-project/vllm/issues/49804) [Bug]: flashinfer cubin version mismatch
-- [Bug] [#49717](https://github.com/vllm-project/vllm/issues/49717) [Bug]: Gemma4 streaming: `content` comes back completely empty while `reasoning` holds the model's entire output when the reasoning channel is left open
-- [Bug] [#49692](https://github.com/vllm-project/vllm/issues/49692) [Bug]: EPD correctness test produces different output for multi-image prompts
-- [Performance] [#49699](https://github.com/vllm-project/vllm/issues/49699) [Performance]: Compile mode 3 degrades triton w4a16 kernel performance in few request scenarios.
+- [Bug] 🆕 [#49878](https://github.com/vllm-project/vllm/issues/49878) [Bug]: Dramatic KV cache size increase (~40%) for Gemma4 from v0.25.1 to v0.26
+- [Bug] 🆕 [#49778](https://github.com/vllm-project/vllm/issues/49778) [Bug]: gpt-oss-120b fails for ROCm on gfx950 with Triton 3.7.1
 
 ## Uncategorized
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#32276](https://github.com/sgl-project/sglang/issues/32276) [Bug] MiniMax-M3: `thinking: {"type":"disabled"}` is silently ignored, model keeps reasoning
-- [no-prefix] 🆕 ⚠no-prefix [#32355](https://github.com/sgl-project/sglang/issues/32355) Add REFUTE scientific critique + calibration benchmark
+- [no-prefix] ⚠no-prefix [#32355](https://github.com/sgl-project/sglang/issues/32355) Add REFUTE scientific critique + calibration benchmark
 
 ### vllm-project/vllm
 
-- [no-prefix] 🆕 ⚠no-prefix [#49769](https://github.com/vllm-project/vllm/issues/49769) Add REFUTE scientific critique + calibration benchmark
+- [no-prefix] ⚠no-prefix [#49769](https://github.com/vllm-project/vllm/issues/49769) Add REFUTE scientific critique + calibration benchmark

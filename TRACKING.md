@@ -9,7 +9,7 @@
 
 # Tracking
 
-_4 issues tracked. Refreshed 2026-07-25 13:56 UTC._
+_4 issues tracked. Refreshed 2026-07-26 13:53 UTC._
 
 ## sgl-project/sglang#31424  [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
 
@@ -43,4 +43,6 @@ _4 issues tracked. Refreshed 2026-07-25 13:56 UTC._
 - 2026-07-13 16:19 🆕 opened by @maheshrbapatu — as `NONE`
 - 2026-07-14 18:59 🔗 cross-referenced by @maheshrbapatu — PR [https://github.com/maheshrbapatu/vllm/pull/2](https://github.com/maheshrbapatu/vllm/pull/2) (open)
 - 2026-07-23 20:53 💬 commented by @mbapatu-spec — Hello can someone review this RFC?
+- 2026-07-26 09:57 💬 commented by @effi-ofer — Hey @maheshrbapatu, great idea! We have been working on adding GDS support as part of kv offloading 
+- 2026-07-26 12:47 💬 commented by @orozery — Thanks for the proposal @mbapatu-spec !
 - ⏳ **still open**
