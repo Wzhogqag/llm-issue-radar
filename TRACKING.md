@@ -9,7 +9,7 @@
 
 # Tracking
 
-_4 issues tracked. Refreshed 2026-07-26 13:53 UTC._
+_4 issues tracked. Refreshed 2026-07-27 14:02 UTC._
 
 ## sgl-project/sglang#31424  [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
 
@@ -36,7 +36,7 @@ _4 issues tracked. Refreshed 2026-07-26 13:53 UTC._
 - 2026-07-13 10:45 🏷 labeled by @chaunceyjiang — `RFC`
 - ⏳ **still open**
 
-## vllm-project/vllm#48504  [RFC]: Read-only NIXL GDS connector for filesystem KV-cache loads
+## vllm-project/vllm#48504  [RFC]: GDS support for filesystem KV-cache offloading
 
 ⏳ Status: **open** — <https://github.com/vllm-project/vllm/issues/48504>
 
@@ -45,4 +45,5 @@ _4 issues tracked. Refreshed 2026-07-26 13:53 UTC._
 - 2026-07-23 20:53 💬 commented by @mbapatu-spec — Hello can someone review this RFC?
 - 2026-07-26 09:57 💬 commented by @effi-ofer — Hey @maheshrbapatu, great idea! We have been working on adding GDS support as part of kv offloading 
 - 2026-07-26 12:47 💬 commented by @orozery — Thanks for the proposal @mbapatu-spec !
+- 2026-07-27 00:12 💬 commented by @maheshrbapatu — Thanks @effi-ofer and @orozery. This decomposition makes sense. I have updated the RFC to align it w
 - ⏳ **still open**
