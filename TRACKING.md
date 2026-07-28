@@ -9,7 +9,7 @@
 
 # Tracking
 
-_4 issues tracked. Refreshed 2026-07-27 14:02 UTC._
+_4 issues tracked. Refreshed 2026-07-28 14:05 UTC._
 
 ## sgl-project/sglang#31424  [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
 
@@ -46,4 +46,6 @@ _4 issues tracked. Refreshed 2026-07-27 14:02 UTC._
 - 2026-07-26 09:57 💬 commented by @effi-ofer — Hey @maheshrbapatu, great idea! We have been working on adding GDS support as part of kv offloading 
 - 2026-07-26 12:47 💬 commented by @orozery — Thanks for the proposal @mbapatu-spec !
 - 2026-07-27 00:12 💬 commented by @maheshrbapatu — Thanks @effi-ofer and @orozery. This decomposition makes sense. I have updated the RFC to align it w
+- 2026-07-28 04:46 💬 commented by @maheshrbapatu — @effi-ofer is there any slack channel where this working is being discussing? It will great to know 
+- 2026-07-28 07:51 💬 commented by @effi-ofer — Hey @maheshrbapatu send me your email please (effio@il.ibm.com) and I'll book a meeting.
 - ⏳ **still open**
