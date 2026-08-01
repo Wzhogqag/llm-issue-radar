@@ -1,64 +1,84 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-07-31T14:00+00:00_
+_Last run: 2026-08-01T13:53+00:00_
 
-**11 issues** — sgl-project/sglang: 7, vllm-project/vllm: 4 — 🆕 **11 new** since last run
+**13 issues** — sgl-project/sglang: 7, vllm-project/vllm: 6 — 🆕 **13 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 1
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
-- [Quantization](#quantization) — 3
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
+- [Attention Backend](#attention-backend) — 2
+- [Quantization](#quantization) — 2
 - [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
+- [New Model Integration](#new-model-integration) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 1
 - [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
-- [Build / Install / Platform](#build--install--platform) — 2
+- [Build / Install / Platform](#build--install--platform) — 3
 - [Uncategorized](#uncategorized) — 1
-
-## Scheduler / Batching
-
-### sgl-project/sglang
-
-- [Feature] 🆕 [#33035](https://github.com/sgl-project/sglang/issues/33035) [Feature] Add bounded pre-scheduler admission control for multimodal requests to prevent CPU OOM
 
 ## KV Cache / Connector / PD Disagg
 
+### vllm-project/vllm
+
+- [no-prefix] 🆕 ⚠no-prefix [#50630](https://github.com/vllm-project/vllm/issues/50630) No capability flag declares which KV-cache kinds may be peeked past a candidate boundary — each margin implementation excludes Mamba by hand
+
+## Attention Backend
+
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#32983](https://github.com/sgl-project/sglang/issues/32983) [Bug] SGLang router using cache_aware policy picks same replica repeatedly on cache miss at low concurrency. triggers poor KV cache memory utilization
+- [Bug] 🆕 [#33134](https://github.com/sgl-project/sglang/issues/33134) [Bug] DeepSeek-V4-Flash-0731 DSPARK on 2x DGX Spark (sm_121, TP=2): sparse-MLA prefill rejects topk=192 (config index_topk=512; kernel buckets 128/512/1024/2048)
 
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#50509](https://github.com/vllm-project/vllm/issues/50509) [Feature]: Allow an explicit expert override of the startup KV capacity check
+- [Bug] 🆕 [#50603](https://github.com/vllm-project/vllm/issues/50603) [Bug]: gfx1100 (RDNA3): first-call non-determinism + long-seq corruption from Triton paged-attention fallback (ROCm 7.14)
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#33015](https://github.com/sgl-project/sglang/issues/33015) [Bug]  Dockerised SGLang for ROCM with gfx1150 cannot load a quantised model: use of undeclared identifier '__cvta_generic_to_shared'
-- [Bug] 🆕 [#32965](https://github.com/sgl-project/sglang/issues/32965) [Bug][AMD gfx1201] Native MoE kernels segfault during Qwen3.5 inference
-- [Feature] 🆕 ⚠maintainer-authored [#32993](https://github.com/sgl-project/sglang/issues/32993) [Feature] Route per-tensor FP8 checkpoints to FlashInfer on SM89/SM90
-
-## Distributed / TP / PP / EP
+- [Bug] 🆕 [#33163](https://github.com/sgl-project/sglang/issues/33163) [Bug] deepseek-v4-flash toolcall error runner_backend from marlin to  flashinfer_mxfp4
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#50557](https://github.com/vllm-project/vllm/issues/50557) [Bug]: MiniMax-M3-NVFP4 illegal memory access
+- [Bug] 🆕 [#50679](https://github.com/vllm-project/vllm/issues/50679) [Bug]: fused_qk_rmsnorm compile error on rocm
+
+## Distributed / TP / PP / EP
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#33181](https://github.com/sgl-project/sglang/issues/33181) [Bug] Inkling reasoning parser leaks the tool name into visible content when a turn opens with a tool call
+
+## New Model Integration
+
+### vllm-project/vllm
+
+- [other] 🆕 [#50672](https://github.com/vllm-project/vllm/issues/50672) [Installation]:vllm-openai:kimi-k3 cpuoffloadgb not support?
+
+## Sampling / Speculative Decoding
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#50615](https://github.com/vllm-project/vllm/issues/50615) [Bug]: DSpark spec decode dies in profile_run — forward_mqa warmup asserts topk_indices_buffer, which a drafter never has (regression from #50298)
 
 ## Serving / OpenAI API / Streaming
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#32968](https://github.com/sgl-project/sglang/issues/32968) [Bug][kimi-k3] Long-context [PAD] (id 163839) storms + DSPARK inf/nan asserts — NaN-contaminated logits; released kimi-k3 image predates #32477; pad not stopped/filtered; allowed_special="all" makes [PAD] injectable
+- [Bug] 🆕 [#33185](https://github.com/sgl-project/sglang/issues/33185) [Bug] DeepSeek-V4-Flash-0731: reasoning_effort mapped one level off — `high` is a no-op and vendor `max` is unreachable
 
 ## Build / Install / Platform
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#33194](https://github.com/sgl-project/sglang/issues/33194) [Bug] DeepSeek-V4-Flash-0731 on Ampere (8x A800, SM80, TP=8): three further blockers after the deep_gemm NameError
+- [other] 🆕 [#33187](https://github.com/sgl-project/sglang/issues/33187) [Bug/Design] `SGLANG_SANITIZE_NAN_LOGITS`: a fully-NaN logits row becomes a uniform-random sample — garbage streamed to clients as normal output; proposal: opt-in per-request abort
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#50545](https://github.com/vllm-project/vllm/issues/50545) [Bug]: [XPU] Multi-GPU TP serving hangs on Intel Arc Pro B60 with torch 2.13 wheels (oneCCL 2022.x): warmup allreduce never returns, GuC timeouts, DEVICE_LOST`
-- [Bug] 🆕 [#50477](https://github.com/vllm-project/vllm/issues/50477) [Bug]: gemma4 parser silently ignores named forced tool_choice on 0.26.0 (worked on 0.21.0)
+- [other] 🆕 ⚠maintainer-authored [#50682](https://github.com/vllm-project/vllm/issues/50682) [ROCm][AMD] Kimi-K3 Gap and Roadmap Tracking
 
 ## Uncategorized
 
 ### sgl-project/sglang
 
-- [no-prefix] 🆕 ⚠no-prefix ⚠maintainer-authored [#32970](https://github.com/sgl-project/sglang/issues/32970) Kimi-K3 bug tracking
+- [no-prefix] 🆕 ⚠no-prefix [#33180](https://github.com/sgl-project/sglang/issues/33180) @copilot resolve the merge conflicts on this branch.
