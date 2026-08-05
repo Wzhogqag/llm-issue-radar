@@ -1,106 +1,94 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-08-04T14:01+00:00_
+_Last run: 2026-08-05T14:00+00:00_
 
-**26 issues** — sgl-project/sglang: 10, vllm-project/vllm: 16 — 🆕 **26 new** since last run
+**26 issues** — sgl-project/sglang: 17, vllm-project/vllm: 9 — 🆕 **26 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 2
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
-- [Attention Backend](#attention-backend) — 2
-- [Quantization](#quantization) — 5
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 4
+- [Scheduler / Batching](#scheduler--batching) — 1
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
+- [Attention Backend](#attention-backend) — 1
+- [Quantization](#quantization) — 11
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 1
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
 - [Performance / Memory / OOM](#performance--memory--oom) — 1
 - [Build / Install / Platform](#build--install--platform) — 6
-- [Uncategorized](#uncategorized) — 1
+- [Uncategorized](#uncategorized) — 2
 
 ## Scheduler / Batching
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#33507](https://github.com/sgl-project/sglang/issues/33507) [Bug]
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#51008](https://github.com/vllm-project/vllm/issues/51008) [Bug]: Under MTP + chunked prefill, GDN runs eager Python only in prefill-mixed steps, and the MTP proposer forwards are forced to PIECEWISE (`llm_base_proposer` omits `uniform_decode`)
+- [no-prefix] 🆕 ⚠no-prefix ⚠maintainer-authored [#33713](https://github.com/sgl-project/sglang/issues/33713) unified_cache: MAMBA component nodes are pruned instead of downgraded on device eviction, breaking host-tier loadback
 
 ## KV Cache / Connector / PD Disagg
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#33549](https://github.com/sgl-project/sglang/issues/33549) [Bug] DeepSeek-V4 (dsv4 backend + DSPARK) TP=8 on 8×H20: decode forward hangs indefinitely at ~245K context — all GPUs spin at 100% util / low power, watchdog kills server
-- [other] 🆕 [#33547](https://github.com/sgl-project/sglang/issues/33547) [MLX] Retracted request's decode KV can flush into a reused req_to_token row on the next extend forward
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#50953](https://github.com/vllm-project/vllm/issues/50953) [Bug][Rocm] LMcache running issues for the kimik3 Dspark
+- [no-prefix] 🆕 ⚠no-prefix ⚠maintainer-authored [#33714](https://github.com/sgl-project/sglang/issues/33714) unified_cache: back up long prompts past their first (chunked) extend — currently skipped when extend exceeds chunked_prefill_size
 
 ## Attention Backend
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#33528](https://github.com/sgl-project/sglang/issues/33528) [Bug] Encountered an error while loading the Minimaxh3 model.
-
-### vllm-project/vllm
-
-- [Feature] 🆕 [#50963](https://github.com/vllm-project/vllm/issues/50963) [Feature]: shared expert fusion via Flashinfer kernels
+- [Bug] 🆕 [#33603](https://github.com/sgl-project/sglang/issues/33603) [Bug] backend ignores bidirectional sliding window attention for encoder models
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [other] 🆕 ⚠maintainer-authored [#33522](https://github.com/sgl-project/sglang/issues/33522) [Roadmap] Fast Engine Recovery: Weight Cache Daemon
-- [no-prefix] 🆕 ⚠no-prefix ⚠maintainer-authored [#33470](https://github.com/sgl-project/sglang/issues/33470) inference_mode mismatch can break lazy buffers
+- [Bug] 🆕 [#33693](https://github.com/sgl-project/sglang/issues/33693) [Bug] deepseek v4 flash 0731版本启动失败
+- [Bug] 🆕 [#33670](https://github.com/sgl-project/sglang/issues/33670) [Bug] nvidia/MiniMax-M3-NVFP4 (#31989) fails to load on B200 — VL class crashes with 6144 vs 3072 in MoE _load_w13; --disable-shared-experts-fusion insufficient
+- [Bug] 🆕 [#33656](https://github.com/sgl-project/sglang/issues/33656) [Bug] DeepSeek-V4 + hierarchical cache: deterministic SWA KV position corruption (kv-canary TAIL_K_SWA write_position), downstream NaN sampling crash
+- [Feature] 🆕 ⚠maintainer-authored [#33706](https://github.com/sgl-project/sglang/issues/33706) [Feature] Support shared to sparse experts fusion for Qwen3.5 / Qwen3.6 MoE on SM120 (blockwise FP8)
+- [Feature] 🆕 ⚠maintainer-authored [#33711](https://github.com/sgl-project/sglang/issues/33711) [Feature] Support dense NVFP4 W4A16 (bf16 activations) GEMM on SM120
+- [Feature] 🆕 ⚠maintainer-authored [#33709](https://github.com/sgl-project/sglang/issues/33709) [Feature] Finish the B12X FlashInfer NVFP4 MoE integration for SM120 (#29190)
+- [Feature] 🆕 ⚠maintainer-authored [#33632](https://github.com/sgl-project/sglang/issues/33632) [Feature] Optimize Per-Tensor FP8 GEMM on SM120
+- [Feature] 🆕 ⚠maintainer-authored [#33629](https://github.com/sgl-project/sglang/issues/33629) [Feature] Optimize FP8 Blockwise GEMM on SM120
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#50968](https://github.com/vllm-project/vllm/issues/50968) [Bug]: Kimi-K2.6 TP=4 segfaults in gptq_marlin_repack on GB200 ARM64 with vLLM 0.26.0
-- [Bug] 🆕 [#50934](https://github.com/vllm-project/vllm/issues/50934) [Bug]: CUDA misaligned address crash on GB10 (sm_121) after ~10 days uptime — Nemotron NVFP4 + Marlin MoE + MTP speculative decoding
-- [Bug] 🆕 [#50925](https://github.com/vllm-project/vllm/issues/50925) [Bug]: NVFP4 MoE falls back to Marlin on sm_121 (GB10) in published builds, making the model unservable on a unified 121 GiB pool
+- [Bug] 🆕 [#51066](https://github.com/vllm-project/vllm/issues/51066) [Bug]: nvidia/Kimi-K2.6-NVFP4 TP=4 segfaults during cuDNN vision profiling on GB200 ARM64 unless --language-model-only is set
+- [Feature] 🆕 [#51142](https://github.com/vllm-project/vllm/issues/51142) [Feature][CI] Speed up `Quantization` mi300/mi355 test groups
+- [no-prefix] 🆕 ⚠no-prefix [#51136](https://github.com/vllm-project/vllm/issues/51136) AITER is not enabled on RDNA3 (gfx1100) — integration gap between CDNA3 and RDNA4
 
 ## Sampling / Speculative Decoding
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#50938](https://github.com/vllm-project/vllm/issues/50938) [Bug]: Text emitted before the reasoning start tag escapes both the gemma4 parser and structured output, breaking json_schema responses
-- [Bug] 🆕 [#50924](https://github.com/vllm-project/vllm/issues/50924) [Bug]: EngineCore dies on first guided-decoding request when dspark speculative decoding is enabled (grammar bitmask width mismatch)
+- [Bug] 🆕 [#33642](https://github.com/sgl-project/sglang/issues/33642) [Bug] All schedulers hang in cuModuleLoadData on first EAGLE verify (DSA attention, PD-disagg decode), watchdog timeout
 
 ## Serving / OpenAI API / Streaming
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#33501](https://github.com/sgl-project/sglang/issues/33501) [Bug] MiniMax H3 failed to run。
-- [Bug] 🆕 [#33454](https://github.com/sgl-project/sglang/issues/33454) [Bug] DSpark verify window crosses the model context boundary and causes an illegal RoPE read
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#50954](https://github.com/vllm-project/vllm/issues/50954) [Bug]: System crash: Rust panic loading a tiktoken vocab file with duplicate ranks
-- [Bug] 🆕 [#50927](https://github.com/vllm-project/vllm/issues/50927) [Bug]: stack overflow causing system crash: Rust unbounded recursion in the Gemma4 unified parser
+- [Feature] 🆕 [#33708](https://github.com/sgl-project/sglang/issues/33708) [Feature] [Diffusion] Overlap Ulysses A2A with attention compute for Wan2.2-TI2V-5B
+- [Feature] 🆕 [#33625](https://github.com/sgl-project/sglang/issues/33625) [Feature] Add opt-in bounded-load routing-key affinity to SGLang Model Gateway
 
 ## Performance / Memory / OOM
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Bug] 🆕 [#33483](https://github.com/sgl-project/sglang/issues/33483) [Bug] Default decode CUDA Graph coverage causes a sharp performance cliff when batch size exceeds 32
+- [Bug] 🆕 [#51049](https://github.com/vllm-project/vllm/issues/51049) [Bug]: `fused_qk_norm_rope` multi-head-per-warp kernel corrupts partial-NeoX (`rotary_dim < head_dim`) QK-Norm models on SM90
 
 ## Build / Install / Platform
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#33466](https://github.com/sgl-project/sglang/issues/33466) [Bug] MiniMax-H3 occurs args error
+- [Feature] 🆕 ⚠maintainer-authored [#33627](https://github.com/sgl-project/sglang/issues/33627) [Feature] Should we make the LM head GEMM output fp32 instead of bf16?
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#51009](https://github.com/vllm-project/vllm/issues/51009) [Bug]: DSpark acceptance collapses after position 0 on DeepSeek-V4-Flash-0731 (0.26.1rc1)
-- [Bug] 🆕 [#50989](https://github.com/vllm-project/vllm/issues/50989) [Bug]: Qwen 3.* models go into doom loop if you use strict mode with tools without arguments.
-- [Bug] 🆕 [#50948](https://github.com/vllm-project/vllm/issues/50948) [Bug]: Qwen parser routes grammar-constrained JSON to reasoning when `enable_in_reasoning=true`
-- [Bug] 🆕 [#50947](https://github.com/vllm-project/vllm/issues/50947) [Bug]: Kimi-K3 PP>1 with IndexError: index_fill_(): Expected dtype int64 for index
-- [RFC] 🆕 [#50966](https://github.com/vllm-project/vllm/issues/50966) [RFC]: Pluggable structured-output backends + GRID as a third contract point (declared outcomes for schemas you don't control)
+- [Bug] 🆕 [#51140](https://github.com/vllm-project/vllm/issues/51140) [Bug]: Gemma 4 31B | Incoherent responses high context
+- [Bug] 🆕 [#51106](https://github.com/vllm-project/vllm/issues/51106) [Bug]: DeepSeek-V4-Flash-0731 crashes on RTX PRO 5000 because FlashInfer cannot reshape a tensor with 0 elements into the shape [0, -1]
+- [Bug] 🆕 [#51063](https://github.com/vllm-project/vllm/issues/51063) [Bug]: Composite VLM wrapper (Mistral3ForConditionalGeneration) resolves tie_word_embeddings from the wrong (top-level) config, silently discarding a real lm_head.weight and producing coherent-vocabulary-but-incoherent output
+- [Feature] 🆕 [#51057](https://github.com/vllm-project/vllm/issues/51057) [Feature]: Follow Up from inital ROCm DI CI enablement PR to break it up into smaller chunks -  Use production grade vLLM router in ROCm nightly DI CI instead of "toy proxy"
+- [Feature] 🆕 [#51056](https://github.com/vllm-project/vllm/issues/51056) [Feature] Follow Up from inital ROCm DI CI enablement PR to break it up into smaller chunks -  Nightly ROCm WideEP (EP>=16) DI CI
 
 ## Uncategorized
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Feature] 🆕 [#51023](https://github.com/vllm-project/vllm/issues/51023) [Feature]: Parse Request Priority from HTTP Header
+- [Bug] 🆕 [#33657](https://github.com/sgl-project/sglang/issues/33657) [BUG] sunset Gemini Code Assist referenced in CI
+- [no-prefix] 🆕 ⚠no-prefix [#33628](https://github.com/sgl-project/sglang/issues/33628) nightly-dev image revision can differ from installed SGLang source
