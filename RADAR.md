@@ -1,75 +1,87 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-08-09T13:36+00:00_
+_Last run: 2026-08-10T13:49+00:00_
 
-**16 issues** — sgl-project/sglang: 2, vllm-project/vllm: 14 — 🆕 **9 new** since last run
+**22 issues** — sgl-project/sglang: 8, vllm-project/vllm: 14 — 🆕 **22 new** since last run
 
 ## Contents
 
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
-- [Attention Backend](#attention-backend) — 1
+- [Scheduler / Batching](#scheduler--batching) — 1
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
+- [Attention Backend](#attention-backend) — 3
 - [Quantization](#quantization) — 5
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
-- [New Model Integration](#new-model-integration) — 2
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
-- [Build / Install / Platform](#build--install--platform) — 2
+- [New Model Integration](#new-model-integration) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
+- [Build / Install / Platform](#build--install--platform) — 4
+
+## Scheduler / Batching
+
+### vllm-project/vllm
+
+- [RFC] 🆕 ⚠maintainer-authored [#51608](https://github.com/vllm-project/vllm/issues/51608) [RFC]: Extensible Scheduler Plugin Framework for vLLM
 
 ## KV Cache / Connector / PD Disagg
 
 ### vllm-project/vllm
 
-- [no-prefix] 🆕 ⚠no-prefix [#51518](https://github.com/vllm-project/vllm/issues/51518) MooncakeConnector P/D: NVLink fallback transfer fails "Requested address not found" (fp8 MLA, v0.25.0)
+- [Bug] 🆕 [#51579](https://github.com/vllm-project/vllm/issues/51579) [Bug]: OffloadingConnector CPU tier leaks its /dev/shm mmap file on any unclean exit (including SIGKILL)
+- [Bug] 🆕 [#51567](https://github.com/vllm-project/vllm/issues/51567) [Bug]: EPLB fails to transport E8M0 expert state
+- [RFC] 🆕 [#51639](https://github.com/vllm-project/vllm/issues/51639) [RFC]: Generic Control RPC for KV Connectors
 
 ## Attention Backend
 
 ### sgl-project/sglang
 
-- [Bug] [#34111](https://github.com/sgl-project/sglang/issues/34111) [Bug] A cancelled grammar-constrained overlap request can still emit visible text before abort
+- [Bug] 🆕 [#34260](https://github.com/sgl-project/sglang/issues/34260) [Bug] Kimi-K3 - sglang crash
+- [Bug] 🆕 [#34259](https://github.com/sgl-project/sglang/issues/34259) [Bug] Kimi-K3 - cross prompt reasoning leakage
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#51658](https://github.com/vllm-project/vllm/issues/51658) [Bug]: attention backend probe in cuda.py catches only ImportError; non-ImportError side effects (e.g. cache PermissionError, CUDA runtime   mismatch) crash engine init instead of being recorded as unavailable
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#34155](https://github.com/sgl-project/sglang/issues/34155) [Bug] 1M-token prefill kills the engine with CUDA OOM in DSV4 indexer fp8_mqa_logits (nonpaged path) under --tp 8 + MegaMoE on 8x B200 (v0.5.17); equivalent request serves under tp8/dp8 dp-attention
+- [Bug] 🆕 [#34192](https://github.com/sgl-project/sglang/issues/34192) [Bug] Llama4 NVFP4 MoE crashes on SM120/SM121: apply_router_weight_on_input is not supported for Flashinfer
+- [no-prefix] 🆕 ⚠no-prefix [#34179](https://github.com/sgl-project/sglang/issues/34179) W4A4 MegaMoE FP4-acts on DeepSeek-V4-Flash-0731 (8x B200, SGLang v0.5.17): end-to-end TTFT unchanged on two serving shapes (scheduling-bound and GEMM-bound), plus bounded quality observations
+- [RFC] 🆕 ⚠maintainer-authored [#34295](https://github.com/sgl-project/sglang/issues/34295) [RFC] Remove the torchao integration (`--torchao-config`)
+- [no-prefix] 🆕 ⚠no-prefix [#34193](https://github.com/sgl-project/sglang/issues/34193) Where do CPU kernel patches go after sgl-kernel moved under sglang.kernels.aot?
 
 ### vllm-project/vllm
 
-- [other] 🆕 [#51541](https://github.com/vllm-project/vllm/issues/51541) [ROCm][AITER] Port FlyDSL int4 MoE integration to AITER fused_moe API
-- [Performance] [#51494](https://github.com/vllm-project/vllm/issues/51494) [Performance] MiniMax-M3-NVFP4 on 8x B200, first numbers after the #48929 correctness fix: 1M real-prose envelope, EAGLE3 2.1-2.3x decode
-- [Performance] [#51454](https://github.com/vllm-project/vllm/issues/51454) [Performance] DP8 vs TP8 for single-KV-head MLA: 7.7x KV, 3.4x faster 1M TTFT at c=8 (DeepSeek-V4-Flash-0731, 8x B200, vLLM v0.25.0)
-- [Bug] [#51456](https://github.com/vllm-project/vllm/issues/51456) [Bug]: online FP8 (--quantization fp8) produces corrupted, non-EOS-terminating output on Qwen2.5-1.5B-Instruct
-
-## Distributed / TP / PP / EP
-
-### vllm-project/vllm
-
-- [other] 🆕 [#51533](https://github.com/vllm-project/vllm/issues/51533) [Installation]: Worker processes hang in CPU deadloop after NCCL initialization when loading DeepSeek-V4-Flash-0731 with vLLM V1 engine on H100
-- [RFC] 🆕 [#51513](https://github.com/vllm-project/vllm/issues/51513) [RFC]: Unify functional P2P gating — one veto-only verdict for all P2P consumers (NCCL, custom allreduce, symm-mem)
+- [Bug] 🆕 [#51660](https://github.com/vllm-project/vllm/issues/51660) [Bug]: No viable structured-outputs backend for Kimi-K2.6 + EAGLE3 on v0.26.0: xgrammar bitmask desync kills the engine, outlines compile-timeout leaks threads until OOM, guidance rejects the slow tokenizer
 
 ## New Model Integration
 
 ### vllm-project/vllm
 
-- [no-prefix] 🆕 ⚠no-prefix [#51522](https://github.com/vllm-project/vllm/issues/51522) deepseek_v4: decode runs unfused (breakable CUDA graph) — DeepseekV4ForCausalLM lacks @support_torch_compile; fullgraph capture blocked by inline deep_gemm/tilelang pybinds
-- [other] [#51497](https://github.com/vllm-project/vllm/issues/51497) [New Model]: nvidia/LocateAnything-3B (slow autoregressive mode first)
+- [other] 🆕 [#51619](https://github.com/vllm-project/vllm/issues/51619) [New Model]: Support CrisperWhisper 2.0
 
 ## Sampling / Speculative Decoding
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#34239](https://github.com/sgl-project/sglang/issues/34239) [Bug] Qwen3.5-397B + NEXTN crashes with CUDA illegal memory access near 262144 context boundary on v0.5.16 (H800 TP8)
+- [Bug] 🆕 [#34211](https://github.com/sgl-project/sglang/issues/34211) [Bug] [NPU] (v0.5.17)Eco-Tech/Qwen3.6-35B-A3B-w8a8 Model Served with four 910B: ValueError: Unsupported ModelSlim MoE schemes for layer mtp.layers.0.mlp.experts: W13='FLOAT', W2='FLOAT'
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#51510](https://github.com/vllm-project/vllm/issues/51510) [Bug][Spec Decode] MRV2 AutoRegressiveSpeculator ignores dynamic K from scheduler — DSD non-functional on MRV2
-- [RFC] 🆕 ⚠maintainer-authored [#51472](https://github.com/vllm-project/vllm/issues/51472) [RFC] Raw multimodal input for /generate endpoint (RL workloads)
+- [Bug] 🆕 [#51571](https://github.com/vllm-project/vllm/issues/51571) [Bug]: Async MTP align mode reads accepted counts from mutable InputBatch rows
 
 ## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [Bug] [#51465](https://github.com/vllm-project/vllm/issues/51465) [Bug]: Kimi K3 usage.prompt_tokens over-counts trailing channel-open stub (+3)
+- [Bug] 🆕 [#51679](https://github.com/vllm-project/vllm/issues/51679) [Bug]: qwen3_xml tool parser consumes `</think>`, merging reasoning into `content` with no way to split it
+- [Bug] 🆕 [#51651](https://github.com/vllm-project/vllm/issues/51651) [Bug]: Missing `reasoning` on Some Turns in Multi-Turn Tool-Calling (DeepSeek-V4-Flash-0731)
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [no-prefix] 🆕 ⚠no-prefix [#51521](https://github.com/vllm-project/vllm/issues/51521) DeepSeek-V4 (deepseek_v4): fused topk_softplus_sqrt router rejects non-standard expert counts on CUDA (REAP 144-expert ckpts); torch fallback is XPU-gated
-- [Bug] [#51467](https://github.com/vllm-project/vllm/issues/51467) [Bug]: DeepSeek-V4-Flash-0731 `response_format` (structured output) crashes the vLLM EngineCore — `apply_grammar_bitmask` tensor size mismatch (4040 vs 4041)
+- [Bug] 🆕 [#51677](https://github.com/vllm-project/vllm/issues/51677) [Bug]: NVML UUID resolution fails for NVIDIA's documented short-form CUDA_VISIBLE_DEVICES UUIDs
+- [Bug] 🆕 [#51663](https://github.com/vllm-project/vllm/issues/51663) [Bug]: Massive output-token throughput regression since v0.24.0 with Qwen3.6-35B-A3B-FP8
+- [Bug] 🆕 [#51580](https://github.com/vllm-project/vllm/issues/51580) [Bug]: [ROCm] v0.26.0 release image: NaN logits from AITER fused-MoE path on gfx942 (Qwen3.5-397B-A17B-FP8) — fixed on main, requesting 0.26.x backport
+- [Bug] 🆕 [#51572](https://github.com/vllm-project/vllm/issues/51572) [Bug]:Anthropic Messages API: x-api-key authentication header not supported — only Authorization: Bearer works
