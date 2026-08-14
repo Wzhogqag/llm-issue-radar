@@ -1,83 +1,84 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-08-13T13:50+00:00_
+_Last run: 2026-08-14T13:48+00:00_
 
-**18 issues** — sgl-project/sglang: 5, vllm-project/vllm: 13 — 🆕 **18 new** since last run
+**16 issues** — sgl-project/sglang: 5, vllm-project/vllm: 11 — 🆕 **16 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 2
+- [Scheduler / Batching](#scheduler--batching) — 1
 - [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
 - [Attention Backend](#attention-backend) — 1
-- [Quantization](#quantization) — 2
+- [Quantization](#quantization) — 3
 - [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 6
-- [Performance / Memory / OOM](#performance--memory--oom) — 2
-- [Build / Install / Platform](#build--install--platform) — 2
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
+- [Performance / Memory / OOM](#performance--memory--oom) — 1
+- [Build / Install / Platform](#build--install--platform) — 3
+- [Uncategorized](#uncategorized) — 1
 
 ## Scheduler / Batching
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#34676](https://github.com/sgl-project/sglang/issues/34676) [Bug] Hybrid Mamba prefill allocation failure kills scheduler instead of returning request to waiting queue
-
-### vllm-project/vllm
-
-- [RFC] 🆕 [#52113](https://github.com/vllm-project/vllm/issues/52113) [RFC]: Session-Aware KV Cache Hints for Agentic Workloads
+- [no-prefix] 🆕 ⚠no-prefix [#34815](https://github.com/sgl-project/sglang/issues/34815) PP8 disaggregated prefill has a load-independent ~30 s TTFT floor on Kimi-K3
 
 ## KV Cache / Connector / PD Disagg
 
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#52137](https://github.com/vllm-project/vllm/issues/52137) [Feature]: split local/external prefix-cache hits in `prompt_tokens_details`
-- [no-prefix] 🆕 ⚠no-prefix [#52170](https://github.com/vllm-project/vllm/issues/52170) OffloadingConnector AssertionError in _build_store_jobs under MultiConnector with high concurrency multi-turn
+- [Bug] 🆕 [#52339](https://github.com/vllm-project/vllm/issues/52339) [Bug]: DeepSeek-V4 FlashMLA sparse prefill phase1.cuh:614 on H20-3e TP8 at ~161K context
+- [Bug] 🆕 [#52276](https://github.com/vllm-project/vllm/issues/52276) [Bug]: DeepSeek-V4 NIXL failure returns corrupted reasoning with empty content
 
 ## Attention Backend
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#52065](https://github.com/vllm-project/vllm/issues/52065) [Bug]: DeepSeek-V4-Flash-0731 + DSpark fails to start on vLLM 0.27.0 / H100 sm90 (DeepGEMM CUDA_ERROR_ILLEGAL_ADDRESS); works on 0.26.0
+- [Bug] 🆕 [#52317](https://github.com/vllm-project/vllm/issues/52317) [Bug]: MRv2: --enable-prefix-caching (mamba_cache_mode 'all') + dspark spec decode crashes at startup — prev_last_scheduled_idx never passed by MambaHybridAttnMetadata
 
 ## Quantization
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#34718](https://github.com/sgl-project/sglang/issues/34718) [Bug] DeepSeek-V4 sparse attention indexer (`fp8_paged_mqa_logits`) illegal memory access with long-context requests
-
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#52167](https://github.com/vllm-project/vllm/issues/52167) [RFC]: Extended online quantization roadmap
+- [Bug] 🆕 [#52330](https://github.com/vllm-project/vllm/issues/52330) [Bug]: Data-parallel startup ignores DP in startup_omp_num_threads, causing CPU thread oversubscription and 15x slower weight loading (engine-ready timeout)
+- [Bug] 🆕 [#52319](https://github.com/vllm-project/vllm/issues/52319) [Bug]: Silent generation stall (Avg generation throughput drops to 0.0, no errors, /health and /v1/chat/completions still return 200) on Qwen3.5-397B-A17B / Qwen3.5-397B-A17B-FP8 / Qwen3.5-122B-A10B across v0.18.0, v0.19.0, v0.25.1
+- [Feature] 🆕 [#52347](https://github.com/vllm-project/vllm/issues/52347) [Feature]: Native OCP MXFP6 execution on NVIDIA SM120
 
 ## Distributed / TP / PP / EP
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#52155](https://github.com/vllm-project/vllm/issues/52155) [Bug]: VLLM_BATCH_INVARIANT does not cover convolution, used in VAE blocks
+- [Bug] 🆕 [#34800](https://github.com/sgl-project/sglang/issues/34800) [Bug] macOS: shared-memory names can exceed the 31-char POSIX limit, deadlocking `in_the_same_node_as` with no error output
 
 ## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#34740](https://github.com/sgl-project/sglang/issues/34740) [Bug] SGLANG_SIMULATE_ACC_LEN silently degrades detokenization to O(n²) — `predict.fill_(100)` emits a byte-fallback token, and the `endswith("\ufffd")` commit gate then never advances the incremental-detokenization offsets
-- [Bug] 🆕 [#34720](https://github.com/sgl-project/sglang/issues/34720) [Bug] [XPU] Qwen3.5 GDN + speculative decode: causal_conv1d_update_xpu() got an unexpected keyword argument 'intermediate_conv_window'
-- [Bug] 🆕 [#34719](https://github.com/sgl-project/sglang/issues/34719) [Bug] Scheduler crashes with AttributeError ('list' object has no attribute 'tolist') on mixed batches with token_ids_logprob — prefill and decode paths, v0.5.14–v0.5.17
+- [Bug] 🆕 [#34786](https://github.com/sgl-project/sglang/issues/34786) [Bug] TypeError in set_mamba_track_indices_from_reqs during NEXTN TARGET_VERIFY — mamba_next_track_idx is None (hybrid-mamba + speculative decoding + lazy buffer mode)
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#52071](https://github.com/vllm-project/vllm/issues/52071) [Bug]: speculative decoding under pipeline parallelism produces wrong output with --no-async-scheduling
-- [Bug] 🆕 [#52069](https://github.com/vllm-project/vllm/issues/52069) [Bug]: MTP speculative decoding cannot start under pipeline parallelism — SupportsPP demanded of the draft model
-- [Feature] 🆕 ⚠maintainer-authored [#52053](https://github.com/vllm-project/vllm/issues/52053) [Feature][DSpark]: Evaluate STS for online DSpark confidence alignment
+- [Bug] 🆕 [#52262](https://github.com/vllm-project/vllm/issues/52262) [Bug]: Error while trying Speculative Decoding on Intel XPU for Qwen/Qwen3.6-35B-A3B
+- [Feature] 🆕 [#52258](https://github.com/vllm-project/vllm/issues/52258) [Feature]: Restore length-based speculation skip (speculative max_model_len) or per-request speculative decoding control in V1
 
 ## Performance / Memory / OOM
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#52089](https://github.com/vllm-project/vllm/issues/52089) [Bug]: Continuous Host Memory Growth / Possible Memory Leak with V2 Runner on Qwen3-14B and Qwen3-Rerank-4B
-- [Feature] 🆕 ⚠maintainer-authored [#52057](https://github.com/vllm-project/vllm/issues/52057) [Feature][DSpark]: Improve Adaptive DSpark Online Profiling
+- [Bug] 🆕 [#34772](https://github.com/sgl-project/sglang/issues/34772) [Bug][Diffusion] Native-fallback component loading drops all CPU-offload decisions (should_offload called without model_config) → fatal OOM on 8GB GPUs
 
 ## Build / Install / Platform
 
+### sgl-project/sglang
+
+- [Feature] 🆕 ⚠maintainer-authored [#34758](https://github.com/sgl-project/sglang/issues/34758) [Feature] Router GEMM should keep fp32 output under deterministic inference (DeepSeek V3/V4)
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#52150](https://github.com/vllm-project/vllm/issues/52150) [Bug][ROCm/gfx942]: GLM-5.2-FP8 — first request after GPU idle emits garbage; piecewise CUDA graph cold replay corrupts the request's own prefill (workaround: cudagraph_mode=FULL_DECODE_ONLY)
-- [Bug] 🆕 [#52109](https://github.com/vllm-project/vllm/issues/52109) [Bug][ROCm/gfx942]: DeepSeek-V4-Flash silent retrieval corruption for prompts ≥ ~4-5k tokens (AITER sparse indexer)
+- [Bug] 🆕 [#52306](https://github.com/vllm-project/vllm/issues/52306) [Bug]:  A multimodal item can still be split across prefill chunks with disable_chunked_mm_input=True
+- [Bug] 🆕 [#52280](https://github.com/vllm-project/vllm/issues/52280) [Bug]: Muse-glimmer flawed on formatting (qwen3.6-35b also affected): so many Latex escape errors?
+
+## Uncategorized
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#52300](https://github.com/vllm-project/vllm/issues/52300) [Bug]:  ImportError: libcudart.so.13: cannot open shared object file: No such file or directory
