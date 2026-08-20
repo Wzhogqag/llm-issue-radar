@@ -1,93 +1,96 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-08-19T13:33+00:00_
+_Last run: 2026-08-20T13:35+00:00_
 
-**31 issues** — sgl-project/sglang: 7, vllm-project/vllm: 24 — 🆕 **31 new** since last run
+**25 issues** — sgl-project/sglang: 5, vllm-project/vllm: 20 — 🆕 **25 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 6
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
-- [Attention Backend](#attention-backend) — 1
-- [Quantization](#quantization) — 10
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
+- [Scheduler / Batching](#scheduler--batching) — 2
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 5
+- [Quantization](#quantization) — 3
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
+- [New Model Integration](#new-model-integration) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
 - [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 4
 - [Performance / Memory / OOM](#performance--memory--oom) — 1
 - [Build / Install / Platform](#build--install--platform) — 4
 
 ## Scheduler / Batching
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#35498](https://github.com/sgl-project/sglang/issues/35498) [Bug] TP>1 LoRA tensor hot-load reuses one-shot ForkingPickler FDs and crashes schedulers
-- [Feature] 🆕 [#35495](https://github.com/sgl-project/sglang/issues/35495) [Feature] Add a tiered AdaLN cache manager for MiniMax-H3
-
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#52922](https://github.com/vllm-project/vllm/issues/52922) [Bug]: DSpark scheduling using an overly conservative input budget
-- [Bug] 🆕 [#52909](https://github.com/vllm-project/vllm/issues/52909) [Bug]: Kimi-K3 chunked prefill diverges from one-shot prefill under TP8/PP2
-- [Feature] 🆕 [#52884](https://github.com/vllm-project/vllm/issues/52884) [Feature]: warn from `vllm bench serve` when a repeated random-dataset run hits a warm prefix cache, which inflates throughput by up to 86%
-- [RFC] 🆕 [#52906](https://github.com/vllm-project/vllm/issues/52906) [RFC]: Adaptive prefill token budget based on scheduling pressure
+- [Bug] 🆕 [#53049](https://github.com/vllm-project/vllm/issues/53049) [Bug]: MultiConnector: finished_recving lacks per-connector dedup — late/stale load reports crash scheduler assert in P/D + dual-connector setups
+- [other] 🆕 [#53041](https://github.com/vllm-project/vllm/issues/53041) [Discussion] Tiered SWA/Mamba checkpointing (HBM tail + store periodic) + recompute backfill for divergent hybrid prefix hits
 
 ## KV Cache / Connector / PD Disagg
 
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#52913](https://github.com/vllm-project/vllm/issues/52913) [Feature]: Support Pipeline Parallelism (PP > 1) in NixlConnector for Disaggregated KV Cache Transfer
-- [RFC] 🆕 [#52837](https://github.com/vllm-project/vllm/issues/52837) [RFC]: Derive KV offload save sources from prefix-cache records
-
-## Attention Backend
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#52938](https://github.com/vllm-project/vllm/issues/52938) [Bug]: DeepSeek-V4-Flash on RTX PRO 6000 Blackwell (SM120) emits degenerate output — identical argmax token + identical logprob at every decode position, TP and DP+EP alike, confirmed independent of environment/install history (FLASHINFER_MLA_SPARSE_DSV4)
+- [Bug] 🆕 [#53095](https://github.com/vllm-project/vllm/issues/53095) [Bug] NixlPushConnector heartbeat fails to renew KV leases
+- [Bug] 🆕 [#53084](https://github.com/vllm-project/vllm/issues/53084) [Bug]: MooncakeStoreConnector stores invalid recurrent states with mamba_cache_mode=align, causing silent output corruption
+- [Bug] 🆕 [#53083](https://github.com/vllm-project/vllm/issues/53083) [Bug]: PD P2P supply and demand are computed independently, and nothing checks they match
+- [Bug] 🆕 [#53042](https://github.com/vllm-project/vllm/issues/53042) [Bug][KV Offload] --kv-offloading-size allocates 1.92x the requested host memory as unreclaimable shmem
+- [no-prefix] 🆕 ⚠no-prefix [#53028](https://github.com/vllm-project/vllm/issues/53028) Gemma 4 E2B + LoRA: illegal memory access in lora_expand at engine init once max_model_len >= 87383
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#35437](https://github.com/sgl-project/sglang/issues/35437) [Bug] DFLASH + prefill CUDA graph: BCG capture assert at startup, full-backend IndexError on first request
-- [other] 🆕 [#35514](https://github.com/sgl-project/sglang/issues/35514) [Playground] Verified cell: rtx5090 / default / nvfp4 / undefined / single
-- [other] 🆕 [#35476](https://github.com/sgl-project/sglang/issues/35476) [Playground] Verified cell: dgx-spark / default / nvfp4 / undefined / single
-- [other] 🆕 [#35464](https://github.com/sgl-project/sglang/issues/35464) [Playground] Verified cell: dgx-spark / default / nvfp4 / undefined / single
+- [RFC] 🆕 [#35620](https://github.com/sgl-project/sglang/issues/35620) [RFC] Integrating Ascend MemCache as an HiCache L3 Backend
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#52947](https://github.com/vllm-project/vllm/issues/52947) [Bug]: torchao 0.18.0 cannot load version-1 int8wo checkpoints; surfaces as an opaque VllmConfig ValidationError
-- [Bug] 🆕 [#52872](https://github.com/vllm-project/vllm/issues/52872) [Bug] GDN/mamba-hybrid: profiled peak activation under-predicts prefill peak; max-num-batched-tokens also sizes the CUDA-graph pool
-- [Bug] 🆕 [#52871](https://github.com/vllm-project/vllm/issues/52871) [Bug] Forward-pass CUDA OOM kills the whole EngineCore instead of preempting/rejecting the request
-- [Bug] 🆕 [#52845](https://github.com/vllm-project/vllm/issues/52845) [Bug]: benchmark_moe.py --tune --dtype int4_w4a16 crashes on NVIDIA (BLOCK_SIZE_K vs group_size)
-- [Bug] 🆕 [#52834](https://github.com/vllm-project/vllm/issues/52834) [Bug]: --mm-processor-kwargs cannot scope an override to one modality: videos_kwargs is ignored by profiling while a flat "size" leaks into the image budget (Qwen3-VL)
-- [Bug] 🆕 [#52833](https://github.com/vllm-project/vllm/issues/52833) [Bug]: GLM-5.2 MTP accepts 0% of drafts on MI355X (gfx950); disabling expert parallelism hits hipErrorIllegalAddress
+- [Bug] 🆕 [#53107](https://github.com/vllm-project/vllm/issues/53107) [Bug]: LinearBase.load_weights substitutes the module for a missing parameter, surfacing as a confusing AttributeError
+- [no-prefix] 🆕 ⚠no-prefix ⚠maintainer-authored [#53086](https://github.com/vllm-project/vllm/issues/53086) int4 per-token-head KV cache: triton_reshape_and_cache_flash_per_token_head_quant returns wrong values
+
+## Distributed / TP / PP / EP
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#53105](https://github.com/vllm-project/vllm/issues/53105) [Bug]: bare assert in BasevLLMParameter._assert_and_load gives no diagnostics on weight shape mismatch
+
+## New Model Integration
+
+### sgl-project/sglang
+
+- [Feature] 🆕 [#35691](https://github.com/sgl-project/sglang/issues/35691) [Feature] Support Custom OTLP Trace Service Name
 
 ## Sampling / Speculative Decoding
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#35705](https://github.com/sgl-project/sglang/issues/35705) [Bug] AttributeError: 'list' object has no attribute 'tolist' in move_logprobs_to_cpu
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#52877](https://github.com/vllm-project/vllm/issues/52877) [Bug]: Recurring EngineCore fatal errors on DGX Spark (GB10 / sm_121): CUDA kernel launch failures after 1.5–3 days of uptime (Triton JIT + FlashInfer cuDNN FP8 GEMM)
-- [Bug] 🆕 [#52873](https://github.com/vllm-project/vllm/issues/52873) [Bug]: Qwen3-Next GDN + MTP: crossing sequence position 32768 permanently kills draft acceptance engine-wide (0% until restart)
-- [other] 🆕 [#52843](https://github.com/vllm-project/vllm/issues/52843) [Rust frontend] /inference/v1/generate silently ignores n > 1; should reject it
+- [Bug] 🆕 [#53030](https://github.com/vllm-project/vllm/issues/53030) [Bug]: `set_splitting_ops_for_v1` early return skips the empty-splitting-ops guard — breakable cudagraph + `cudagraph_mode=PIECEWISE` + spec decode silently rejects every draft
+- [Bug] 🆕 [#53029](https://github.com/vllm-project/vllm/issues/53029) [Bug][Spec Decode] All-NaN logits row is laundered into an out-of-vocab token id by the rejection sampler (device assert far from origin); NaN-metric blind spot on the verify path; uninit-scratch audit
+- [no-prefix] 🆕 ⚠no-prefix [#53031](https://github.com/vllm-project/vllm/issues/53031) DFlash speculator `capture()` logs "Capturing model ..." even when nothing is captured — makes drafter-capture state unobservable
 
 ## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#52926](https://github.com/vllm-project/vllm/issues/52926) [Bug]: Voxtral-Mini-4B-Realtime permanent engine hang on a specific audio file via /v1/audio/transcriptions (empty multimodal embeddings)
-- [Bug] 🆕 [#52852](https://github.com/vllm-project/vllm/issues/52852) [Bug] Streaming completions end with no finish_reason / no [DONE] — xgrammar "Failed to advance FSM" is one logged trigger, but some drops are fully silent (no engine error)
-- [Bug] 🆕 [#52846](https://github.com/vllm-project/vllm/issues/52846) [Bug]: DeepSeek V4 buffers long string tool arguments until </parameter>
-- [Bug] 🆕 [#52835](https://github.com/vllm-project/vllm/issues/52835) [Bug]: EngineCore fails to start with ValueError("value too large") when one processed multi-modal item exceeds mm_processor_cache_gb
+- [Bug] 🆕 [#53091](https://github.com/vllm-project/vllm/issues/53091) [Bug]: CLIP pooling model silently returns identical (empty-prompt) embeddings for all completion-style input text requests under sustained multimodal load
+- [Bug] 🆕 [#53089](https://github.com/vllm-project/vllm/issues/53089) [Bug]: Assertion failure due to inconsistent block counts between P and D sides when tools dict key ordering differs in template serialization with tool calls enabled
+- [Bug] 🆕 [#53066](https://github.com/vllm-project/vllm/issues/53066) [Bug] v1 detokenizer: client stop strings match inside the reasoning segment, decapitating think-in-prompt models (lm-eval sends stop on every request)
+- [Bug] 🆕 [#53032](https://github.com/vllm-project/vllm/issues/53032) [Bug]: In a Python environment, when requesting a model deployed with vLLM and the output mode is streaming, there is a low probability that the connection is established but the model does not receive the request.
 
 ## Performance / Memory / OOM
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Bug] 🆕 [#35415](https://github.com/sgl-project/sglang/issues/35415) [Bug] MiniMax-H3 FL2VA + Turbo LoRA: `slice_lora_b_weights` crashes on merged/QKV linear layers with TP>1
+- [Bug] 🆕 ⚠maintainer-authored [#53013](https://github.com/vllm-project/vllm/issues/53013) [Bug]: CUDA graph memory profiling estimation is too huge
 
 ## Build / Install / Platform
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#35673](https://github.com/sgl-project/sglang/issues/35673) [Bug] Gemma-4-31B-it TP=8 hangs in the vision path on AMD/ROCm
+- [Bug] 🆕 [#35591](https://github.com/sgl-project/sglang/issues/35591) [Bug] ROCm images pin AITER below the FlyDSL MXFP4 MoE kernels, making tuned AITER_CONFIG_FMOE tables unusable on gfx950
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#52897](https://github.com/vllm-project/vllm/issues/52897) [Bug]: Align-mode prefix caching never hits (0 / 996k queries) with --scheduling-policy priority on hybrid GDN model (post-#51113)
-- [Bug] 🆕 [#52860](https://github.com/vllm-project/vllm/issues/52860) [Bug]: MiniMax-M3 AITER sparse PA prototype corrupts output under speculative decoding with FP8 KV (ROCm)
-- [no-prefix] 🆕 ⚠no-prefix [#52907](https://github.com/vllm-project/vllm/issues/52907) Multi-node startup deadlock in in_the_same_node_as() gloo barrier at 2 nodes x TP-16 with the Ray executor (regression between 0.26.1rc1.dev78 and 0.26.1rc1.dev148)
-- [RFC] 🆕 ⚠maintainer-authored [#52911](https://github.com/vllm-project/vllm/issues/52911) [RFC]: DeepSeek-V4 Performance Optimization on ROCm (Phase Two)
+- [Bug] 🆕 [#53019](https://github.com/vllm-project/vllm/issues/53019) [Bug]: NemotronParseForConditionalGeneration does not tie lm_head.weight to decoder.embed_tokens.weight, produces garbage output
+- [no-prefix] 🆕 ⚠no-prefix [#53063](https://github.com/vllm-project/vllm/issues/53063) DFlash draft model does not inherit the target's RoPE layout (is_neox_style)
