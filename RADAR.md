@@ -1,94 +1,89 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-08-25T13:36+00:00_
+_Last run: 2026-08-26T13:39+00:00_
 
-**23 issues** — sgl-project/sglang: 6, vllm-project/vllm: 17 — 🆕 **23 new** since last run
+**21 issues** — sgl-project/sglang: 11, vllm-project/vllm: 10 — 🆕 **21 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 5
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
-- [Attention Backend](#attention-backend) — 1
+- [Scheduler / Batching](#scheduler--batching) — 2
 - [Quantization](#quantization) — 6
 - [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
-- [New Model Integration](#new-model-integration) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
-- [Build / Install / Platform](#build--install--platform) — 2
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
+- [Performance / Memory / OOM](#performance--memory--oom) — 1
+- [Build / Install / Platform](#build--install--platform) — 4
+- [Uncategorized](#uncategorized) — 1
 
 ## Scheduler / Batching
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#36326](https://github.com/sgl-project/sglang/issues/36326) [Bug] --config rejects canonical mamba-radix-cache-strategy due to DeprecatedAliasStoreAction
-- [RFC] 🆕 ⚠maintainer-authored [#36224](https://github.com/sgl-project/sglang/issues/36224) [RFC] First-Class, Versioned KV Hint Envelope for SGLang
+- [Bug] 🆕 [#36500](https://github.com/sgl-project/sglang/issues/36500) [Bug] [NGRAM] Removing a corpus during asynchronous loading returns success without cancelling the load
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#53658](https://github.com/vllm-project/vllm/issues/53658) [Bug]: FULL cudagraph dummy runs set seq_lens > max_model_len, overrunning the block table (TRITON_ATTN illegal memory access; FLEX_ATTENTION shape error)
-- [Bug] 🆕 [#53655](https://github.com/vllm-project/vllm/issues/53655) [Bug]: model_hosting_container_standards changes a shared root/vllm handler to ERROR and suppresses vLLM startup logs
-- [RFC] 🆕 [#53703](https://github.com/vllm-project/vllm/issues/53703) [RFC]: Progressive block handoff for NIXL Push
-
-## KV Cache / Connector / PD Disagg
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#53706](https://github.com/vllm-project/vllm/issues/53706) [Bug]: Mamba N-1 truncation after a full local prefix-cache hit makes num_new_tokens zero and crashes the prefill EngineCore
-
-## Attention Backend
-
-### vllm-project/vllm
-
-- [Performance] 🆕 [#53691](https://github.com/vllm-project/vllm/issues/53691) [Performance]: DSA indexer is computed redundantly on every TP rank (NVIDIA / CUDA)
+- [Performance] 🆕 [#53810](https://github.com/vllm-project/vllm/issues/53810) [Performance]: [MRV2][PP]: Post sampled-result receives closer to T+PP consumption
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#36302](https://github.com/sgl-project/sglang/issues/36302) [Bug] sglang-kernel JIT: HiCache L3 segfault on first backup with nvcc 12.8 + CUDA 13 runtime (compile-time vs runtime cudaMemcpyBatchAsync ABI in staged_write_back.cuh)
-- [no-prefix] 🆕 ⚠no-prefix [#36291](https://github.com/sgl-project/sglang/issues/36291) --enable-deterministic-inference accepted and reported enabled, but has no effect on an NVFP4 W4A4 + hybrid-Mamba checkpoint with a DFlash2 drafter (GB10 / sm_121)
+- [Bug] 🆕 [#36481](https://github.com/sgl-project/sglang/issues/36481) [Bug] SGLANG_RAGGED_VERIFY_MODE=compact crashes decode CUDA-graph capture on Qwen3.5 hybrid linear attention: IMA in extend_attention_fwd (triton_backend)
+- [Bug] 🆕 [#36390](https://github.com/sgl-project/sglang/issues/36390) [Bug] [ROCm] DeepSeek-V4-Flash FP8 on MI300X (gfx942): output degrades with context length — coherent <100 tokens, garbage by ~300, NIAH 0/3
+- [Feature] 🆕 [#36447](https://github.com/sgl-project/sglang/issues/36447) [Feature] Support GLM-5.2 MXFP4 with DSA/NSA and Mega-MoE
+- [Feature] 🆕 [#36460](https://github.com/sgl-project/sglang/issues/36460) [Feature] Support expert-wise FP8/W4A16_AWQ mixed precision for ModelOpt MoE checkpoints
 
 ### vllm-project/vllm
 
-- [Performance] 🆕 [#53687](https://github.com/vllm-project/vllm/issues/53687) [Performance]: Add native layer-fused MoE parameter loading for weight reload
-- [Bug] 🆕 [#53635](https://github.com/vllm-project/vllm/issues/53635) [Bug][DSV4][Blackwell SM12x] Indexer decode paged MQA logits broken when DeepGEMM is available: 2-state compress pages vs kernels templated for block_kv 32/64
-- [RFC] 🆕 [#53714](https://github.com/vllm-project/vllm/issues/53714) [RFC]: PCP-Sharded O-Projection Weights
-- [RFC] 🆕 [#53629](https://github.com/vllm-project/vllm/issues/53629) [RFC]: Apply MoE weight transformations at disk streaming time instead of materializing raw tensor
+- [Bug] 🆕 [#53887](https://github.com/vllm-project/vllm/issues/53887) [Bug]: MTP draft allocates a second full vocab embedding, OOMing a 27B INT4 target that the baseline fits
+- [no-prefix] 🆕 ⚠no-prefix [#53888](https://github.com/vllm-project/vllm/issues/53888) Sleep level=1 wake silently corrupts LoRA state (NemotronH NVFP4/Marlin, TP=2, WSL2): fixed-seed generation diverges after wake, adapter stops applying, no error raised
 
 ## Distributed / TP / PP / EP
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#53718](https://github.com/vllm-project/vllm/issues/53718) [Bug]: Named shared memory may be closed before peer ranks open it
-- [RFC] 🆕 [#53684](https://github.com/vllm-project/vllm/issues/53684) [RFC]: Allow the DSA Indexer to Use Context Parallelism Independently
-
-## New Model Integration
+- [Bug] 🆕 ⚠maintainer-authored [#36429](https://github.com/sgl-project/sglang/issues/36429) [Bug] #35061 rejects multi-node custom all-reduce v2 without expandable segments, causing ~19% Llama-4 TP8 regression on GB300
 
 ### vllm-project/vllm
 
-- [no-prefix] 🆕 ⚠no-prefix [#53626](https://github.com/vllm-project/vllm/issues/53626) Unsupported tool_choice in Responses API (Harmony/gpt-oss) returns HTTP 501, should be 4xx
+- [other] 🆕 [#53890](https://github.com/vllm-project/vllm/issues/53890) [Installation]: 0.28.0 build error in jetson agx orin 64G jetpack 7.2.1
 
 ## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#36276](https://github.com/sgl-project/sglang/issues/36276) [Bug] qwen3.6-35b-a3b repeat bug
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#53620](https://github.com/vllm-project/vllm/issues/53620) [Bug]: test_spec_decode_logprobs never runs on NVIDIA CI, and is ill-defined at top-k ties when it does
-- [no-prefix] 🆕 ⚠no-prefix [#53726](https://github.com/vllm-project/vllm/issues/53726) Silent CUDA IMA (exit 0) in hybrid GDN + MTP k=3 + async scheduling on RTX 3090; persists through #50021/#45100/#53613-class fixes
-- [RFC] 🆕 ⚠maintainer-authored [#53673](https://github.com/vllm-project/vllm/issues/53673) [RFC]: Decouple draft-model parallelism from the target model (PCP/DCP + speculative decoding)
+- [Bug] 🆕 [#36495](https://github.com/sgl-project/sglang/issues/36495) [Bug] NGRAM trie capacity equal to max depth causes an invalid free and scheduler abort
+- [Bug] 🆕 [#36480](https://github.com/sgl-project/sglang/issues/36480) [Bug] Qwen3.5 greedy outputs differ A LOT between v0.5.12 and v0.5.17.dev for the same multimodal request; v0.5.17.dev36 not self-consistent behind router
+- [Perf] 🆕 [#36452](https://github.com/sgl-project/sglang/issues/36452) [Perf] NEXTN/EAGLE: draft embed_tokens/lm_head copies are released after KV pool sizing, significantly shrinking max_total_num_tokens
 
 ## Serving / OpenAI API / Streaming
 
 ### sgl-project/sglang
 
-- [Performance] 🆕 [#36226](https://github.com/sgl-project/sglang/issues/36226) [Performance] Multiple potential avoidable scheduler, sampling, and streaming overheads identified
+- [RFC] 🆕 [#36431](https://github.com/sgl-project/sglang/issues/36431) [RFC] Resumable raw token stream for /v1/chat/completions
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#53836](https://github.com/vllm-project/vllm/issues/53836) [Bug]: NVIDIA DGX Spark vllms and gemma 4 26B won't work
+
+## Performance / Memory / OOM
+
+### vllm-project/vllm
+
+- [RFC] 🆕 [#53788](https://github.com/vllm-project/vllm/issues/53788) [RFC]: Using Helion for Selected vLLM CustomOps
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#53717](https://github.com/vllm-project/vllm/issues/53717) [Bug]: MedGemma 27B model:  Repetitive newline-token generation loop
-- [Bug] 🆕 [#53665](https://github.com/vllm-project/vllm/issues/53665) [Bug]: min_tokens + structured output can empty the token mask and return HTTP 500
+- [Bug] 🆕 [#53894](https://github.com/vllm-project/vllm/issues/53894) [Bug]: v0.28.0 hangs when starting distributed inference with DeepSeek-V4-Pro on 2 nodes × 16 H100 GPUs
+- [Bug] 🆕 [#53863](https://github.com/vllm-project/vllm/issues/53863) [Bug]: Out-of-bounds attrIdxs in the C++ batch memcpy path (cache_kernels.cu)
+- [Bug] 🆕 [#53822](https://github.com/vllm-project/vllm/issues/53822) [Bug]: XPU TP>1 consumes host RAM equal to total VRAM; workers are never isolated to their own device
+- [Bug] 🆕 [#53796](https://github.com/vllm-project/vllm/issues/53796) [Bug]: PD-disaggregation cannot use PCIe P2P for KV transfer on Intel Arc Pro B60 (BMG)
+
+## Uncategorized
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#36427](https://github.com/sgl-project/sglang/issues/36427) [Bug] Several ambiguous points in the installation documentation, please check
