@@ -9,13 +9,14 @@
 
 # Tracking
 
-_4 issues tracked. Refreshed 2026-08-26 13:39 UTC._
+_4 issues tracked. Refreshed 2026-08-27 17:01 UTC._
 
 ## sgl-project/sglang#31424  [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
 
 ⏳ Status: **open** — <https://github.com/sgl-project/sglang/issues/31424>
 
 - 2026-07-16 05:50 🆕 opened by @DellCurry — as `CONTRIBUTOR`
+- 2026-08-27 14:28 🔗 cross-referenced by @alphabetc1 — PR [https://github.com/sgl-project/sglang/pull/36705](https://github.com/sgl-project/sglang/pull/36705) (open)
 - ⏳ **still open**
 
 ## vllm-project/vllm#48489  [Bug]: Deferred block-free path loses per-group eviction ordering for hybrid KV cache configs
