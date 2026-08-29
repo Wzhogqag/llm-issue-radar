@@ -9,7 +9,7 @@
 
 # Tracking
 
-_4 issues tracked. Refreshed 2026-08-28 17:24 UTC._
+_4 issues tracked. Refreshed 2026-08-29 13:22 UTC._
 
 ## sgl-project/sglang#31424  [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
 
@@ -51,4 +51,5 @@ _4 issues tracked. Refreshed 2026-08-28 17:24 UTC._
 - 2026-07-27 00:12 💬 commented by @maheshrbapatu — Thanks @effi-ofer and @orozery. This decomposition makes sense. I have updated the RFC to align it w
 - 2026-07-28 04:46 💬 commented by @maheshrbapatu — @effi-ofer is there any slack channel where this working is being discussing? It will great to know 
 - 2026-07-28 07:51 💬 commented by @effi-ofer — Hey @maheshrbapatu send me your email please (effio@il.ibm.com) and I'll book a meeting.
+- 2026-08-29 08:35 🔗 cross-referenced by @akalin9507 — PR [https://github.com/vllm-project/vllm/pull/54327](https://github.com/vllm-project/vllm/pull/54327) (open)
 - ⏳ **still open**
