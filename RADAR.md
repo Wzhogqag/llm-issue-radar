@@ -1,90 +1,83 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-09-04T13:27+00:00_
+_Last run: 2026-09-05T13:23+00:00_
 
-**22 issues** — sgl-project/sglang: 8, vllm-project/vllm: 14 — 🆕 **22 new** since last run
+**21 issues** — sgl-project/sglang: 8, vllm-project/vllm: 13 — 🆕 **17 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 1
+- [Scheduler / Batching](#scheduler--batching) — 3
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
 - [Attention Backend](#attention-backend) — 1
 - [Quantization](#quantization) — 8
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 5
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
 - [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
 - [Performance / Memory / OOM](#performance--memory--oom) — 1
-- [Build / Install / Platform](#build--install--platform) — 2
-- [Uncategorized](#uncategorized) — 1
+- [Uncategorized](#uncategorized) — 2
 
 ## Scheduler / Batching
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#38022](https://github.com/sgl-project/sglang/issues/38022) [Bug] A single malformed multimodal request takes down the whole engine, and client retries spread it node-by-node across the cluster
+- [Feature] 🆕 [#38069](https://github.com/sgl-project/sglang/issues/38069) [Feature] Per-request opt-out from prefix cache insertion (skip_cache_insert)
+
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#55265](https://github.com/vllm-project/vllm/issues/55265) [RFC] Length-aware batch composition for admission scheduling — experimental evidence, fairness fix, and where it breaks
+- [Bug] 🆕 [#55381](https://github.com/vllm-project/vllm/issues/55381) [Bug]: Scheduler batch defaults silently fall back to smallest-GPU values inside MIG containers (NVML permission error swallowed), costing 28-53% throughput on H200 2g.35gb
+
+## KV Cache / Connector / PD Disagg
+
+### vllm-project/vllm
+
+- [Performance] 🆕 [#55434](https://github.com/vllm-project/vllm/issues/55434) [Performance]: GLM-5.3 P/D on GB200 — NIXL issues up to ~112k KV descriptors per rank-transfer, making MNNVL/cuda_ipc slower than RDMA on this workload
+- [Bug] 🆕 [#55428](https://github.com/vllm-project/vllm/issues/55428) [Bug]: KV cache offload crash-loops under NVIDIA Confidential Computing (TDX guest, H200 CC-On): cudaHostRegister is not allowed in CC mode (documented), and every built-in offload path depends on it
+- [Feature] 🆕 [#55463](https://github.com/vllm-project/vllm/issues/55463) [Feature]: Zero-Copy In-Place KV-Cache Compactor via In-Situ Cycle Permutations (1.65x Speedup, 0 Bytes Aux VRAM)
 
 ## Attention Backend
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Bug] 🆕 [#37983](https://github.com/sgl-project/sglang/issues/37983) [Bug] VisionTritonAttention drops MiMo-style window attention and sinks
+- [Bug] 🆕 [#55373](https://github.com/vllm-project/vllm/issues/55373) [Bug][ROCm] Sparse indexer clears the full max_model_len logits buffer every decode step: 17% throughput on a 1M context
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#37931](https://github.com/sgl-project/sglang/issues/37931) [Bug] DeepSeek-V4-Flash-Vision-Exp on 2x DGX Spark: scheduler OOM-killed during weight load (cookbook cell dgx-spark|flash-vision|fp4)
-- [other] 🆕 [#37993](https://github.com/sgl-project/sglang/issues/37993) [Playground] Verified cell: h200 / flash-official / fp4 / low-latency / single
-- [RFC] 🆕 ⚠maintainer-authored [#38004](https://github.com/sgl-project/sglang/issues/38004) [RFC] Quantization module layout: Config, Scheme, backend kernels
+- [other] [#37993](https://github.com/sgl-project/sglang/issues/37993) [Playground] Verified cell: h200 / flash-official / fp4 / low-latency / single
+- [RFC] ⚠maintainer-authored [#38004](https://github.com/sgl-project/sglang/issues/38004) [RFC] Quantization module layout: Config, Scheme, backend kernels
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#55291](https://github.com/vllm-project/vllm/issues/55291) [Bug]: Qwen3.6-27B-FP8 eventually collapses into repeated ! tokens, affecting all subsequent requests
-- [Bug] 🆕 [#55281](https://github.com/vllm-project/vllm/issues/55281) [Bug]: Whisper segment timestamps collapse under `prompt` — the reference timestamp decoding rules are not applied
-- [Bug] 🆕 [#55250](https://github.com/vllm-project/vllm/issues/55250) [Bug]: DFlash2 draft gets 0% acceptance with --dtype float16 on XPU (bf16 works) — Qwen3.8-27B + incoai/Qwen3.8-27B-DFlash2
-- [RFC] 🆕 [#55259](https://github.com/vllm-project/vllm/issues/55259) [RFC]: Optional native startup self-benchmarking for forward-pass performance characterization
-- [RFC] 🆕 [#55339](https://github.com/vllm-project/vllm/issues/55339) [RFC]: Unify ModelOpt MoE methods (mirror of #49381)
-
-## Distributed / TP / PP / EP
-
-### vllm-project/vllm
-
-- [Bug] 🆕 ⚠maintainer-authored [#55336](https://github.com/vllm-project/vllm/issues/55336) [Bug]: Model Runner V2 never locks the workspace, so post-capture growth silently invalidates captured CUDA graphs
-- [Feature] 🆕 [#55261](https://github.com/vllm-project/vllm/issues/55261) [Feature]: Benchmark and integrate CUTLASS Lamport GEMM + AllReduce into vLLM
+- [Performance] 🆕 [#55462](https://github.com/vllm-project/vllm/issues/55462) [Performance]: AWQ CUDA GEMM kernel is heavily L1/Memory bound (Profiled on RTX 3070 Ti)
+- [Bug] 🆕 [#55425](https://github.com/vllm-project/vllm/issues/55425) [Bug]: [XPU] Intel Arc Pro B70: Qwen3.8-27B MTP2 at 160K causes xe CCS timeout / BCS fault; MTP1 stable
+- [Bug] 🆕 [#55406](https://github.com/vllm-project/vllm/issues/55406) [Bug]: Nemotron-3.5-Lightning-30B-A3B-NVFP4 dies with CUDA illegal memory access in cudagraph replay on SM110 (Jetson Thor); deterministic 5-request repro; --enforce-eager works around it
+- [RFC] 🆕 [#55421](https://github.com/vllm-project/vllm/issues/55421) [RFC] RL Test Consolidation: File Ownership, Coverage Docstrings, and CI Integration
+- [RFC] 🆕 [#55394](https://github.com/vllm-project/vllm/issues/55394) [RFC]: Tile-union QSA sparse attention for prefill (Qwen3.8-Flash-Next): share the K/V gather across neighbouring query rows, −4.7 % TTFT on GB10
+- [no-prefix] 🆕 ⚠no-prefix [#55383](https://github.com/vllm-project/vllm/issues/55383) AOT compile cache key ignores the LoRA module tree, loading an incompatible artifact (`KeyError: 'weight'`)
 
 ## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#38009](https://github.com/sgl-project/sglang/issues/38009) [Bug] [DFlash2] Greedy output diverges from target-only Qwen3.8-27B when thinking is enabled
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#55323](https://github.com/vllm-project/vllm/issues/55323) [Bug]: num_speculative_tokens cannot default from the draft config's n_predict for MTP models (TypeError in SpeculativeConfig MTP auto-detection)
-- [Bug] 🆕 [#55322](https://github.com/vllm-project/vllm/issues/55322) [Bug]: Qwen3.5/3.6 MTP resolves n_predict=None for multimodal-wrapper checkpoints (mtp_num_hidden_layers is read from the wrapper, not text_config)
-- [Bug] 🆕 [#55313](https://github.com/vllm-project/vllm/issues/55313) [Bug]: Qwen3.8 + DSpark + streaming json_schema can desync XGrammar and emit 250k trailing spaces with HTTP 200
-- [Bug] 🆕 [#55279](https://github.com/vllm-project/vllm/issues/55279) [Bug]: DFlash2 (dflash method) deterministic cumulative OOB — engine dies with CUDA IMA / Xid 31 after ~11k decode steps under sampling load (sm_80, v0.27.1)
+- [Bug] 🆕 [#38031](https://github.com/sgl-project/sglang/issues/38031) [Bug] GLM-5.3-Flash (DSA): HiCache host-tier load-back corrupts generation even without speculative decoding — dropped tool calls, degenerate repetition loops (8×H100, TP8)
+- [Bug] [#38009](https://github.com/sgl-project/sglang/issues/38009) [Bug] [DFlash2] Greedy output diverges from target-only Qwen3.8-27B when thinking is enabled
 
 ## Serving / OpenAI API / Streaming
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [no-prefix] 🆕 ⚠no-prefix [#37919](https://github.com/sgl-project/sglang/issues/37919) The initial CI workflows were stopped by the PR gate because the `run-ci` label is missing, so no tests were executed.
+- [Feature] 🆕 [#55382](https://github.com/vllm-project/vllm/issues/55382) [Feature]: Let `reasoning_effort` set a default `thinking_token_budget` via a server-side effort→budget map
 
 ## Performance / Memory / OOM
 
-### sgl-project/sglang
-
-- [Feature] 🆕 [#37944](https://github.com/sgl-project/sglang/issues/37944) [Feature] Dynamic Prefill Context Parallelism
-
-## Build / Install / Platform
-
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#55238](https://github.com/vllm-project/vllm/issues/55238) [Bug]: gemma-4-26B-A4B-it produces different greedy output with CUDA graphs than with enforce_eager
-- [other] 🆕 [#55327](https://github.com/vllm-project/vllm/issues/55327) [ROCm] gfx950 top-k policy is gated on topK==1024, leaving index_topk=2048 models (GLM-5.x) on the generic 10-way split
+- [Bug] 🆕 [#55452](https://github.com/vllm-project/vllm/issues/55452) [Bug][ROCm] Startup aborts in CUDA graph capture with --max-num-seqs > 64: AITER split-K workspace is warmed on a different stream than capture uses
 
 ## Uncategorized
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#38013](https://github.com/sgl-project/sglang/issues/38013) [Bug]
+- [Feature] 🆕 [#38075](https://github.com/sgl-project/sglang/issues/38075) [Feature] Implement the standard gRPC Health Checking Protocol
+- [Bug] [#38013](https://github.com/sgl-project/sglang/issues/38013) [Bug]
