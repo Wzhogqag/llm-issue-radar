@@ -1,79 +1,85 @@
-# Weekly Trends — 2026-08-30
+# Weekly Trends — 2026-09-06
 
-Window: 2026-08-24 → 2026-08-30 (7 snapshots)
+Window: 2026-08-31 → 2026-09-06 (7 snapshots)
 
-**Totals:** 19 → 27  (27 appeared, 19 vanished)
+**Totals:** 22 → 29  (29 appeared, 22 vanished)
 
 ## Movement by category
 
 | Category | Start | End | Δ | Appeared | Vanished |
 |---|---:|---:|---:|---:|---:|
-| Attention Backend | 1 | 2 | +1 | 2 | 1 |
-| Build / Install / Platform | 2 | 2 | 0 | 2 | 2 |
-| KV Cache / Connector / PD Disagg | 6 | 4 | -2 | 4 | 6 |
-| New Model Integration | 1 | 2 | +1 | 2 | 1 |
-| Performance / Memory / OOM | 1 | 0 | -1 | 0 | 1 |
-| Quantization | 3 | 6 | +3 | 6 | 3 |
-| Sampling / Speculative Decoding | 2 | 6 | +4 | 6 | 2 |
-| Scheduler / Batching | 3 | 2 | -1 | 2 | 3 |
-| Serving / OpenAI API / Streaming | 0 | 2 | +2 | 2 | 0 |
-| Uncategorized | 0 | 1 | +1 | 1 | 0 |
+| Attention Backend | 1 | 3 | +2 | 3 | 1 |
+| Build / Install / Platform | 8 | 4 | -4 | 4 | 8 |
+| Distributed / TP / PP / EP | 1 | 2 | +1 | 2 | 1 |
+| KV Cache / Connector / PD Disagg | 1 | 3 | +2 | 3 | 1 |
+| New Model Integration | 1 | 1 | 0 | 1 | 1 |
+| Performance / Memory / OOM | 0 | 1 | +1 | 1 | 0 |
+| Quantization | 4 | 9 | +5 | 9 | 4 |
+| Sampling / Speculative Decoding | 4 | 3 | -1 | 3 | 4 |
+| Scheduler / Batching | 0 | 1 | +1 | 1 | 0 |
+| Serving / OpenAI API / Streaming | 1 | 2 | +1 | 2 | 1 |
+| Uncategorized | 1 | 0 | -1 | 0 | 1 |
 
 ## Appeared this week
 
 ### Attention Backend
 
-- [Bug] [sgl-project/sglang#37105](https://github.com/sgl-project/sglang/issues/37105) [Bug] GLM-5.3-Flash on RTX PRO 6000 (sm_120): two DSA backend blockers after the deep_gemm NameError
-- [Bug] [vllm-project/vllm#54317](https://github.com/vllm-project/vllm/issues/54317) [Bug]: GLM-5.3-Flash (glm5next) — recurring CUDA illegal memory access on 4xB200, surfacing in three unrelated kernels (KDA linear-attention, MHC TileLang, TRT-LLM fused MoE)
+- [Bug] [sgl-project/sglang#38196](https://github.com/sgl-project/sglang/issues/38196) [Bug] [NPU] ascend attention backend silently corrupts output with page_size 16 (128 OK, 1 rejected per #25169)
+- [Bug] [vllm-project/vllm#55526](https://github.com/vllm-project/vllm/issues/55526) [Bug]: DeepSeek-V4-Flash TP=16 on SM120 (RTX 5090 x16, ray multi-node) fails: DSV4 sparse MLA decode specialization error for (num_q_heads=8, top_k=128) despite FlashInfer dispatch table containing that config
+- [Bug] [vllm-project/vllm#55568](https://github.com/vllm-project/vllm/issues/55568) [Bug]: [Portability][MSVC] Preprocessor directives inside BOOL_SWITCH macro arguments fail to compile
 
 ### Build / Install / Platform
 
-- [Bug] [sgl-project/sglang#37111](https://github.com/sgl-project/sglang/issues/37111) [Bug] Qwen3.8-Flash-Next QSA + NEXTN decode graph silently corrupts output on GB10 TP2
-- [Bug] [vllm-project/vllm#54385](https://github.com/vllm-project/vllm/issues/54385) [Bug]: DeepSeek V4 DSpark TP=2 on 2× GB10 hits dual-rank Xid 31 at the inferred T=16 PIECEWISE warmup
+- [Bug] [vllm-project/vllm#55502](https://github.com/vllm-project/vllm/issues/55502) [Bug]: /rerank keeps processing queued documents after the client disconnects, despite @with_cancellation
+- [Bug] [vllm-project/vllm#55515](https://github.com/vllm-project/vllm/issues/55515) [Bug]: Qwen4Exp N-gram PLE embedding requires pipeline_parallel_size=1 because non-first pipeline ranks do not receive the raw input_ids it needs. Please run with PP=1
+- [Bug] [vllm-project/vllm#55552](https://github.com/vllm-project/vllm/issues/55552) [Bug]: tool_choice="required" not enforced with Qwen3.8-Flash-Next when enable_thinking=false (streaming); xgrammar "Failed to advance FSM" / "matcher has terminated" with thinking on + MTP
+- [Bug] [vllm-project/vllm#55555](https://github.com/vllm-project/vllm/issues/55555) [Bug]: multimodal LoRA/tower connector with float16 dtype reaches torch.empty(None)
+
+### Distributed / TP / PP / EP
+
+- [RFC] [vllm-project/vllm#55487](https://github.com/vllm-project/vllm/issues/55487) [RFC] Publish typed extra_keys in BlockStored KV events
+- [Bug] [vllm-project/vllm#55517](https://github.com/vllm-project/vllm/issues/55517) [Bug]: qwen3.8-flash-next: assert numerator % denominator == 0, "{} is not divisible by {}".format
 
 ### KV Cache / Connector / PD Disagg
 
-- [Bug] [sgl-project/sglang#37022](https://github.com/sgl-project/sglang/issues/37022) [Bug] Prefill transfer failed with exception KVTransferError Decode instance could be dead, remote mooncake session ...:port is not alive
-- [Feature] [vllm-project/vllm#54354](https://github.com/vllm-project/vllm/issues/54354) [Feature]: cannot budget KV cache per GPU when one card of a DP group is shared with another process
-- [no-prefix] [vllm-project/vllm#54383](https://github.com/vllm-project/vllm/issues/54383) First boot of a new `(max-num-batched-tokens, max-num-seqs)` shape is granted a ~5% smaller KV cache than subsequent identical boots
-- [RFC] [vllm-project/vllm#54426](https://github.com/vllm-project/vllm/issues/54426) [RFC] Qwen3.8-Flash-Next: fp8_e4m3 KV cache on the QSA path — working patch, one machine, looking for corroboration
+- [Performance] [sgl-project/sglang#38206](https://github.com/sgl-project/sglang/issues/38206) [Performance][PP/PD] Bootstrap admission waits ~7.8s for consensus under PP16 concurrent prefill
+- [Bug] [sgl-project/sglang#38207](https://github.com/sgl-project/sglang/issues/38207) [Bug] GLM-5.3 DPC crashes
+- [Bug] [vllm-project/vllm#55509](https://github.com/vllm-project/vllm/issues/55509) [Bug]: --attention-backend FLASHINFER fails the startup KV-cache check at a max-model-len that FLASH_ATTN serves; the message never names the backend
 
 ### New Model Integration
 
-- [Bug] [vllm-project/vllm#54318](https://github.com/vllm-project/vllm/issues/54318) [Bug]: Qwen3.8-Flash-Next-FP8 fails to start on 4x NVIDIA A100 due to fp8e4nv unsupported in SM80
-- [Bug] [vllm-project/vllm#54415](https://github.com/vllm-project/vllm/issues/54415) [Bug][Feature][KV-offloading]: shared-mmap CPU region assumes all ranks on one host — multi-node engines hang at init; node-local disk tier reference implementation
+- [Feature] [vllm-project/vllm#55501](https://github.com/vllm-project/vllm/issues/55501) [Feature]: Warn or auto-select the shipped score template when serving an original Qwen3-Reranker without --chat-template
+
+### Performance / Memory / OOM
+
+- [Bug] [vllm-project/vllm#55561](https://github.com/vllm-project/vllm/issues/55561) [Bug]: Sweep Pareto plots include dominated throughput ties
 
 ### Quantization
 
-- [Bug] [sgl-project/sglang#37052](https://github.com/sgl-project/sglang/issues/37052) [Bug] Qwen3.8-Flash-Next + NEXTN full decode graph: repeated dual-rank invalid-probability asserts on GB10
-- [Bug] [sgl-project/sglang#37089](https://github.com/sgl-project/sglang/issues/37089) [Bug] Qwen3.8-Flash-Next W4A16 on A100 TP4: Marlin MoE invalid thread config; Triton MoE then hits QSA FA-CuTe capture failure
-- [Bug] [vllm-project/vllm#54311](https://github.com/vllm-project/vllm/issues/54311) [Bug]: Cutlass int8 kernel never declines on SM120, making the Triton int8 fallback unreachable
-- [Bug] [vllm-project/vllm#54331](https://github.com/vllm-project/vllm/issues/54331) [Bug]: sm_120 hybrid-GDN NVFP4 dies under sustained load whenever CUDA graphs are on — persists 0.26.0 → 0.28.0, clean on 0.24.0; PIECEWISE and TRITON_ATTN both fail, only enforce_eager survives
-- [Bug] [vllm-project/vllm#54349](https://github.com/vllm-project/vllm/issues/54349) [Bug]: [XPU] AWQ MoE selector (check_moe_marlin_supports_config) ignores XPU platform, crashes on Marlin path
-- [Bug] [vllm-project/vllm#54350](https://github.com/vllm-project/vllm/issues/54350) [Bug]: [XPU] moe_wna16 AWQ fallback compares CUDA device_capability, always -1 on XPU
+- [Bug] [sgl-project/sglang#38143](https://github.com/sgl-project/sglang/issues/38143) [Bug] MiniMax-M3 W4A16 (compressed-tensors) on 2x DGX Spark (sm_121, TP=2): serves but every token is id 0 — all-NUL output on the Triton MiniMaxSparse path; same weights correct on vLLM
+- [Bug] [vllm-project/vllm#55486](https://github.com/vllm-project/vllm/issues/55486) [Bug]: vLLM 0.28.0 — DeepSeek V4 on B200 (TP8+EP, fp8 KV, FULL_AND_PIECEWISE) generates only BOS tokens with V2 model runner default
+- [Bug] [vllm-project/vllm#55495](https://github.com/vllm-project/vllm/issues/55495) [Bug]: qwen3_xml tool parser emits a truncated `arguments` string with a leaked `</parameter` tag; the Responses API then rejects every later request of the conversation with `400 Expecting value`
+- [Bug] [vllm-project/vllm#55496](https://github.com/vllm-project/vllm/issues/55496) [Bug]: ModelOpt MIXED_PRECISION cannot load FP8_BLOCK_SCALES MTP experts (nvidia/Qwen3.8-Flash-Next-NVFP4 + MTP)
+- [Bug] [vllm-project/vllm#55510](https://github.com/vllm-project/vllm/issues/55510) [Bug]: EngineCore and TP workers survive a SIGKILLed API server, keep the GPUs, and reparent to the launching process
+- [other] [vllm-project/vllm#55512](https://github.com/vllm-project/vllm/issues/55512) [New Model]: K2-Horizon-MoVA (MoVA attention) — single-GPU Int4 via out-of-tree plugin; native support?
+- [Bug] [vllm-project/vllm#55541](https://github.com/vllm-project/vllm/issues/55541) [Bug]: GLM-5.3-Flash with forced tool_choice (named function) fails to converge — runs to max_tokens and returns   ▎ truncated tool_call.arguments
+- [Bug] [vllm-project/vllm#55560](https://github.com/vllm-project/vllm/issues/55560) [Bug]: CPU WNA16 GPTQ-Int4 MoE kernel (CPUExpertsInt4) produces NaN logits under torch.compile — fixed by --enforce-eager
+- [Bug] [vllm-project/vllm#55571](https://github.com/vllm-project/vllm/issues/55571) [Bug]: Xid 13 "Out Of Range Address" / CUDA illegal memory access on RTX PRO 5000 (SM120) with FP8 model under sustained load — gone with VLLM_DISABLED_KERNELS=FlashInferFP8ScaledMMLinearKernel or --enforce-eager
 
 ### Sampling / Speculative Decoding
 
-- [Bug] [sgl-project/sglang#37128](https://github.com/sgl-project/sglang/issues/37128) [Bug] Spec V2 paths no longer emit speculative-decoding OpenTelemetry spans
-- [RFC] [vllm-project/vllm#54333](https://github.com/vllm-project/vllm/issues/54333) [RFC]: Reduced sampling for tensor-parallel decoding
-- [Bug] [vllm-project/vllm#54360](https://github.com/vllm-project/vllm/issues/54360) [Bug]: Speculative decoding (mtp and dflash) silently disables prefix-cache hits for hybrid GDN models on nightly; worked on v0.24.0
-- [Bug] [vllm-project/vllm#54392](https://github.com/vllm-project/vllm/issues/54392) [Bug]: PD-admitted Mamba request is spec-padded before prefill completes, then align split truncates the 8-token window to 5
-- [Feature] [vllm-project/vllm#54414](https://github.com/vllm-project/vllm/issues/54414) [Feature][KV-offloading]: recent-window state groups can never participate in restores — per-group offload exclusion + hit-boundary rollback (GLM-5.3 tail_cache)
-- [Bug] [vllm-project/vllm#54425](https://github.com/vllm-project/vllm/issues/54425) [Bug]: V2 sampler warmup misses explicit-seed native path when FlashInfer is enabled
+- [Bug] [vllm-project/vllm#55503](https://github.com/vllm-project/vllm/issues/55503) [Bug]: OffloadingConnector multi-tier (CPU+fs secondary tier) + MTP speculative decoding crashes EngineCore in _build_store_jobs (assert len(offload_keys) == len(offload_block_ids))
+- [Bug] [vllm-project/vllm#55518](https://github.com/vllm-project/vllm/issues/55518) [Bug]: kv_cache_utils warns that prefix-cache reuse is disabled even when disable_eagle_block_drop keeps it working
+- [Bug] [vllm-project/vllm#55533](https://github.com/vllm-project/vllm/issues/55533) [Bug][Spec Decode] Hybrid GDN (Qwen3.5/Qwen3.8 27B-class) + MTP: scheduler runs only ~3 concurrent sequences at batch >= 4 — acceptance/throughput collapse
 
 ### Scheduler / Batching
 
-- [RFC] [vllm-project/vllm#54363](https://github.com/vllm-project/vllm/issues/54363) [RFC]: Data integrity and I/O liveness for the filesystem KV offload tier
-- [Feature] [vllm-project/vllm#54413](https://github.com/vllm-project/vllm/issues/54413) [Feature][KV-offloading]: OffloadingConnector rejects hybrid models whose KV groups have blocks smaller than one hash unit (GLM-5.3-Flash) — per-group blocks_per_chunk implementation attached
+- [RFC] [vllm-project/vllm#55524](https://github.com/vllm-project/vllm/issues/55524) [RFC] Mamba2: exact-replay decode so that prefill, chunked prefill and decode produce identical bits
 
 ### Serving / OpenAI API / Streaming
 
-- [Bug] [sgl-project/sglang#37097](https://github.com/sgl-project/sglang/issues/37097) [Bug] Pretokenized image requests can crash GLM MRoPE with a stale retokenized mask
-- [Feature] [vllm-project/vllm#54340](https://github.com/vllm-project/vllm/issues/54340) [Feature]: In the framework, there are many assert statements. How can we optimize the issue of service processes crashing due to asserts?
-
-### Uncategorized
-
-- [Feature] [vllm-project/vllm#54389](https://github.com/vllm-project/vllm/issues/54389) [Feature]: Tencent/WeMM-Embedding
+- [Bug] [sgl-project/sglang#38167](https://github.com/sgl-project/sglang/issues/38167) [Bug][Diffusion] MiniMax-H3: 1344x768 fails deterministically with "CUDA driver error: device not ready" on 12GB, and the failed request poisons the server
+- [Bug] [vllm-project/vllm#55530](https://github.com/vllm-project/vllm/issues/55530) [Bug]: Responses API automatic tool JSON retry crashes in ParsableContext
 
 ## Vanished this week
 
@@ -81,43 +87,49 @@ _Likely closed, PR merged, or dropped from top 100 by activity — worth spot-ch
 
 ### Attention Backend
 
-- [Bug] [vllm-project/vllm#53573](https://github.com/vllm-project/vllm/issues/53573) [Bug]: [PCP+DCP][MLA] Rank-local PCP context metadata causes divergent DCP KV-gather collectives
+- [Bug] [vllm-project/vllm#54567](https://github.com/vllm-project/vllm/issues/54567) [Bug]: Prefix caching never hits for DeepSeek-V4-Flash on Jetson Thor (SM110) — every request cold-prefills, TTFT scales linearly with context
 
 ### Build / Install / Platform
 
-- [Bug] [vllm-project/vllm#53480](https://github.com/vllm-project/vllm/issues/53480) [Bug][XPU]: Silent persistent output corruption (endless "!" / token 0) under sustained concurrent decode on Arc Pro B70, W4A16 27B head_dim 256
-- [Bug] [vllm-project/vllm#53481](https://github.com/vllm-project/vllm/issues/53481) [Bug]: FLASHINFER backend produces degenerate output for Mistral3 (Ministral-3-3B) on sm_120 with ANY kv-cache dtype; TRITON_ATTN and FLASH_ATTN correct
+- [no-prefix] [sgl-project/sglang#37183](https://github.com/sgl-project/sglang/issues/37183) AMD MI308X SGLang GLM-5.3-Flash ValueError: The checkpoint you are trying to load has model type `glm5_next` but Transformers does not recognize this architecture.
+- [Bug] [vllm-project/vllm#54486](https://github.com/vllm-project/vllm/issues/54486) [Bug]: openai chat-template content format breaks structured request contracts
+- [Bug] [vllm-project/vllm#54487](https://github.com/vllm-project/vllm/issues/54487) [Bug]: prefix-caching hash configuration changes deterministic repeated output
+- [Bug] [vllm-project/vllm#54490](https://github.com/vllm-project/vllm/issues/54490) [Bug]: enabling prefix caching changes deterministic repeated output
+- [Bug] [vllm-project/vllm#54491](https://github.com/vllm-project/vllm/issues/54491) [Bug]: Qwen2.5 tool parser plus openai content format fails chat requests
+- [Bug] [vllm-project/vllm#54493](https://github.com/vllm-project/vllm/issues/54493) [Bug]: --enable-dbo reaches an assertion-backed all2all backend validation failure
+- [Feature] [vllm-project/vllm#54497](https://github.com/vllm-project/vllm/issues/54497) [Feature]: Upgrade XGrammar to >=0.2.4 and expose max_whitespace_cnt
+- [Bug] [vllm-project/vllm#54569](https://github.com/vllm-project/vllm/issues/54569) [Bug]: FunASR get error result with fp16 dtype
+
+### Distributed / TP / PP / EP
+
+- [Bug] [sgl-project/sglang#37215](https://github.com/sgl-project/sglang/issues/37215) [Bug] --dp 8 intermittently fails with TCPStore EADDRINUSE on single-node 8×H800
 
 ### KV Cache / Connector / PD Disagg
 
-- [Feature] [sgl-project/sglang#36083](https://github.com/sgl-project/sglang/issues/36083) [Feature] Extend cross-layer index-topk reuse (dsa_layer_skips_topk) to DeepSeek-V4
-- [Bug] [sgl-project/sglang#36140](https://github.com/sgl-project/sglang/issues/36140) [Bug] DFLASH speculative decoding is not supported under PD disaggregation: spec_info None crash, then watchdog self-kill
-- [RFC] [vllm-project/vllm#53484](https://github.com/vllm-project/vllm/issues/53484) [RFC]: Generalize Connector Metrics
-- [Bug] [vllm-project/vllm#53505](https://github.com/vllm-project/vllm/issues/53505) [Bug]: [SpecDecode] Hybrid Mamba (align) corrupts under speculative decoding when a KV connector is attached — even with zero retrieved tokens
-- [Performance] [vllm-project/vllm#53548](https://github.com/vllm-project/vllm/issues/53548) [Performance]: higher Mooncake Store tail latency with all-HCA registration on 4-TP / 4-RNIC hosts
-- [Bug] [vllm-project/vllm#53569](https://github.com/vllm-project/vllm/issues/53569) [Bug][KV Offload] OffloadingConnector fs tier: multi-group MLA+DSA (DeepSeek-V4) TP=2 lookup fully misses across restart; single-group MHA hits 99.6%
+- [Feature] [vllm-project/vllm#54536](https://github.com/vllm-project/vllm/issues/54536) [Feature][KV-offloading]: Host-staged RDMA for MooncakeStoreConnector requester-only ranks
 
 ### New Model Integration
 
-- [Feature] [sgl-project/sglang#36174](https://github.com/sgl-project/sglang/issues/36174) [Feature] Support deterministic inference for DeepSeek-V4
-
-### Performance / Memory / OOM
-
-- [Performance] [vllm-project/vllm#53472](https://github.com/vllm-project/vllm/issues/53472) [Performance]: v0.23→v0.26: ~20% decode ITL regression on non-gated (relu2) BF16 MoE (SM100) — TRTLLM-gen backend swap (#43853) adds per-call host cost; --moe-backend flashinfer_cutlass recovers ~90%
+- [Bug] [vllm-project/vllm#54459](https://github.com/vllm-project/vllm/issues/54459) [Bug] [Portability][MSVC]: M_LOG2E is unavailable when building Flash Attention with NVCC and MSVC
 
 ### Quantization
 
-- [Bug] [sgl-project/sglang#36118](https://github.com/sgl-project/sglang/issues/36118) [Bug] Qwen3.8 DFlash2 TTFT regresses 3.1% from db2eb475 to 95f5ecd3 on RTX PRO 6000 Blackwell
-- [Bug] [sgl-project/sglang#36181](https://github.com/sgl-project/sglang/issues/36181) [Bug] DSV4 indexer weights_proj CUBLAS_STATUS_EXECUTION_FAILED / cudaErrorIllegalAddress under multi-turn hicache load
-- [RFC] [vllm-project/vllm#53563](https://github.com/vllm-project/vllm/issues/53563) [RFC]: SM90 Exact Fused DSA Prefill Indexer
+- [Feature] [sgl-project/sglang#37150](https://github.com/sgl-project/sglang/issues/37150) [Feature] Tuning / per-GPU config for DSv4 top-k v2 cluster launch plan (kClusterFloor / kNumPersistentClusters / kCandidates)
+- [RFC] [vllm-project/vllm#54477](https://github.com/vllm-project/vllm/issues/54477) [RFC]: Selective Weight Reload for RL Training
+- [Bug] [vllm-project/vllm#54521](https://github.com/vllm-project/vllm/issues/54521) [Bug]: Qwen3.8-Flash-Next: greedy decoding is non-deterministic from persistent_topk in prefill when prompt length nears indexer_budget (sm121/GB10)
+- [Bug] [vllm-project/vllm#54559](https://github.com/vllm-project/vllm/issues/54559) [Bug]: qwen3.8-flash-next-fp8: No available shared memory broadcast block found in 60 seconds.
 
 ### Sampling / Speculative Decoding
 
-- [Bug] [vllm-project/vllm#53477](https://github.com/vllm-project/vllm/issues/53477) [Bug]: DFLASH2 force reprocesses context every reply
-- [Performance] [vllm-project/vllm#53504](https://github.com/vllm-project/vllm/issues/53504) [Performance]: MTP first repeat misses prefix cache on a hybrid Mamba/GDN model
+- [RFC] [vllm-project/vllm#54506](https://github.com/vllm-project/vllm/issues/54506) [RFC]: Batch invariance for speculative decoding needs to cover the forward pass (M=1 vs M=k+1)
+- [Bug] [vllm-project/vllm#54526](https://github.com/vllm-project/vllm/issues/54526) [Bug]: Cannot load an Eagle3 model, trained with Speculators
+- [no-prefix] [vllm-project/vllm#54552](https://github.com/vllm-project/vllm/issues/54552) Qwen4Exp: QSA ring assert makes num_speculative_tokens 5..8 unreachable on all block sizes
+- [Bug] [vllm-project/vllm#54555](https://github.com/vllm-project/vllm/issues/54555) [Bug]: V1 spec-decode proposer never constructs the positions buffer a both-XD-RoPE drafter seeds from
 
-### Scheduler / Batching
+### Serving / OpenAI API / Streaming
 
-- [Bug] [sgl-project/sglang#36179](https://github.com/sgl-project/sglang/issues/36179) [Bug] When using hicache to enable L2/L3 storage in DeepSeek V4, token loop repetition occurs very frequently
-- [RFC] [vllm-project/vllm#53485](https://github.com/vllm-project/vllm/issues/53485) [RFC]: Reconcile Backpressure Admission
-- [RFC] [vllm-project/vllm#53486](https://github.com/vllm-project/vllm/issues/53486) [RFC]: Secondary Tier Usage Metrics
+- [Feature] [vllm-project/vllm#54528](https://github.com/vllm-project/vllm/issues/54528) [Feature]: Migrate MuseGlimmer reasoning/tool parsers to the Streaming Parser Engine
+
+### Uncategorized
+
+- [no-prefix] [sgl-project/sglang#37238](https://github.com/sgl-project/sglang/issues/37238) Does SGLang have a demo for running the VBench dataset accuracy evaluation on Wan2.2?
