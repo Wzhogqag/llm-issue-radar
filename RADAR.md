@@ -1,87 +1,68 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-09-07T13:29+00:00_
+_Last run: 2026-09-08T13:29+00:00_
 
-**22 issues** — sgl-project/sglang: 5, vllm-project/vllm: 17 — 🆕 **22 new** since last run
+**12 issues** — sgl-project/sglang: 7, vllm-project/vllm: 5 — 🆕 **12 new** since last run
 
 ## Contents
 
 - [Scheduler / Batching](#scheduler--batching) — 2
 - [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
-- [Attention Backend](#attention-backend) — 4
-- [Quantization](#quantization) — 6
+- [Quantization](#quantization) — 2
 - [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [New Model Integration](#new-model-integration) — 3
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 3
-- [Build / Install / Platform](#build--install--platform) — 1
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
+- [Build / Install / Platform](#build--install--platform) — 3
+- [Uncategorized](#uncategorized) — 1
 
 ## Scheduler / Batching
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#38319](https://github.com/sgl-project/sglang/issues/38319) [Bug] Chunked Prefill + Radix Insert race corrupts KV pages (QSA, Qwen3.8-Flash-Next)
+- [Bug] 🆕 [#38452](https://github.com/sgl-project/sglang/issues/38452) [Bug] UnifiedRadixCache: L3 storage is never consulted when a prefix survives only as backuped stubs after host-tier eviction
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#55639](https://github.com/vllm-project/vllm/issues/55639) [RFC][EPD] Avoid redundant encoder work when Prefill can reuse KV or embeddings
+- [Performance] 🆕 [#55798](https://github.com/vllm-project/vllm/issues/55798) [Performance]: A performance optimization in the Scheduler regarding pad_spec_decode
 
 ## KV Cache / Connector / PD Disagg
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#55729](https://github.com/vllm-project/vllm/issues/55729) [Bug][MooncakeConnector] Bootstrap registration timeout is fatal during slow rank-0 initialization
-- [Feature] 🆕 [#55635](https://github.com/vllm-project/vllm/issues/55635) [Feature]: EFA vLLM image should work out of the box on AWS NVIDIA GPUs
-
-## Attention Backend
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#55722](https://github.com/vllm-project/vllm/issues/55722) [Bug]: `fuse_attn_quant` without `use_inductor_graph_partition` drops all piecewise cudagraphs on backends that cannot do FULL (-38 % on ROCm sparse MLA)
-- [Bug] 🆕 [#55720](https://github.com/vllm-project/vllm/issues/55720) [Bug]: `fuse_rope_kvcache` / `fuse_qk_norm_rope_kvcache` silently register zero patterns on MLA-only models, but their side effects are still paid
-- [Bug] 🆕 [#55636](https://github.com/vllm-project/vllm/issues/55636) [Bug] DeepSeek V4 sparse MLA can index a nonexistent block-table row during CUDA-graph warmup
-- [RFC] 🆕 [#55697](https://github.com/vllm-project/vllm/issues/55697) [RFC]: Application-Directed Prefix Checkpoints for Mamba / Hybrid Prefix Caching
+- [Bug] 🆕 [#55870](https://github.com/vllm-project/vllm/issues/55870) [Bug]: Mooncake bootstrap and KV transfer failures can leave PD requests waiting without terminal error propagation
+- [Feature] 🆕 [#55855](https://github.com/vllm-project/vllm/issues/55855) [Feature]: Add RDMA-capable NIXL OBJ support for KV offload secondary tier
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [other] 🆕 [#38312](https://github.com/sgl-project/sglang/issues/38312) [Playground] Verified cell: h100 / flash-official / fp4 / high-throughput / single
-- [no-prefix] 🆕 ⚠no-prefix ⚠maintainer-authored [#38300](https://github.com/sgl-project/sglang/issues/38300) TP2 hang with HiCache, breakable prefill CUDA graphs, and FlashInfer MNNVL on B300
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#55725](https://github.com/vllm-project/vllm/issues/55725) [Bug]: Weight loading error on GLM-5.3-Flash (`KeyError: 'layers.11.shared_transformer.self_attn.qkv_proj.weight'`) in 2-node setup
-- [Bug] 🆕 [#55673](https://github.com/vllm-project/vllm/issues/55673) [Bug]: FlashInfer TensorRT-LLM NVFP4 KV cache produces invalid Qwen3.5-397B output on Blackwell
-- [Bug] 🆕 [#55649](https://github.com/vllm-project/vllm/issues/55649) [Bug]: NVFP4 gated-MoE end-padding silently corrupts Gemma-4-26B at TP2 on B200 (SM100)
-- [Bug] 🆕 [#55644](https://github.com/vllm-project/vllm/issues/55644) [Bug]: GLM-5.3-Flash video input: placeholder count (GLM-4.6V timestamp path) disagrees with the pixel path's frame sampling, engine core dies in _merge_multimodal_embeddings
+- [no-prefix] 🆕 ⚠no-prefix [#38514](https://github.com/sgl-project/sglang/issues/38514) Docs: official BFL FLUX.2-klein FP8 is Comfy split-QKV, not a packed SGLang --transformer-weights-path drop-in
+- [no-prefix] 🆕 ⚠no-prefix [#38513](https://github.com/sgl-project/sglang/issues/38513) supports_fp8() always True; _apply_fallback_scaled_mm still calls torch._scaled_mm (no escape on SM<89)
 
 ## Distributed / TP / PP / EP
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#55632](https://github.com/vllm-project/vllm/issues/55632) [Bug][ROCm] 15s EngineCore cleanup grace is defeated by MultiprocExecutor's 9s worker-kill budget; workers SIGKILLed mid-teardown
-
-## New Model Integration
-
-### sgl-project/sglang
-
-- [Bug] 🆕 [#38291](https://github.com/sgl-project/sglang/issues/38291) [Bug] `fp8e4nv` not supported on A100 (SM80) when serving Qwen3.8-Flash-Next-FP8
-- [RFC] 🆕 [#38334](https://github.com/sgl-project/sglang/issues/38334) [RFC] Gluon MegaMoE: SGLang Integration and Multi-Node Support
-
-### vllm-project/vllm
-
-- [Feature] 🆕 [#55683](https://github.com/vllm-project/vllm/issues/55683) [Feature]: LoRA support for deepseek v4 flash vision
+- [Bug] 🆕 [#55856](https://github.com/vllm-project/vllm/issues/55856) [Bug] v0.20.2 empty build incompatible with V1 engine (missing vllm._C)
 
 ## Serving / OpenAI API / Streaming
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#55663](https://github.com/vllm-project/vllm/issues/55663) [Bug]: Sweep plots drop queued figures and hide worker failures
-- [Bug] 🆕 [#55659](https://github.com/vllm-project/vllm/issues/55659) [Bug]: /v1/responses crashes on persisted additional_tools input items
-- [Bug] 🆕 [#55633](https://github.com/vllm-project/vllm/issues/55633) [Bug]: legacy qwen3_xml streaming parser emits whitespace-only content before the first tool call
+- [Bug] 🆕 [#38450](https://github.com/sgl-project/sglang/issues/38450) [Bug] DeepSeek-V4-Flash-Vision preview image: multi-turn tool calls come back wrapped in {"arguments": {...}}
 
 ## Build / Install / Platform
 
+### sgl-project/sglang
+
+- [no-prefix] 🆕 ⚠no-prefix [#38516](https://github.com/sgl-project/sglang/issues/38516) Diffusion CUDA JIT: rsqrt host/CRT clash burns tens of seconds before soft-fail (fail fast / skip on sm<80)
+- [no-prefix] 🆕 ⚠no-prefix [#38515](https://github.com/sgl-project/sglang/issues/38515) sgl_kernel AOT: rmsnorm NoKernelImage on sm_75 while silu_and_mul / gelu_and_mul work (per-op cubin gap)
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#55689](https://github.com/vllm-project/vllm/issues/55689) [Bug]: GLM-5.3-Flash produces repetitive / off‑topic outputs in PD‑disaggregated deployment
+- [Bug] 🆕 [#55845](https://github.com/vllm-project/vllm/issues/55845) [Bug] tencent/Hunyuan-A13B-Instruct fails with ImportError: cannot import name 'is_torch_fx_available' (trust_remote_code, transformers v5)
+
+## Uncategorized
+
+### sgl-project/sglang
+
+- [other] 🆕 [#38424](https://github.com/sgl-project/sglang/issues/38424) [First-time contributor] Looking for beginner-friendly issues to contribute
