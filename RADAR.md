@@ -1,85 +1,66 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-09-10T13:26+00:00_
+_Last run: 2026-09-11T13:28+00:00_
 
-**20 issues** — sgl-project/sglang: 16, vllm-project/vllm: 4 — 🆕 **20 new** since last run
+**13 issues** — sgl-project/sglang: 4, vllm-project/vllm: 9 — 🆕 **13 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 2
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 5
-- [Attention Backend](#attention-backend) — 1
-- [Quantization](#quantization) — 5
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [New Model Integration](#new-model-integration) — 2
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
+- [Quantization](#quantization) — 2
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
+- [New Model Integration](#new-model-integration) — 3
 - [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
-- [Build / Install / Platform](#build--install--platform) — 1
-- [Uncategorized](#uncategorized) — 1
-
-## Scheduler / Batching
-
-### sgl-project/sglang
-
-- [Bug] 🆕 [#38849](https://github.com/sgl-project/sglang/issues/38849) [Bug] GLM 5.3 segfault on MI300 in SGLang scheduler
-- [no-prefix] 🆕 ⚠no-prefix [#38785](https://github.com/sgl-project/sglang/issues/38785) pp scheduler in prefill node
+- [Build / Install / Platform](#build--install--platform) — 3
 
 ## KV Cache / Connector / PD Disagg
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#38840](https://github.com/sgl-project/sglang/issues/38840) [Bug] Encoder-decoder KV cache: shared boundary page is double-freed when page_size > 1
-- [Bug] 🆕 [#38788](https://github.com/sgl-project/sglang/issues/38788) [Bug] Scripted-runtime rid reuse loses a race with rid_to_state release, surfacing as a 60s recv timeout (3 tests red in test/manual/chunked_prefill)
-- [Feature] 🆕 [#38889](https://github.com/sgl-project/sglang/issues/38889) [Feature] Move shared cache transfer types out of hicache_storage.py
-- [Feature] 🆕 [#38846](https://github.com/sgl-project/sglang/issues/38846) [Feature] Expose the effective `max_running_requests` (after the mamba/linear-attention state-cache cap) in `/get_server_info`
-- [Feature] 🆕 [#38819](https://github.com/sgl-project/sglang/issues/38819) [Feature] End-to-end PD disaggregation + DSpark support for DeepSeek-V4.1
-
-## Attention Backend
-
 ### vllm-project/vllm
 
-- [Feature] 🆕 ⚠maintainer-authored [#56217](https://github.com/vllm-project/vllm/issues/56217) [Feature]: DeepSeek-V4.1-Flash kernels integration
+- [RFC] 🆕 [#56402](https://github.com/vllm-project/vllm/issues/56402) [RFC]: Efficient Routed-Expert Replay with Prefix Omission and KV Cache Offloading
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#38854](https://github.com/sgl-project/sglang/issues/38854) [Bug] Qwen3.5 hybrid (GDN) GPTQ checkpoint: `linear_attn.in_proj_ba` built as quantized although the checkpoint stores `in_proj_a/b` as bf16 → 96× "not found in params_dict", then `gptq_marlin_repack` fails (size_n=96)
-- [Bug] 🆕 [#38817](https://github.com/sgl-project/sglang/issues/38817) [Bug] RuntimeError: Promotion for Float8 Types is not supported, attempted to promote Float8_e4m3fn and BFloat16
-- [Bug] 🆕 [#38795](https://github.com/sgl-project/sglang/issues/38795) [Bug] NVFP4 + flashinfer_cutlass + --speculative-adaptive: CUDA-graph capture raises "Unsupported moe_runner_backend ... Use flashinfer_cutlass instead" for the backend already in use
-- [Feature] 🆕 [#38856](https://github.com/sgl-project/sglang/issues/38856) [Feature] Batched asynchronous Engram host-row prefetch
+- [Bug] 🆕 [#39087](https://github.com/sgl-project/sglang/issues/39087) [Bug] Quantized DFlash2 draft silently yields ~0% acceptance — no error, no warning (the quiet counterpart to #36599)
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#56206](https://github.com/vllm-project/vllm/issues/56206) [Bug]: v0.29.0 fails to start on SM110 (AGX Thor) — illegal memory access in Qwen GDN prefill warmup
+- [Bug] 🆕 [#56457](https://github.com/vllm-project/vllm/issues/56457) [Bug] Qwen4Exp QSA indexer: per-chunk logits buffer grows with max_seq_len, caching allocator keeps every size, device OOM/hang on unified-memory GB10 (SM121) during long prefill
 
 ## Distributed / TP / PP / EP
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#56251](https://github.com/vllm-project/vllm/issues/56251) [Bug]: vLLM 并发缺陷报告：6 项确认缺陷
+- [Bug] 🆕 [#56389](https://github.com/vllm-project/vllm/issues/56389) [Bug]: DeepSeek-V4.1-Flash dsv4_topk Triton illegal memory access under high concurrency on H20; mitigated by max_num_seqs=256
+- [Bug] 🆕 [#56370](https://github.com/vllm-project/vllm/issues/56370) [Bug]: Batch invariance is broken when sequence parallelism / async TP is enabled (`VLLM_BATCH_INVARIANT=1` + `pass_config.enable_sp`)
 
 ## New Model Integration
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#38821](https://github.com/sgl-project/sglang/issues/38821) [Bug] GLM-5.3-Flash vision: single JPEG data URL is misidentified as an unrelated bird on 8x H20
-- [Feature] 🆕 [#38794](https://github.com/sgl-project/sglang/issues/38794) [Feature] Korean Localization for SGLang Cookbook
+- [Bug] 🆕 [#39070](https://github.com/sgl-project/sglang/issues/39070) [Bug] FLUX.2 rejects --attention-backend sage_attn: model-level whitelist excludes SAGE_ATTN (regression since #22423)
+- [Bug] 🆕 [#38980](https://github.com/sgl-project/sglang/issues/38980) [Bug] sgl_kernel flash_attn: is_fa3_supported() accepts sm_89 but no sm_89 cubin ships, and `ver` is ignored
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#56428](https://github.com/vllm-project/vllm/issues/56428) [Bug]: Reasoning still returned in /responses while include_reasoning is set to false
 
 ## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#38899](https://github.com/sgl-project/sglang/issues/38899) [Bug] DSpark compact SPS profiling ignores forced budgets and fails on ragged mRoPE positions
-- [Bug] 🆕 [#38787](https://github.com/sgl-project/sglang/issues/38787) [Bug] DSA attention: `tl.constexpr` strides in `transform_index_page_table_{prefill,decode}_kernel` cause unbounded Triton recompiles and stall
-
-## Build / Install / Platform
-
-### sgl-project/sglang
-
-- [Bug] 🆕 [#38793](https://github.com/sgl-project/sglang/issues/38793) [Bug] H20 8card can't launch Qwen3.8-Flash-Next-FP8
-
-## Uncategorized
+- [Bug] 🆕 [#39072](https://github.com/sgl-project/sglang/issues/39072) [Bug] GLM-5.3 crash on disagg decode + dp-attention + spec decode
 
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#56172](https://github.com/vllm-project/vllm/issues/56172) [Feature]: Lightweight vLLM Render API: Offload Heavy Multimodal Preprocessing from CPU Sidecars
+- [Bug] 🆕 [#56419](https://github.com/vllm-project/vllm/issues/56419) [Bug]: CPU Gated-DeltaNet — EngineCore dies when constrained decoding rejects all speculative draft tokens (num_accepted_tokens=0 violates causal_conv1d_update_cpu precondition)
+
+## Build / Install / Platform
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#56384](https://github.com/vllm-project/vllm/issues/56384) [Bug]: [Bug][Docker] Recipe references vllm/vllm-openai-rocm:deepseekv41-flash-0909 but the image is not available on Docker Hub
+- [Bug] 🆕 [#56363](https://github.com/vllm-project/vllm/issues/56363) [Bug]: Qwen3-VL fails when using modality-scoped image/video size kwargs (`images_kwargs` / `videos_kwargs`)
+- [Bug] 🆕 [#56347](https://github.com/vllm-project/vllm/issues/56347) [Bug][ROCm]: DeepSeek-V4.1 segfaults on the 3rd decode token with FULL_DECODE_ONLY graphs unless --no-async-scheduling is set
