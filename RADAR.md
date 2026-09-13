@@ -1,38 +1,60 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-09-12T13:24+00:00_
+_Last run: 2026-09-13T13:24+00:00_
 
-**6 issues** — sgl-project/sglang: 1, vllm-project/vllm: 5 — 🆕 **6 new** since last run
+**10 issues** — sgl-project/sglang: 4, vllm-project/vllm: 6 — 🆕 **8 new** since last run
 
 ## Contents
 
 - [Scheduler / Batching](#scheduler--batching) — 1
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
 - [Attention Backend](#attention-backend) — 1
+- [Quantization](#quantization) — 3
 - [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
-- [Build / Install / Platform](#build--install--platform) — 3
+- [Build / Install / Platform](#build--install--platform) — 1
 
 ## Scheduler / Batching
 
 ### sgl-project/sglang
 
-- [RFC] 🆕 [#39192](https://github.com/sgl-project/sglang/issues/39192) [RFC] Contention-aware batching for dynamic EPLB expert migration
+- [RFC] [#39192](https://github.com/sgl-project/sglang/issues/39192) [RFC] Contention-aware batching for dynamic EPLB expert migration
 
-## Attention Backend
+## KV Cache / Connector / PD Disagg
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#39302](https://github.com/sgl-project/sglang/issues/39302) [Bug] GLM-5.x NoPE MLA (qk_rope_head_dim=0) cannot run on SM120: every DSA sparse-MLA backend is unavailable
 
 ### vllm-project/vllm
 
-- [Performance] 🆕 [#56564](https://github.com/vllm-project/vllm/issues/56564) [Performance]: GLM-5.3-Flash on H100: auto-selected FLASHINFER_MLA_SPARSE_SM90 is 36-70% slower than FLASH_ATTN_MLA_SPARSE
+- [Bug] 🆕 ⚠maintainer-authored [#56699](https://github.com/vllm-project/vllm/issues/56699) [Bug][HiSparse] Decode engine dies with cudaErrorLaunchFailure in the host-mirror path under sustained P/D host imports
+- [RFC] 🆕 [#56701](https://github.com/vllm-project/vllm/issues/56701) [RFC][KV Offload]: Align sliding-window restore coverage with MTP-retained history
+
+## Attention Backend
+
+### sgl-project/sglang
+
+- [no-prefix] 🆕 ⚠no-prefix [#39299](https://github.com/sgl-project/sglang/issues/39299) MoE deferred finalize is unreachable for models that supply their own routing (FLASHINFER_TRTLLM_ROUTED excluded)
+
+## Quantization
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#39226](https://github.com/sgl-project/sglang/issues/39226) [Bug] --moe-runner-backend deep_gemm accepted for DSV4.1 MXFP4 experts, then fails in CUDA graph capture (layout.hpp:108, sm_121)
+
+### vllm-project/vllm
+
+- [Performance] 🆕 [#56684](https://github.com/vllm-project/vllm/issues/56684) [Performance]: 3.4 s engine stalls from DeepGEMM compiling the o-projection kernel per prefill chunk size, DeepSeek-V4.1-Flash on 8x B200
+- [other] 🆕 [#56700](https://github.com/vllm-project/vllm/issues/56700) [SM120] Field report: running DeepSeek-V4.1-Flash end-to-end on 8x RTX PRO 6000 — pitfall map + working configuration (1M context verified)
 
 ## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#56581](https://github.com/vllm-project/vllm/issues/56581) [RFC]: Streaming prompt prefill for overlapping upstream generation and downstream prefill
+- [RFC] [#56581](https://github.com/vllm-project/vllm/issues/56581) [RFC]: Streaming prompt prefill for overlapping upstream generation and downstream prefill
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#56605](https://github.com/vllm-project/vllm/issues/56605) [Bug]: GLM-5.3-Flash degenerates into repeated-token "word salad" in multi-turn agentic use
-- [Bug] 🆕 [#56521](https://github.com/vllm-project/vllm/issues/56521) [Bug][ROCm]: Intermittent worker segfault in libhsa-runtime64 — ROCPROFILER_QUEUE_INTERPOSITION=0 forces an unfixed ROCr heap overflow
-- [Bug] 🆕 [#56540](https://github.com/vllm-project/vllm/issues/56540) [Bug]: ROCm Stack DeepSeekv4.1 Flash Issue spamming logs with GLUON backend not available. Using TRITON backend!!!
+- [Bug] 🆕 [#56696](https://github.com/vllm-project/vllm/issues/56696) [Bug]: --otlp-traces-endpoint initializes tracer but never sends spans (instrument_otel/manual_instrument_otel never invoked)
