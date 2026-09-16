@@ -1,60 +1,68 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-09-15T13:30+00:00_
+_Last run: 2026-09-16T13:29+00:00_
 
-**16 issues** — vllm-project/vllm: 16 — 🆕 **16 new** since last run
+**15 issues** — sgl-project/sglang: 1, vllm-project/vllm: 14 — 🆕 **15 new** since last run
 
 ## Contents
 
-- [Quantization](#quantization) — 5
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
+- [Scheduler / Batching](#scheduler--batching) — 2
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
+- [Attention Backend](#attention-backend) — 1
+- [Quantization](#quantization) — 3
 - [New Model Integration](#new-model-integration) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
-- [Build / Install / Platform](#build--install--platform) — 4
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 4
+- [Performance / Memory / OOM](#performance--memory--oom) — 1
+
+## Scheduler / Batching
+
+### vllm-project/vllm
+
+- [RFC] 🆕 [#57111](https://github.com/vllm-project/vllm/issues/57111) [RFC]: Checkpoint-aware cache eviction and segmented recomputation for hybrid models
+- [RFC] 🆕 [#57106](https://github.com/vllm-project/vllm/issues/57106) [RFC]: [FS Offloading][ThreadPool] Updates to Thread Pool
+
+## KV Cache / Connector / PD Disagg
+
+### sgl-project/sglang
+
+- [RFC] 🆕 [#39740](https://github.com/sgl-project/sglang/issues/39740) [RFC] Pluggable KV Compression for Disaggregated Serving
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#57159](https://github.com/vllm-project/vllm/issues/57159) [Bug]: OffloadingConnector KV events advertise block hashes that are not independently retrievable
+- [RFC] 🆕 [#57103](https://github.com/vllm-project/vllm/issues/57103) [RFC]: Programmable KV Cache: Composable Policies for Agentic Serving
+
+## Attention Backend
+
+### vllm-project/vllm
+
+- [Feature] 🆕 [#57144](https://github.com/vllm-project/vllm/issues/57144) [Feature]: SM8x (Ampere A100/A800) support for DeepSeek-V4.1-Flash
 
 ## Quantization
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#57014](https://github.com/vllm-project/vllm/issues/57014) [Bug]: race in `hadacore_transform`'s tail warp, last rows % 8 rows read stale shared memory when rows % 8 is 1-4 
-- [Performance] 🆕 [#56992](https://github.com/vllm-project/vllm/issues/56992) [Performance][ROCm][gfx1100] compressed-tensors silently enables fp8 KV cache, which is far slower than bf16 for paged decode attention on RDNA3
-- [Performance] 🆕 [#56924](https://github.com/vllm-project/vllm/issues/56924) [Performance]: int8 W8A8 CUTLASS on Ada (sm_89) is 1.3x to 2x slower per call from M=17, at the dispatch bucket edge
-- [Bug] 🆕 [#56900](https://github.com/vllm-project/vllm/issues/56900) [Bug]: Qwen/Qwen1.5-MoE-A2.7B-Chat produces degenerate output with torch.compile (VLLM_COMPILE) but correct output without it on vLLM 0.28.0 (H100, torch 2.13.0+cu130); CUDA graphs, compile cache and custom_ops make no difference
-- [RFC] 🆕 [#56968](https://github.com/vllm-project/vllm/issues/56968) [RFC]: Plain-Python watermarking performance regression benchmark
-
-## Distributed / TP / PP / EP
-
-### vllm-project/vllm
-
-- [Performance] 🆕 [#56975](https://github.com/vllm-project/vllm/issues/56975) [Performance] GLM-5.3-Flash on 4x GB200 TP4: p99 ITL 15-20x SGLang's at c>=32; prefill-containing steps run outside CUDA graphs; raising --max-cudagraph-capture-size to the chunk size cuts the tail by about half (data)
+- [Bug] 🆕 [#57125](https://github.com/vllm-project/vllm/issues/57125) [Bug]: Qwen3.8-Flash-Next-NVFP4  service cannot start normally.
+- [Bug] 🆕 [#57087](https://github.com/vllm-project/vllm/issues/57087) [Bug] GLM-5.3 hybrid (nvfp4, GB10/sm121, TP2): concurrent batching corrupts non-ASCII generation — fragment-token state poisoning + silent DecodeStream FFFD flush
+- [other] 🆕 [#57149](https://github.com/vllm-project/vllm/issues/57149) [ROCm][AMD] Qwen3.8-2.4T-A95B gfx950 / MI355X Performance Optimization
 
 ## New Model Integration
 
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#57002](https://github.com/vllm-project/vllm/issues/57002) [Feature]: ModernBert LoRa support
-
-## Sampling / Speculative Decoding
-
-### vllm-project/vllm
-
-- [Feature] 🆕 [#57013](https://github.com/vllm-project/vllm/issues/57013) [Feature][Spec Decode] Support MiniCPM5-2B-DSpark
-- [Feature] 🆕 [#56917](https://github.com/vllm-project/vllm/issues/56917) [Feature]: TP=2 graph capture + MTP speculative decoding crash on Arc B70 — fix already exists upstream, unmerged
-- [RFC] 🆕 [#56993](https://github.com/vllm-project/vllm/issues/56993) [RFC]: Split scale-out into owned components (Renderer / Frontend / Generation) with dedicated launch commands
-- [RFC] 🆕 [#56916](https://github.com/vllm-project/vllm/issues/56916) [RFC]: Windowed Hidden-State Collection for vLLM Rollouts
+- [Feature] 🆕 [#57166](https://github.com/vllm-project/vllm/issues/57166) [Feature]: lora support for deepseek v4.1 flash
 
 ## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#56943](https://github.com/vllm-project/vllm/issues/56943) [Bug]: Per-request EngineDeadError tracebacks accumulate stack frames and flood logs after a worker crash
+- [Bug] 🆕 [#57173](https://github.com/vllm-project/vllm/issues/57173) [Bug]: Multi-turn benchmark drops unfinished active conversations when the task queue is exhausted
+- [Bug] 🆕 [#57099](https://github.com/vllm-project/vllm/issues/57099) [Bug]: Encountered `openai_harmony.HarmonyError` when using GPT-OSS-120B.
+- [other] 🆕 [#57157](https://github.com/vllm-project/vllm/issues/57157) [Security]: remote media URLs allow SSRF to internal/link-local addresses by default
+- [no-prefix] 🆕 ⚠no-prefix [#57082](https://github.com/vllm-project/vllm/issues/57082) Engine-initiated aborts end chat completion streams as if they completed: HTTP 200, terminal finish_reason "abort" (not an OpenAI enum value), then an unconditional data: [DONE]
 
-## Build / Install / Platform
+## Performance / Memory / OOM
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#56981](https://github.com/vllm-project/vllm/issues/56981) [Bug]:  Qwen3-ASR audio preprocessing produces different audio-token counts from Hugging Face
-- [Bug] 🆕 [#56980](https://github.com/vllm-project/vllm/issues/56980) [Bug]: MiniMax-M3 MSA crashes with quack-kernels 0.6.5 on the standard SM100 CUDA path
-- [Bug] 🆕 [#56945](https://github.com/vllm-project/vllm/issues/56945) [Bug]: rocm/vllm image never sets VLLM_ROCM_USE_AITER — Qwen3.5-122B-A10B-FP8 runs Triton MoE + ROCM_ATTN, 1.7x slower at short prompts and 3.7x at 12k than AITER + ROCM_AITER_UNIFIED_ATTN (MI300X/MI325X/MI355X)
-- [no-prefix] 🆕 ⚠no-prefix [#57008](https://github.com/vllm-project/vllm/issues/57008) XPU: --cpu-offload-gb (UVA) does not reduce peak device memory for compressed-tensors WNA16 MoE models
+- [RFC] 🆕 [#57177](https://github.com/vllm-project/vllm/issues/57177) [RFC]: Retain MRV2 DBO CUDA Graph replay under DP imbalance through real-token staging
