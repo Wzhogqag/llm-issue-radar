@@ -1,54 +1,82 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-09-17T13:28+00:00_
+_Last run: 2026-09-18T13:27+00:00_
 
-**10 issues** — sgl-project/sglang: 4, vllm-project/vllm: 6 — 🆕 **10 new** since last run
+**14 issues** — sgl-project/sglang: 3, vllm-project/vllm: 11 — 🆕 **14 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 2
-- [Quantization](#quantization) — 2
+- [Scheduler / Batching](#scheduler--batching) — 1
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
+- [Attention Backend](#attention-backend) — 1
+- [Quantization](#quantization) — 3
 - [New Model Integration](#new-model-integration) — 2
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
-- [Build / Install / Platform](#build--install--platform) — 3
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 1
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
+- [Performance / Memory / OOM](#performance--memory--oom) — 1
+- [Build / Install / Platform](#build--install--platform) — 2
 
 ## Scheduler / Batching
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [no-prefix] 🆕 ⚠no-prefix [#39963](https://github.com/sgl-project/sglang/issues/39963) # [RFC] Asymmetric P/D deployment for DeepSeek-V4.1 Flash
+- [Bug] 🆕 [#57562](https://github.com/vllm-project/vllm/issues/57562) [Bug]: AsyncScheduler num_output_placeholders underflow with chunked prefill + concurrency (no spec decode, no preemption) — regression from 0.24.0
+
+## KV Cache / Connector / PD Disagg
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#57383](https://github.com/vllm-project/vllm/issues/57383) [RFC]: Asymmetric P/D Deployment for DeepSeek-V4.1 Flash
+- [RFC] 🆕 [#57566](https://github.com/vllm-project/vllm/issues/57566) [RFC]: Stable, versioned plugin contract for out-of-tree attention backends + custom KV-cache specs
+
+## Attention Backend
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#40083](https://github.com/sgl-project/sglang/issues/40083) [Bug] json_schema accepts uniqueItems and multipleOf but does not enforce them
 
 ## Quantization
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#57324](https://github.com/vllm-project/vllm/issues/57324) [Bug]: Claude Code tool search: first request of every session rejected with 400 (tool_addition content blocks not accepted by /v1/messages)
-- [Feature] 🆕 [#57345](https://github.com/vllm-project/vllm/issues/57345) [Feature]: [CPU][GLM5Next] Add native sparse MLA / KeyPool indexer support for GLM-5.3-Flash
+- [Bug] 🆕 [#57521](https://github.com/vllm-project/vllm/issues/57521) [Bug][Perf][DSpark] #54674 stacked context WKV regresses TTFT ~3.3% on 2-node DGX Spark (GB10, TP=2), with no decode gain
+- [Bug] 🆕 [#57486](https://github.com/vllm-project/vllm/issues/57486) [Bug]: On SM12x, fp8 block linear still selects DeepGEMM when E8M0 is disabled, which now hard-fails after the a6bbb80 pin
+- [Bug] 🆕 [#57473](https://github.com/vllm-project/vllm/issues/57473) [Bug]: Aria expert loading looks up w13_weight.weight / w2_weight.weight
 
 ## New Model Integration
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#39850](https://github.com/sgl-project/sglang/issues/39850) [Bug] GLM-5.3-Flash (glm5_next): image requests render a no-multimodal reminder instead of the image placeholder — model never sees the image
-- [other] 🆕 [#39971](https://github.com/sgl-project/sglang/issues/39971) [KDA] Fused intra-chunk prefill path (`chunk_kda_fwd_intra(fuse_diagonal=True)`) collapses for strong per-channel decays because of the ±126 clamp in the exp2 factorization
+- [Feature] 🆕 [#40152](https://github.com/sgl-project/sglang/issues/40152) [Feature] Track DeepSeek-V4.1 support on the main branch
+
+### vllm-project/vllm
+
+- [Feature] 🆕 [#57544](https://github.com/vllm-project/vllm/issues/57544) [Feature]: Support jina-ocr-v1
+
+## Sampling / Speculative Decoding
+
+### vllm-project/vllm
+
+- [RFC] 🆕 [#57499](https://github.com/vllm-project/vllm/issues/57499) [RFC]: Stateless Responses API in the Rust frontend
 
 ## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [Performance] 🆕 [#57350](https://github.com/vllm-project/vllm/issues/57350) [Performance]: Streaming derender bypasses renderer thread pool and blocks the event loop
+- [Bug] 🆕 [#57550](https://github.com/vllm-project/vllm/issues/57550) [Bug]: xgrammar feature detection misses constraints when JSON Schema omits type
+- [RFC] 🆕 ⚠maintainer-authored [#57479](https://github.com/vllm-project/vllm/issues/57479) [RFC]: Bound frontend drain latency for bulk aborts and long non-streaming completions
+
+## Performance / Memory / OOM
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#57475](https://github.com/vllm-project/vllm/issues/57475) [Bug] CUDA graph memory estimate under-reserves → OOM during graph capture at high `--gpu-memory-utilization`
 
 ## Build / Install / Platform
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#39922](https://github.com/sgl-project/sglang/issues/39922) [Bug] /v1/messages never reports cache_creation_input_tokens, so cache writes are billed as plain input
+- [other] 🆕 [#40084](https://github.com/sgl-project/sglang/issues/40084) [ROCm][QuickReduce] Q8 BF16→FP16 low-amplitude scale saturation attenuates all-reduce output
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#57276](https://github.com/vllm-project/vllm/issues/57276) [Bug]: MRV2不支持anthropic?
-- [Feature] 🆕 [#57346](https://github.com/vllm-project/vllm/issues/57346) [Feature]: [CPU][GLM5Next][KDA] Add CPU KDA backend for GLM-5.3-Flash
+- [Bug] 🆕 [#57493](https://github.com/vllm-project/vllm/issues/57493) [Bug]: [ROCm][gfx1151] ROCM_ATTN returns different outputs for the same greedy request after other requests
