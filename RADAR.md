@@ -1,15 +1,15 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-10-04T15:00+00:00_
+_Last run: 2026-10-05T13:39+00:00_
 
-**13 issues** — sgl-project/sglang: 7, vllm-project/vllm: 6 — 🆕 **12 new** since last run
+**13 issues** — sgl-project/sglang: 8, vllm-project/vllm: 5 — 🆕 **10 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 2
+- [Scheduler / Batching](#scheduler--batching) — 5
 - [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
-- [Quantization](#quantization) — 4
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
+- [Quantization](#quantization) — 2
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
 - [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
 - [Build / Install / Platform](#build--install--platform) — 1
 
@@ -17,50 +17,44 @@ _Last run: 2026-10-04T15:00+00:00_
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#42508](https://github.com/sgl-project/sglang/issues/42508) [Bug] Scheduler aborts with `double free or corruption` inside the idle-loop invariant check (`session_held_tokens` walk); server hangs permanently afterwards
+- [Bug] 🆕 [#42544](https://github.com/sgl-project/sglang/issues/42544) [Bug] /update_weights_from_disk: is_async / keep_pause / token_step have no effect, num_paused_requests is always 0
+- [Bug] [#42508](https://github.com/sgl-project/sglang/issues/42508) [Bug] Scheduler aborts with `double free or corruption` inside the idle-loop invariant check (`session_held_tokens` walk); server hangs permanently afterwards
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#59907](https://github.com/vllm-project/vllm/issues/59907) [Bug]: Priority scheduling can un-schedule a request it already scheduled in the same step (encoder cache miss, prefix hits on unwritten KV, priority inversion)
+- [Bug] 🆕 [#60019](https://github.com/vllm-project/vllm/issues/60019) [Bug]: P2P KV offload tier runs NIXL peer registration synchronously inside the scheduler step, stalling all requests on the rank
+- [Bug] 🆕 [#60007](https://github.com/vllm-project/vllm/issues/60007) [Bug]: TRITON_MLA is not batch invariant under chunked prefill with `VLLM_BATCH_INVARIANT=1` (DeepSeek-V2-Lite, DeepSeek-V3.1)
+- [Feature] 🆕 [#60044](https://github.com/vllm-project/vllm/issues/60044) [Feature]: Per-request prefix-cache miss attribution (prompt divergence vs. eviction)
 
 ## KV Cache / Connector / PD Disagg
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 ⚠maintainer-authored [#59956](https://github.com/vllm-project/vllm/issues/59956) [Bug]: NIXL: `remove_remote_agent` does not release UCX endpoints, so each `engine_ttl` eviction + re-handshake leaks until handshakes fail
+- [Bug] 🆕 ⚠maintainer-authored [#59971](https://github.com/vllm-project/vllm/issues/59971) [Bug]: NIXL pull: one wedged connection repeatedly strands decode KV blocks (production log analysis)
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Feature] 🆕 [#42511](https://github.com/sgl-project/sglang/issues/42511) [Feature] server-level control over GPU image decoding
-- [no-prefix] 🆕 ⚠no-prefix [#42473](https://github.com/sgl-project/sglang/issues/42473) Test issue (deprecated)
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#59946](https://github.com/vllm-project/vllm/issues/59946) [Bug]: gemma4 loader requires k_proj/v_proj/k_norm for KV-shared layers that transformers 5.5.4 never saves; any transformers-saved gemma4 checkpoint is refused
-- [other] [#59868](https://github.com/vllm-project/vllm/issues/59868) [Qwen4Exp] PLE pinned-host FP8 lookup will not compile on sm_86, so --engram-config cpu_offload is unusable on consumer Ampere
+- [Bug] 🆕 [#42530](https://github.com/sgl-project/sglang/issues/42530) [Bug] big prefill blocks other requests on 2xRTX3090  for qwen3.8 27b
+- [no-prefix] ⚠no-prefix [#42473](https://github.com/sgl-project/sglang/issues/42473) Development Roadmap (2026 Q4)
 
 ## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#42510](https://github.com/sgl-project/sglang/issues/42510) [Bug] EAGLE/MTP same-checkpoint draft keeps redundant embed_tokens/lm_head copies resident during KV pool sizing → under-sized pool, startup OOM
-- [no-prefix] 🆕 ⚠no-prefix [#42415](https://github.com/sgl-project/sglang/issues/42415) fix(mlx): repeated chat returns unrelated text after native generation
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#59933](https://github.com/vllm-project/vllm/issues/59933) [Bug]: RecoverSSM align mode commits the final SSM state to an unwritten block at exact block boundaries (floor vs ceil-1)
-- [Bug] 🆕 [#59926](https://github.com/vllm-project/vllm/issues/59926) [Bug] DeepSeek-V4-Flash tool-call format failures associated with prefix-cache reuse; worst for short cached head + long uncached suffix; `cache_salt` reduces failures but is confounded with hit shape (v0.27.1, fp8 KV, MTP)
+- [Bug] 🆕 [#42568](https://github.com/sgl-project/sglang/issues/42568) [Bug] `chain_speculative_sampling_triton` rejects every draft whose q rounds just above 1.0 (since #37134)
+- [Feature] 🆕 [#42559](https://github.com/sgl-project/sglang/issues/42559) [Feature] Support Whisper speech translation (task="translate" / /v1/audio/translations)
+- [Bug] [#42510](https://github.com/sgl-project/sglang/issues/42510) [Bug] EAGLE/MTP same-checkpoint draft keeps redundant embed_tokens/lm_head copies resident during KV pool sizing → under-sized pool, startup OOM
 
 ## Serving / OpenAI API / Streaming
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Bug] 🆕 [#42465](https://github.com/sgl-project/sglang/issues/42465) [Bug] DeepSeek-V4 + HiCache write_through: TP ranks deadlock under concurrent long prefills (scheduler and detokenizer go silent, /health 503)
+- [Bug] 🆕 [#60059](https://github.com/vllm-project/vllm/issues/60059) [Bug]: `/inference/v1/generate` doesn't pass `reasoning_ended` or `reasoning_parser_kwargs`, so structured outputs start later than on `/v1/chat/completions`
 
 ## Build / Install / Platform
 
 ### sgl-project/sglang
 
-- [Feature] 🆕 [#42459](https://github.com/sgl-project/sglang/issues/42459) [Feature] Upgrade Nsight Compute bundled by the CUDA devel base image
+- [Bug] 🆕 [#42564](https://github.com/sgl-project/sglang/issues/42564) [Bug][ROCm] FLUX.2-dev fails on gfx1151: NVIDIA PTX inline assembly in residual_gate_add kernel
