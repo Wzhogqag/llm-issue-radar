@@ -1,79 +1,85 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-10-09T13:34+00:00_
+_Last run: 2026-10-10T13:29+00:00_
 
-**14 issues** — sgl-project/sglang: 3, vllm-project/vllm: 11 — 🆕 **14 new** since last run
+**20 issues** — sgl-project/sglang: 4, vllm-project/vllm: 16 — 🆕 **20 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 1
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
-- [Quantization](#quantization) — 2
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [New Model Integration](#new-model-integration) — 1
+- [Scheduler / Batching](#scheduler--batching) — 4
+- [Quantization](#quantization) — 5
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
+- [New Model Integration](#new-model-integration) — 2
 - [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
 - [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
 - [Performance / Memory / OOM](#performance--memory--oom) — 1
-- [Build / Install / Platform](#build--install--platform) — 1
+- [Build / Install / Platform](#build--install--platform) — 2
 
 ## Scheduler / Batching
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#60744](https://github.com/vllm-project/vllm/issues/60744) [Bug] pause_generation(mode="keep", clear_cache=True) raises when a streaming-input session is parked between turns
-
-## KV Cache / Connector / PD Disagg
+- [other] 🆕 [#43557](https://github.com/sgl-project/sglang/issues/43557) [PD] Runtime role switch: engine launched with --disaggregation-mode decode crashes with illegal memory access after decode -> prefill -> decode
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#60838](https://github.com/vllm-project/vllm/issues/60838) [Bug]: `--mamba-block-size` has no effect in any valid configuration after the removal of `mamba_cache_mode="all"`
-- [Bug] 🆕 [#60755](https://github.com/vllm-project/vllm/issues/60755) [Bug]: vLLM 0.31.0 Mooncake connector crashes after Decode timeout
-- [Bug] 🆕 ⚠maintainer-authored [#60791](https://github.com/vllm-project/vllm/issues/60791) [Bug]: MiniMax-M3: PP startup, NIXL+PP prefill, NIXL+HMA+DSpark, offload+PP, Mooncake recompute loop
+- [Bug] 🆕 [#60905](https://github.com/vllm-project/vllm/issues/60905) [Bug]: DeepSeek-V4-Pro returns wrong answers on long prompts (>~380k tokens) when --long-prefill-token-threshold=256 is set (v0.30.0)
+- [Feature] 🆕 [#60947](https://github.com/vllm-project/vllm/issues/60947) [Feature]: Allow pooling tasks (token_embed / token_classify) to reuse prefix cache while returning full hidden-state sequences
+- [RFC] 🆕 [#60986](https://github.com/vllm-project/vllm/issues/60986) [RFC]: Scheduler-owned KV transfer obligations: release blocks only after both recv and send complete
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#43342](https://github.com/sgl-project/sglang/issues/43342) [Bug] RuntimeError: Failed at /sgl-workspace/sglang/python/sglang/kernels/jit/csrc/gemm/marlin/gptq_marlin_repack.cuh:311: size_n = 8608 is not divisible by tile_n_size = 64
+- [other] 🆕 ⚠maintainer-authored [#43526](https://github.com/sgl-project/sglang/issues/43526) [AMD][Bug] Accuracy issue with gfx942 block-FP8 linear AITER CK blockscale GEMM
 
 ### vllm-project/vllm
 
-- [Performance] 🆕 [#60778](https://github.com/vllm-project/vllm/issues/60778) [Performance]: Reduce load_weights synchronization overhead for DeepSeek V4 Flash weight updates on H200
+- [Bug] 🆕 [#60914](https://github.com/vllm-project/vllm/issues/60914) [Bug]: compressed-tensors MXFP4 MoE (`CutlassExpertsMxfp4`) crashes with an illegal memory access on GB200 (SM100) on main
+- [Feature] 🆕 [#60944](https://github.com/vllm-project/vllm/issues/60944) [Feature]: Explicitly trust a selected preload daemon to avoid checkpoint rescans on engine restart
+- [RFC] 🆕 [#60932](https://github.com/vllm-project/vllm/issues/60932) [RFC]: Peer-device expert tier: run a subset of routed experts on a second GPU in the same host (out-of-tree plugin first, then a small seam in RoutedExperts)
+- [no-prefix] 🆕 ⚠no-prefix [#60931](https://github.com/vllm-project/vllm/issues/60931) WIP [RFC]: SupportsReload, a single post-load contract and reload verifier (follow-up to #59502)
 
 ## Distributed / TP / PP / EP
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#60845](https://github.com/vllm-project/vllm/issues/60845) [Bug]: CUDA graphs deadlock fully-sharded fused-MoE LoRA across TP ranks
+- [Bug] 🆕 [#60928](https://github.com/vllm-project/vllm/issues/60928) [Bug]: Exception on a non-output TP rank is logged and the worker dequeues the next RPC, so ranks desync and collectives mispair (cross-node deadlock)
+- [RFC] 🆕 [#60965](https://github.com/vllm-project/vllm/issues/60965) [RFC]: Support Internally Managed Elastic EP with the MP DP Backend
 
 ## New Model Integration
 
 ### sgl-project/sglang
 
-- [Feature] 🆕 [#43379](https://github.com/sgl-project/sglang/issues/43379) [Feature] [Diffusion] Support LingBot-VLA 2.0
+- [other] 🆕 [#43519](https://github.com/sgl-project/sglang/issues/43519) [Roadmap][NPU][Multimodal] Model support and serving features (2026 Q4)
+
+### vllm-project/vllm
+
+- [other] 🆕 ⚠maintainer-authored [#60935](https://github.com/vllm-project/vllm/issues/60935) [Draft] [RFC]: Support dispatcher-native token dropping for MoE expert capacity
 
 ## Sampling / Speculative Decoding
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#60830](https://github.com/vllm-project/vllm/issues/60830) [Bug]: MTP speculative decoding makes response_format {"type": "json_schema", ...} invalid on request for Qwen3.8-Flash-Next
-- [Bug] 🆕 [#60765](https://github.com/vllm-project/vllm/issues/60765) [Bug]: Qwen3.5 (hybrid GDN) models cannot run dflash speculative decoding with pipeline parallelism (missing supports_aux_hidden_states_over_pp opt-in)
-- [Bug] 🆕 [#60829](https://github.com/vllm-project/vllm/issues/60829) [Bug]: `top_k_per_row_decode` raises an illegal memory access for runtime topK > 8192 instead of a clean error
+- [Bug] 🆕 [#60981](https://github.com/vllm-project/vllm/issues/60981) [Bug]: ngram_gpu crashes with num_speculative_tokens_per_batch_size (assert num_speculative_tokens == self.k)
+- [Bug] 🆕 [#60897](https://github.com/vllm-project/vllm/issues/60897) [Bug]: token_indices_to_sample underflows past the request's query start with PP > 1 spec decode
+- [Bug] 🆕 [#60929](https://github.com/vllm-project/vllm/issues/60929) [Bug][Spec Decode]: DeepGEMM warm-up covers only the target model; speculator GEMMs JIT-load in the serving hot path
 
 ## Serving / OpenAI API / Streaming
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#60771](https://github.com/vllm-project/vllm/issues/60771) [Bug]: deepseek-v4-flash-0731 repeat and Garbled characters
+- [Bug] 🆕 [#43486](https://github.com/sgl-project/sglang/issues/43486) [Bug]  DSV4.1 Flash + DSPARK: CUDA caching allocator exhausts GPU memory under sustained max-batch decode (OOM crash every 15–25 min), KV pool only 29% used
 
 ## Performance / Memory / OOM
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [no-prefix] 🆕 ⚠no-prefix ⚠maintainer-authored [#43314](https://github.com/sgl-project/sglang/issues/43314) MLLM Roadmap (2026 q4)
+- [Performance] 🆕 [#60985](https://github.com/vllm-project/vllm/issues/60985) [Performance]: Resize video frames while decoding to skip full-resolution copies
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#60752](https://github.com/vllm-project/vllm/issues/60752) [Bug]: grouped_topk selects wrong experts with more than eight groups
+- [other] 🆕 [#60964](https://github.com/vllm-project/vllm/issues/60964) [Installation]:
+- [RFC] 🆕 [#60904](https://github.com/vllm-project/vllm/issues/60904) [RFC]: A standard for MonoKernels in vllm/models
