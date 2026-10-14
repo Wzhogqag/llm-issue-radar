@@ -1,70 +1,85 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-10-13T13:41+00:00_
+_Last run: 2026-10-14T13:28+00:00_
 
-**14 issues** — sgl-project/sglang: 3, vllm-project/vllm: 11 — 🆕 **14 new** since last run
+**17 issues** — sgl-project/sglang: 7, vllm-project/vllm: 10 — 🆕 **17 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 1
 - [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
-- [Quantization](#quantization) — 5
+- [Attention Backend](#attention-backend) — 1
+- [Quantization](#quantization) — 2
 - [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 1
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
+- [New Model Integration](#new-model-integration) — 2
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 3
 - [Build / Install / Platform](#build--install--platform) — 1
-
-## Scheduler / Batching
-
-### vllm-project/vllm
-
-- [RFC] 🆕 [#61396](https://github.com/vllm-project/vllm/issues/61396) [RFC] [KV Offload]: Store trigger and store admission policies for the offloading manager (lazy offloading)
+- [Uncategorized](#uncategorized) — 3
 
 ## KV Cache / Connector / PD Disagg
 
 ### sgl-project/sglang
 
-- [Feature] 🆕 [#43965](https://github.com/sgl-project/sglang/issues/43965) [Feature] [RFC] SGLang Engine Initialization Snapshots: Reusing Initialized State for Faster Startup
+- [no-prefix] 🆕 ⚠no-prefix [#44186](https://github.com/sgl-project/sglang/issues/44186) ADR: releasing decode KV pages after a failed PD transfer
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#61389](https://github.com/vllm-project/vllm/issues/61389) [Bug][MoRIIO] P-side remote decode completion skips FINISHED_STOPPED
-- [Bug] 🆕 [#61313](https://github.com/vllm-project/vllm/issues/61313) [Bug]: disable_hybrid_kv_cache_manager=True crashes engine startup on hybrid mamba models — ValueError: Failed to promote local KV cache specs to one unified type
+- [Bug] 🆕 [#61526](https://github.com/vllm-project/vllm/issues/61526) [Bug]: NixlConnector silently corrupts Mamba2 conv state under heterogeneous TP when n_groups is not divisible by TP (e.g. granite-4.0-h, n_groups=1)
+- [Performance] 🆕 [#61604](https://github.com/vllm-project/vllm/issues/61604) [Performance]: Waiting requests re-walk their whole prefix-cache hit on every scheduling step
+
+## Attention Backend
+
+### vllm-project/vllm
+
+- [RFC] 🆕 [#61626](https://github.com/vllm-project/vllm/issues/61626) [RFC]: Porting Sequence Parallelism & Async TP to manual fusion
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#43988](https://github.com/sgl-project/sglang/issues/43988) [Bug] --fp4-gemm-backend marlin crashes with NVFP4 W4A4 checkpoints on SM100 (mm_fp4 has no 'marlin' backend)
-- [Bug] 🆕 [#43956](https://github.com/sgl-project/sglang/issues/43956) [Bug] Qwen3.8-27B scores depend on batch shape and can change borderline decisions (FP8 and BF16)
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#61319](https://github.com/vllm-project/vllm/issues/61319) [Bug]:  Greedy (temperature=0) decoding is not reproducible across repeated calls on the same engine for LiquidAI/LFM2-8B-A1B (hybrid mamba)
-- [Bug] 🆕 [#61316](https://github.com/vllm-project/vllm/issues/61316) [Bug]:  fp8 kernel selection discards per-kernel rejection reasons — quantization="fp8_per_channel" surfaces as a misleading "Requires SM89+ for Cutlass FP8" with no indication of what actually failed
-- [Bug] 🆕 [#61314](https://github.com/vllm-project/vllm/issues/61314) [Bug]: quantization="fp8" + kv_cache_dtype="float16" on a bf16 model crashes at startup — same flash-attn dtype assert as #60859, now on the online-quant path
+- [Bug] 🆕 [#44291](https://github.com/sgl-project/sglang/issues/44291) [Bug] EP2 (tp=2 + ep=2) crashes with illegal memory access on Qwen3.8-Flash-Next-NVFP4 (RTX PRO 6000, sm_120)
+- [Bug] 🆕 [#44178](https://github.com/sgl-project/sglang/issues/44178) [Bug] DeepSeek-V4.1-Flash on SM120: historical report of NCCL initialization failure with DSPARK
 
 ## Distributed / TP / PP / EP
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#61317](https://github.com/vllm-project/vllm/issues/61317) [Bug]: jit_monitor_mode="error" kills the engine on the first real request for hybrid mamba models — JIT warmup never covers precopy_mamba_align_fused_kernel
-- [Bug] 🆕 [#61315](https://github.com/vllm-project/vllm/issues/61315) [Bug]: enable_lora with max_lora_rank=320 crashes engine startup on MoE models — AssertionError: fused_moe_lora_one_shot supports max_lora_rank<=128
-
-## Sampling / Speculative Decoding
+- [RFC] 🆕 [#44171](https://github.com/sgl-project/sglang/issues/44171) [RFC] Preserve multimodal identity end to end: precomputed inputs, collision-safe KV reuse, and KV-event parity
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#61383](https://github.com/vllm-project/vllm/issues/61383) [Bug]: Intermittent XGrammar request termination with V2 DFlash probabilistic drafting and block rejection
+- [Feature] 🆕 [#61631](https://github.com/vllm-project/vllm/issues/61631) [Feature]: Gated contributor PRs show as failed checks, and offloader paths have no CODEOWNERS
+
+## New Model Integration
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#61608](https://github.com/vllm-project/vllm/issues/61608) [Bug]: enable_tower_connector_lora: get_mm_lora_token_counts() under-sizes punica wrappers in 8 models (startup/runtime token_lora_mapping asserts)
+- [Feature] 🆕 [#61629](https://github.com/vllm-project/vllm/issues/61629) [Feature]: Support logprobs / top_logprobs for gpt-oss (Harmony) models in /v1/responses
 
 ## Serving / OpenAI API / Streaming
 
+### sgl-project/sglang
+
+- [no-prefix] 🆕 ⚠no-prefix [#44284](https://github.com/sgl-project/sglang/issues/44284) Breakable prefill CUDA graph backend trips torch CachingHostAllocator assert (`use_count > 0`) when graphs are re-captured after destruction
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#61372](https://github.com/vllm-project/vllm/issues/61372) [Bug][Rust Frontend] DeepSeek V4/V4.1 renderer rejects `latest_reminder`, which the Python encoder renders
+- [Bug] 🆕 [#61632](https://github.com/vllm-project/vllm/issues/61632) [Bug]: Olmo3 tool parser (non-streaming) drops the tool call when a string argument contains "</function_calls>"
+- [RFC] 🆕 [#61539](https://github.com/vllm-project/vllm/issues/61539) [RFC]: Explicit row layouts for routed-expert capture
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#61330](https://github.com/vllm-project/vllm/issues/61330) [Bug]: DFlash speculative decoding with gpt-oss target crashes with FA3 illegal memory access
+- [Bug] 🆕 [#61603](https://github.com/vllm-project/vllm/issues/61603) [Bug]: NemotronH/Mamba2: _chunk_scan_fwd_kernel nondeterministically emits NaN rows on sm90 (H20) for 8 of 23 autotune configs (warps=4, stages>=2, M/N>=64)
+
+## Uncategorized
+
+### sgl-project/sglang
+
+- [Feature] 🆕 [#44172](https://github.com/sgl-project/sglang/issues/44172) [Feature] Could you include the sgl-model-gateway container image alongside each version release?
+- [other] 🆕 [#44206](https://github.com/sgl-project/sglang/issues/44206) [Tracking][Mori] PRs for Community Review
+
+### vllm-project/vllm
+
+- [no-prefix] 🆕 ⚠no-prefix [#61597](https://github.com/vllm-project/vllm/issues/61597) test
