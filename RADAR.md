@@ -1,53 +1,66 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-10-15T13:31+00:00_
+_Last run: 2026-10-16T13:30+00:00_
 
-**9 issues** — sgl-project/sglang: 3, vllm-project/vllm: 6 — 🆕 **9 new** since last run
+**13 issues** — sgl-project/sglang: 9, vllm-project/vllm: 4 — 🆕 **13 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 1
 - [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
-- [Attention Backend](#attention-backend) — 1
+- [Quantization](#quantization) — 3
 - [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
+- [New Model Integration](#new-model-integration) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 5
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
 - [Build / Install / Platform](#build--install--platform) — 1
-
-## Scheduler / Batching
-
-### sgl-project/sglang
-
-- [Feature] 🆕 [#44485](https://github.com/sgl-project/sglang/issues/44485) [Feature][Spec][Ngram] Freeze external-corpus SAMs into a compact layout after finalize()
 
 ## KV Cache / Connector / PD Disagg
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [RFC] 🆕 [#61787](https://github.com/vllm-project/vllm/issues/61787) [RFC]: Layerwise KV Pooling and P/D Disaggregation for High-Hit-Rate Agent Workloads
+- [RFC] 🆕 [#44635](https://github.com/sgl-project/sglang/issues/44635) [RFC] Context-parallel support for the unified L3 key scheme
 
-## Attention Backend
+## Quantization
 
 ### sgl-project/sglang
 
-- [other] 🆕 [#44445](https://github.com/sgl-project/sglang/issues/44445) [Report] DeepSeek-V4.1-Flash on 4x SM120 (83 GiB): 1M context + DSpark works on v0.5.21, setup notes and numbers
+- [Bug] 🆕 [#44735](https://github.com/sgl-project/sglang/issues/44735) [Bug] HiCache host-tier hit on hybrid GDN model (Qwen3.8-Flash-Next) returns wrong output — kernel and direct io both affected
+- [other] 🆕 ⚠maintainer-authored [#44675](https://github.com/sgl-project/sglang/issues/44675) [Roadmap] Intel CPU (Xeon) Backend Optimization (2026Q4)
+- [other] 🆕 ⚠maintainer-authored [#44674](https://github.com/sgl-project/sglang/issues/44674) [Roadmap] Intel GPU (XPU) Backend Optimization (2026Q4)
 
 ## Distributed / TP / PP / EP
 
+### sgl-project/sglang
+
+- [RFC] 🆕 [#44697](https://github.com/sgl-project/sglang/issues/44697) [RFC] MoE routing simulator for prefill imbalance profiling: balanced reference and GPU-faithful replay
+
+## New Model Integration
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#61820](https://github.com/vllm-project/vllm/issues/61820) [Bug]: Whisper long-audio transcription loses words at the internal 30 s cut points in json/text (split_audio cuts inside speech, no overlap or merge)
+- [Bug] 🆕 [#62003](https://github.com/vllm-project/vllm/issues/62003) [Bug]: mamba_ssm_cache_dtype="float16" crashes mamba-family models at startup — bare kernel assertion with an empty message (selective_scan_fwd.cu:791)
 
 ## Sampling / Speculative Decoding
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#44745](https://github.com/sgl-project/sglang/issues/44745) [Bug] When client disconnect with `pause_generation(mode="abort")` and `release_memory_occupation` kills the scheduler
+- [Bug] 🆕 [#44744](https://github.com/sgl-project/sglang/issues/44744) [Bug] `pause_generation(mode="retract")` while a request's grammar is compiling, then `release_memory_occupation` with an AssertionError kills the scheduler
+- [other] 🆕 ⚠maintainer-authored [#44678](https://github.com/sgl-project/sglang/issues/44678) [Roadmap] Muse Spark Open Development & Optimization
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#61762](https://github.com/vllm-project/vllm/issues/61762) [Bug]: Scheduler livelock with multi-module MTP + Mamba align prefix caching when prompt_len % block_size < num_speculative_tokens
-- [Bug] 🆕 [#61738](https://github.com/vllm-project/vllm/issues/61738) [Bug]: Wide speculative decoding verify (num_speculative_tokens ≥ 7) samples EOS at `prompt_len+8` on hybrid GDN models (Qwen3.5): silent early stop, byte-clean until the EOS row — reproduced on both model runners (`ngram_gpu` V1, stock MTP V2)
-- [Feature] 🆕 [#61771](https://github.com/vllm-project/vllm/issues/61771) [Feature]: Harden logit_bias against absolute-logit leakage
-- [RFC] 🆕 [#61761](https://github.com/vllm-project/vllm/issues/61761) [RFC]: DFlash2 speculative decoding performance on ROCm (MI355X)
+- [Performance] 🆕 ⚠maintainer-authored [#61998](https://github.com/vllm-project/vllm/issues/61998) [Performance]: Monolithic Triton top-k kernel falls back to full-vocab search on real logits (outlier gather misses)
+- [Bug] 🆕 ⚠maintainer-authored [#61997](https://github.com/vllm-project/vllm/issues/61997) [Bug]: Split top-p mask kernel restarts its tie count every 8192 entries and over-keeps boundary ties
+
+## Serving / OpenAI API / Streaming
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#61972](https://github.com/vllm-project/vllm/issues/61972) [Bug]: --reasoning-parser qwen3: leading \n\n left in content after stripping the <think> block
 
 ## Build / Install / Platform
 
 ### sgl-project/sglang
 
-- [other] 🆕 ⚠maintainer-authored [#44479](https://github.com/sgl-project/sglang/issues/44479) [CI] Runner 5090-vast-no-0 is out of disk: every job fails in Install dependencies with 'No space left on device'
+- [Perf] 🆕 [#44656](https://github.com/sgl-project/sglang/issues/44656) [Perf] HiCache Throughput Loss Analysis in Long-Context MLA Workloads
