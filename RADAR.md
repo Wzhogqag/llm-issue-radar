@@ -1,44 +1,61 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-10-19T13:34+00:00_
+_Last run: 2026-10-20T13:32+00:00_
 
-**6 issues** — sgl-project/sglang: 3, vllm-project/vllm: 3 — 🆕 **6 new** since last run
+**11 issues** — sgl-project/sglang: 4, vllm-project/vllm: 7 — 🆕 **11 new** since last run
 
 ## Contents
 
 - [Scheduler / Batching](#scheduler--batching) — 2
 - [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 1
-- [Performance / Memory / OOM](#performance--memory--oom) — 1
+- [Quantization](#quantization) — 2
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
+- [Build / Install / Platform](#build--install--platform) — 3
 
 ## Scheduler / Batching
 
 ### sgl-project/sglang
 
-- [Feature] 🆕 [#45074](https://github.com/sgl-project/sglang/issues/45074) [Feature] Offline batch runner for OpenAI batch files (follow-up to #7427)
-- [RFC] 🆕 ⚠maintainer-authored [#45128](https://github.com/sgl-project/sglang/issues/45128) [RFC] linker: Prefetch SSD-resident KV while the request is queued
+- [Bug] 🆕 [#45357](https://github.com/sgl-project/sglang/issues/45357) [Bug] PD prefill PP8 + HiCache cache mode hangs: PP0–PP3 blocked in the HiCache PP-sync drain
+- [Perf] 🆕 [#45351](https://github.com/sgl-project/sglang/issues/45351) [Perf] HiCache PP-sync drain makes the PP prefill scheduler lock-step across ranks
 
 ## KV Cache / Connector / PD Disagg
 
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#62388](https://github.com/vllm-project/vllm/issues/62388) [Feature]: HF3FSKVConnector: support models with more than one KV cache shape (e.g. MLA + DSA indexer)
+- [Bug] 🆕 [#62697](https://github.com/vllm-project/vllm/issues/62697) [Bug][ROCm] `ROCM_ATTN` returns wrong attention (and can fault the GPU) on RDNA for head size ≥ 96 with KV block size ≠ 16, and for MHA with head size 192/256
 
-## Distributed / TP / PP / EP
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#62460](https://github.com/vllm-project/vllm/issues/62460) [Bug][Rust Frontend] /v1/completions rejects an array of prompts
-
-## Sampling / Speculative Decoding
+## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#45159](https://github.com/sgl-project/sglang/issues/45159) [Bug] GLM-5.3-Flash on 8×H20 (TP8/EP8) with EAGLE: CUDA illegal memory access in run_eagle_verify → build_grammar_vocab_mask
-
-## Performance / Memory / OOM
+- [other] 🆕 [#45373](https://github.com/sgl-project/sglang/issues/45373) [Tracking] GLM-5.3-Flash performance optimization on Hopper (SM90)
 
 ### vllm-project/vllm
 
-- [Perf] 🆕 [#62442](https://github.com/vllm-project/vllm/issues/62442) [Perf]: ~2x decode throughput regression for structured outputs since #45424 (apply_grammar_bitmask staging), not fixed by #49919
+- [Bug] 🆕 [#62609](https://github.com/vllm-project/vllm/issues/62609) [Bug]: A100 run Bolt (nv-community/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB) throw :B12X NVFP4 kernels require a Blackwell 12x device
+
+## Sampling / Speculative Decoding
+
+### vllm-project/vllm
+
+- [Feature] 🆕 [#62694](https://github.com/vllm-project/vllm/issues/62694) [Feature]: [Spec Decode] Support model-based drafters (target hidden states) via custom_class
+- [RFC] 🆕 [#62640](https://github.com/vllm-project/vllm/issues/62640) [RFC]: Improve MTP configuration warning
+
+## Serving / OpenAI API / Streaming
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#62598](https://github.com/vllm-project/vllm/issues/62598) [Bug][Rust Frontend] Long conversations fail with HTTP 500 (chat template fuel limit)
+
+## Build / Install / Platform
+
+### sgl-project/sglang
+
+- [other] 🆕 ⚠maintainer-authored [#45370](https://github.com/sgl-project/sglang/issues/45370) [Roadmap] Beam Development & Optimization
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#62639](https://github.com/vllm-project/vllm/issues/62639) [Bug]: Responses API: tool_choice=allowed_tools does not work
+- [Bug] 🆕 [#62606](https://github.com/vllm-project/vllm/issues/62606) [Bug][ROCm]: ROCM_AITER_UNIFIED_ATTN gives wrong output on gfx950 when a layer's KV cache is 2–4 GiB
