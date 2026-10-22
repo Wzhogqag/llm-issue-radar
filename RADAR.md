@@ -1,66 +1,78 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-10-21T13:30+00:00_
+_Last run: 2026-10-22T13:33+00:00_
 
-**16 issues** — sgl-project/sglang: 5, vllm-project/vllm: 11 — 🆕 **16 new** since last run
+**13 issues** — sgl-project/sglang: 5, vllm-project/vllm: 8 — 🆕 **13 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 2
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
-- [Quantization](#quantization) — 2
+- [Scheduler / Batching](#scheduler--batching) — 1
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
+- [Attention Backend](#attention-backend) — 1
+- [Quantization](#quantization) — 1
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
 - [New Model Integration](#new-model-integration) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
-- [Build / Install / Platform](#build--install--platform) — 4
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
+- [Build / Install / Platform](#build--install--platform) — 3
 
 ## Scheduler / Batching
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Bug] 🆕 [#45510](https://github.com/sgl-project/sglang/issues/45510) [Bug] --max-queued-requests 0 with priority scheduling crashes the scheduler on an empty queue
-- [RFC] 🆕 [#45547](https://github.com/sgl-project/sglang/issues/45547) [RFC] adapter hisparse to npu
+- [Bug] 🆕 [#63037](https://github.com/vllm-project/vllm/issues/63037) [Bug][KV Offload] Reused OffloadKey can lose metadata from delayed BlockStored events
 
 ## KV Cache / Connector / PD Disagg
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [RFC] 🆕 [#45527](https://github.com/sgl-project/sglang/issues/45527) [RFC] PD disaggregation: send the last KV chunk from later PP stages as soon as their forward finishes
+- [Feature] 🆕 [#63058](https://github.com/vllm-project/vllm/issues/63058) [Feature]: keep_tags for CuMemAllocator.sleep so selected allocations (e.g. kv_cache) stay mapped
+- [Feature] 🆕 [#63056](https://github.com/vllm-project/vllm/issues/63056) [Feature]: expose --sleep-mode-backend on the CLI (ModelConfig.sleep_mode_backend has no EngineArgs flag)
+
+## Attention Backend
 
 ### vllm-project/vllm
 
-- [Performance] 🆕 [#62862](https://github.com/vllm-project/vllm/issues/62862) [Performance]: MultiConnector([NixlConnector, OffloadingConnector]) disables divergent local hybrid cache hits on Decode
-- [Bug] 🆕 [#62808](https://github.com/vllm-project/vllm/issues/62808) [Bug]: Built-in LMCacheConnectorV1 does not forward shutdown(), so LMCache never stops and EngineCore is force-killed
+- [Bug] 🆕 [#63043](https://github.com/vllm-project/vllm/issues/63043) [Bug]: Native FlashInfer produces garbage output with BF16 Q and non-unit q_scale
 
 ## Quantization
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#62820](https://github.com/vllm-project/vllm/issues/62820) [Bug]: FlashInfer fp4_gemm autotune changes temperature-0 tokens on Qwen3.8-27B NVFP4 (SM120)
-- [Bug] 🆕 [#62803](https://github.com/vllm-project/vllm/issues/62803) [Bug]: Investigate uniform decision scores for a D3 checkpoint loaded as Qwen3.5
+- [Bug] 🆕 [#45755](https://github.com/sgl-project/sglang/issues/45755) [Bug] Kimi-K3 on SM90: `flashinfer_mxfp4` silently computes GPT-OSS SwiGLU instead of SiTU
+
+## Distributed / TP / PP / EP
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#45786](https://github.com/sgl-project/sglang/issues/45786) [Bug] GB300 aarch64/MNNVL: NCCL initialization fails under Nsight Systems in v0.5.22 stack
 
 ## New Model Integration
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#62801](https://github.com/vllm-project/vllm/issues/62801) [Bug]: MoE LoRA accepts incompatible round-robin expert placement with EP
+- [Feature] 🆕 [#45777](https://github.com/sgl-project/sglang/issues/45777) [Feature] Add Host Offloading and Asynchronous Prefetching for DeepSeek V4.1 Engram
 
 ## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#45563](https://github.com/sgl-project/sglang/issues/45563) [Bug] HiCache NIXL L3: under O_DIRECT the DSA indexer sidecar is never written, and the 0-byte objects are restored as hits, so restored prefixes get zero index-K (silent output change, EAGLE accept collapse)
-- [Bug] 🆕 [#45525](https://github.com/sgl-project/sglang/issues/45525) [Bug] DeepSeek-V4-Flash: speculative and ordinary decoding produce different greedy outputs
+- [Bug] 🆕 [#45781](https://github.com/sgl-project/sglang/issues/45781) [Bug] GLM-5.3 FP8 inference hangs after sustained workload with KV cache full (TP8, EAGLE, H200)
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#62851](https://github.com/vllm-project/vllm/issues/62851) [Bug]: Qwen3.6 GDN greedy DFlash2 divergence from batch-dependent numerics and preemption/recompute (v0.31.0)
-- [RFC] 🆕 [#62818](https://github.com/vllm-project/vllm/issues/62818) [RFC]: Preserve output distribution under structured-output + speculative decoding
+- [Bug] 🆕 [#63128](https://github.com/vllm-project/vllm/issues/63128) [Bug][Spec Decode] MTP draft from a draft-only checkpoint runs with an uninitialised embedding under pipeline parallelism (no error; acceptance collapses)
+
+## Serving / OpenAI API / Streaming
+
+### sgl-project/sglang
+
+- [RFC] 🆕 [#45816](https://github.com/sgl-project/sglang/issues/45816) [RFC] Complete migration to the shared api.v1 backend API
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#62865](https://github.com/vllm-project/vllm/issues/62865) [Bug]: Compile mode 2 leads to incorrect kernels when the Transformers backend is used
-- [other] 🆕 [#62844](https://github.com/vllm-project/vllm/issues/62844) [Installation]: [ROCm] Gemma4 multimodal model fails to start on vLLM 0.32.0 due to excessive video encoder memory reservation (negative KV cache)
-- [other] 🆕 [#62842](https://github.com/vllm-project/vllm/issues/62842) [Installation]: cu129
-- [other] 🆕 [#62804](https://github.com/vllm-project/vllm/issues/62804) [Feature / Question]::  /v1/systemone rejects image inputs on standard multimodal VLMs with "this model does not take image inputs"
+- [Bug] 🆕 [#63121](https://github.com/vllm-project/vllm/issues/63121) [Bug]: `torchcodec` is unpinned and resolves to a CUDA-13 wheel in CUDA-12.9 builds, breaking `vllm serve` on `vllm/vllm-openai:v0.32.0-cu129`
+- [Bug] 🆕 [#63052](https://github.com/vllm-project/vllm/issues/63052) [Bug]: Breakable PIECEWISE capture (model runner V2) leaves warmup activations cached on the discarded capture stream
+- [Bug] 🆕 [#63026](https://github.com/vllm-project/vllm/issues/63026) [Bug]: EngineCore CPU memory growth on Ascend associated with SHM notification mailbox accumulation
