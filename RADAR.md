@@ -1,55 +1,67 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-10-24T13:26+00:00_
+_Last run: 2026-10-25T13:26+00:00_
 
-**8 issues** — sgl-project/sglang: 2, vllm-project/vllm: 6 — 🆕 **8 new** since last run
+**11 issues** — sgl-project/sglang: 2, vllm-project/vllm: 9 — 🆕 **10 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 1
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
-- [Attention Backend](#attention-backend) — 1
+- [Scheduler / Batching](#scheduler--batching) — 2
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
 - [Quantization](#quantization) — 2
-- [Build / Install / Platform](#build--install--platform) — 1
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
+- [Performance / Memory / OOM](#performance--memory--oom) — 1
+- [Build / Install / Platform](#build--install--platform) — 2
 - [Uncategorized](#uncategorized) — 1
 
 ## Scheduler / Batching
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Bug] 🆕 [#46203](https://github.com/sgl-project/sglang/issues/46203) [Bug]  Xid 13 "CTA Not Present" in HiCache kvcacheio transfer kernels on Blackwell (B20Z) — 7 crashes across 4 machines / 7 GPU instances under agentic load
+- [Bug] 🆕 [#63549](https://github.com/vllm-project/vllm/issues/63549) [Bug]: Async scheduling + preemption crashes Model Runner V1 with KeyError all_token_ids[req_id] in _update_states
+- [Bug] 🆕 [#63519](https://github.com/vllm-project/vllm/issues/63519) [Bug]: Deferred block-free fence (#45357) does not cover speculator `propose()` KV writes in the V2 model runner
 
 ## KV Cache / Connector / PD Disagg
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#63465](https://github.com/vllm-project/vllm/issues/63465) [Bug]: Mooncake Store split-load failures omit unattempted KV blocks from invalidation
-- [RFC] 🆕 [#63439](https://github.com/vllm-project/vllm/issues/63439) [RFC]: Reduce CPU overhead in Model Runner V2 for long-context P/D serving
-
-## Attention Backend
-
-### vllm-project/vllm
-
-- [Performance] 🆕 [#63399](https://github.com/vllm-project/vllm/issues/63399) [Performance]: Startup sizing of FlashInfer workspace to recover KV-cache capacity
+- [Perf] 🆕 [#63517](https://github.com/vllm-project/vllm/issues/63517) [Perf][Qwen4Exp] Hybrid KV-cache capacity accounting: merged main-KV+indexer groups share one block table — slots/request are coverage-set; page bytes buy blocks via bytes_per_block
 
 ## Quantization
 
+### vllm-project/vllm
+
+- [Bug] 🆕 [#63536](https://github.com/vllm-project/vllm/issues/63536) [Bug]: [Usage]: RTX PRO 5000 (SM120) deadlocks at 3-4W during vLLM 0.32.0 startup with 70B NVFP4 model, even with --enforce-eager
+- [Bug] 🆕 [#63514](https://github.com/vllm-project/vllm/issues/63514) [Bug]: `hadacore_transform` gives wrong results for odd row counts (INT4 per-token-head KV cache): garbage K/V and intermittent illegal memory access
+
+## Serving / OpenAI API / Streaming
+
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#46259](https://github.com/sgl-project/sglang/issues/46259) [Bug] FlashInfer prefill is not split-invariant: radix-cache hit or chunked prefill flips greedy output on a Qwen3.5 hybrid GDN model
+- [Bug] 🆕 [#46390](https://github.com/sgl-project/sglang/issues/46390) [Bug] multimodal_gen: cross-node pure-Ulysses H3 serve (1 GPU/node x 4 nodes) freezes at the first distributed generation - /health never binds with --warmup-mode off, 0% GPU on all ranks, zero errors
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#63455](https://github.com/vllm-project/vllm/issues/63455) [Bug]: [ROCm] AutoAWQ checkpoints never use the RDNA W4A16 kernel; AWQ decodes 2.5x slower than BF16 on gfx1151
+- [Bug] 🆕 [#63573](https://github.com/vllm-project/vllm/issues/63573) [Bug][Anthropic API] /v1/messages/count_tokens requires --tool-call-parser when tools are present
+
+## Performance / Memory / OOM
+
+### vllm-project/vllm
+
+- [RFC] 🆕 [#63501](https://github.com/vllm-project/vllm/issues/63501) [RFC]: Select the MRV2 DBO microbatch count per step within an allocated capacity
 
 ## Build / Install / Platform
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#46326](https://github.com/sgl-project/sglang/issues/46326) [Bug] ValueError: The checkpoint you are trying to load has model type `qwen4_exp` but Transformers does not recognize this architecture.
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#63467](https://github.com/vllm-project/vllm/issues/63467) [Bug]: Wrong token ids from fastokens' split cache before 0.3.4 (Rust frontend, VLLM_USE_FASTOKENS)
+- [Bug] 🆕 [#63505](https://github.com/vllm-project/vllm/issues/63505) [Bug]: Qwen3.8-27B (GDN hybrid) with PP=3 on sm_86: illegal memory access (Xid 31) with prefix caching, gibberish output without it; regression since v0.28.0 (v0.31.0, v0.32.0, both model runners)
 
 ## Uncategorized
 
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#63470](https://github.com/vllm-project/vllm/issues/63470) [Feature]: Run Nemotron 3.5 Super VL without the --trust-remote-code flag
+- [Feature] [#63470](https://github.com/vllm-project/vllm/issues/63470) [Feature]: Run Nemotron 3.5 Super VL without the --trust-remote-code flag
