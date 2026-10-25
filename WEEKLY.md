@@ -1,51 +1,55 @@
-# Weekly Trends — 2026-10-18
+# Weekly Trends — 2026-10-25
 
-Window: 2026-10-12 → 2026-10-18 (7 snapshots)
+Window: 2026-10-20 → 2026-10-25 (5 snapshots)
 
-**Totals:** 7 → 10  (10 appeared, 7 vanished)
+**Totals:** 11 → 11  (11 appeared, 11 vanished)
 
 ## Movement by category
 
 | Category | Start | End | Δ | Appeared | Vanished |
 |---|---:|---:|---:|---:|---:|
-| Build / Install / Platform | 1 | 1 | 0 | 1 | 1 |
-| Distributed / TP / PP / EP | 1 | 0 | -1 | 0 | 1 |
-| KV Cache / Connector / PD Disagg | 2 | 1 | -1 | 1 | 2 |
-| New Model Integration | 0 | 1 | +1 | 1 | 0 |
-| Quantization | 0 | 3 | +3 | 3 | 0 |
-| Sampling / Speculative Decoding | 2 | 3 | +1 | 3 | 2 |
-| Scheduler / Batching | 0 | 1 | +1 | 1 | 0 |
-| Uncategorized | 1 | 0 | -1 | 0 | 1 |
+| Build / Install / Platform | 3 | 2 | -1 | 2 | 3 |
+| KV Cache / Connector / PD Disagg | 1 | 1 | 0 | 1 | 1 |
+| Performance / Memory / OOM | 0 | 1 | +1 | 1 | 0 |
+| Quantization | 2 | 2 | 0 | 2 | 2 |
+| Sampling / Speculative Decoding | 2 | 0 | -2 | 0 | 2 |
+| Scheduler / Batching | 2 | 2 | 0 | 2 | 2 |
+| Serving / OpenAI API / Streaming | 1 | 2 | +1 | 2 | 1 |
+| Uncategorized | 0 | 1 | +1 | 1 | 0 |
 
 ## Appeared this week
 
 ### Build / Install / Platform
 
-- [other] [sgl-project/sglang#44959](https://github.com/sgl-project/sglang/issues/44959) [NPU] Please keep publishing Docker images for Ascend 910B
+- [Bug] [sgl-project/sglang#46326](https://github.com/sgl-project/sglang/issues/46326) [Bug] ValueError: The checkpoint you are trying to load has model type `qwen4_exp` but Transformers does not recognize this architecture.
+- [Bug] [vllm-project/vllm#63505](https://github.com/vllm-project/vllm/issues/63505) [Bug]: Qwen3.8-27B (GDN hybrid) with PP=3 on sm_86: illegal memory access (Xid 31) with prefix caching, gibberish output without it; regression since v0.28.0 (v0.31.0, v0.32.0, both model runners)
 
 ### KV Cache / Connector / PD Disagg
 
-- [Feature] [vllm-project/vllm#62283](https://github.com/vllm-project/vllm/issues/62283) [Feature][KV Offload]: Require canonical_layout when a secondary tier shares KV across TP sizes (direct layout silently corrupts)
+- [Perf] [vllm-project/vllm#63517](https://github.com/vllm-project/vllm/issues/63517) [Perf][Qwen4Exp] Hybrid KV-cache capacity accounting: merged main-KV+indexer groups share one block table — slots/request are coverage-set; page bytes buy blocks via bytes_per_block
 
-### New Model Integration
+### Performance / Memory / OOM
 
-- [Feature] [sgl-project/sglang#44885](https://github.com/sgl-project/sglang/issues/44885) [Feature] kv-shard: Pass Q instead of KV for short prefills with long cached prefixes
+- [RFC] [vllm-project/vllm#63501](https://github.com/vllm-project/vllm/issues/63501) [RFC]: Select the MRV2 DBO microbatch count per step within an allocated capacity
 
 ### Quantization
 
-- [Bug] [sgl-project/sglang#44998](https://github.com/sgl-project/sglang/issues/44998) [Bug] NVFP4 Marlin fallback (SM80-SM90) garbles every output when the block scales are small (vllm-project/vllm#34577 not ported)
-- [Bug] [sgl-project/sglang#44999](https://github.com/sgl-project/sglang/issues/44999) [Bug] Marlin MoE (AWQ W4A16) on SM86 intermittently returns wrong expert outputs, even for a single request; the Triton WNA16 kernel is exact
-- [Bug] [sgl-project/sglang#45000](https://github.com/sgl-project/sglang/issues/45000) [Bug] FP8 block-quantized checkpoint on SM86 (FP8 Marlin) intermittently gives wrong tokens with the overlap scheduler; exact without it
-
-### Sampling / Speculative Decoding
-
-- [Bug] [sgl-project/sglang#44997](https://github.com/sgl-project/sglang/issues/44997) [Bug] NGRAM speculative decoding corrupts radix-cached KV with the overlap scheduler when requests end on a stop token (0.5.22)
-- [Bug] [sgl-project/sglang#45002](https://github.com/sgl-project/sglang/issues/45002) [Bug] Client-controlled RID prefix allows cross-request abort through disconnect cleanup
-- [Bug] [vllm-project/vllm#62304](https://github.com/vllm-project/vllm/issues/62304) [Bug]: Hybrid GDN models (Qwen3.5) with n-gram speculative decoding: greedy outputs go wrong when drafts are partly accepted; the GDN state misses the last accepted token's update
+- [Bug] [vllm-project/vllm#63514](https://github.com/vllm-project/vllm/issues/63514) [Bug]: `hadacore_transform` gives wrong results for odd row counts (INT4 per-token-head KV cache): garbage K/V and intermittent illegal memory access
+- [Bug] [vllm-project/vllm#63536](https://github.com/vllm-project/vllm/issues/63536) [Bug]: [Usage]: RTX PRO 5000 (SM120) deadlocks at 3-4W during vLLM 0.32.0 startup with 70B NVFP4 model, even with --enforce-eager
 
 ### Scheduler / Batching
 
-- [RFC] [vllm-project/vllm#62257](https://github.com/vllm-project/vllm/issues/62257) [RFC]: Add Single-Process In-Memory Engine Mode for Low-Tier Sandbox Environments (Colab T4 / Jupyter)
+- [Bug] [vllm-project/vllm#63519](https://github.com/vllm-project/vllm/issues/63519) [Bug]: Deferred block-free fence (#45357) does not cover speculator `propose()` KV writes in the V2 model runner
+- [Bug] [vllm-project/vllm#63549](https://github.com/vllm-project/vllm/issues/63549) [Bug]: Async scheduling + preemption crashes Model Runner V1 with KeyError all_token_ids[req_id] in _update_states
+
+### Serving / OpenAI API / Streaming
+
+- [Bug] [sgl-project/sglang#46390](https://github.com/sgl-project/sglang/issues/46390) [Bug] multimodal_gen: cross-node pure-Ulysses H3 serve (1 GPU/node x 4 nodes) freezes at the first distributed generation - /health never binds with --warmup-mode off, 0% GPU on all ranks, zero errors
+- [Bug] [vllm-project/vllm#63573](https://github.com/vllm-project/vllm/issues/63573) [Bug][Anthropic API] /v1/messages/count_tokens requires --tool-call-parser when tools are present
+
+### Uncategorized
+
+- [Feature] [vllm-project/vllm#63470](https://github.com/vllm-project/vllm/issues/63470) [Feature]: Run Nemotron 3.5 Super VL without the --trust-remote-code flag
 
 ## Vanished this week
 
@@ -53,22 +57,29 @@ _Likely closed, PR merged, or dropped from top 100 by activity — worth spot-ch
 
 ### Build / Install / Platform
 
-- [Bug] [vllm-project/vllm#61204](https://github.com/vllm-project/vllm/issues/61204) [Bug]: [ROCm] requirements/rocm.txt hard-requires mooncake-transfer-engine-rocm, which has no Python 3.14 wheel
-
-### Distributed / TP / PP / EP
-
-- [Bug] [vllm-project/vllm#61169](https://github.com/vllm-project/vllm/issues/61169) [Bug]: custom all-reduce creates its NVLink multicast reduce-scatter buffer mid-serving (not at startup); the run then crashes (Xid + CUBLAS_STATUS_EXECUTION_FAILED)
+- [other] [sgl-project/sglang#45370](https://github.com/sgl-project/sglang/issues/45370) [Roadmap] Beam Development & Optimization
+- [Bug] [vllm-project/vllm#62606](https://github.com/vllm-project/vllm/issues/62606) [Bug][ROCm]: ROCM_AITER_UNIFIED_ATTN gives wrong output on gfx950 when a layer's KV cache is 2–4 GiB
+- [Bug] [vllm-project/vllm#62639](https://github.com/vllm-project/vllm/issues/62639) [Bug]: Responses API: tool_choice=allowed_tools does not work
 
 ### KV Cache / Connector / PD Disagg
 
-- [Bug] [vllm-project/vllm#61131](https://github.com/vllm-project/vllm/issues/61131) [Bug]: CPU without Triton: slot-mapping fallback has a stale signature after #57169, V1 inference fails on the first forward step
-- [Bug] [vllm-project/vllm#61160](https://github.com/vllm-project/vllm/issues/61160) [Bug]: Cross-request context contamination via shared-prefix KV reuse in PD disaggregation with automatic prefix caching — clean with `--no-enable-prefix-caching`
+- [Bug] [vllm-project/vllm#62697](https://github.com/vllm-project/vllm/issues/62697) [Bug][ROCm] `ROCM_ATTN` returns wrong attention (and can fault the GPU) on RDNA for head size ≥ 96 with KV block size ≠ 16, and for MHA with head size 192/256
+
+### Quantization
+
+- [other] [sgl-project/sglang#45373](https://github.com/sgl-project/sglang/issues/45373) [Tracking] GLM-5.3-Flash performance optimization on Hopper (SM90)
+- [Bug] [vllm-project/vllm#62609](https://github.com/vllm-project/vllm/issues/62609) [Bug]: A100 run Bolt (nv-community/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB) throw :B12X NVFP4 kernels require a Blackwell 12x device
 
 ### Sampling / Speculative Decoding
 
-- [Bug] [vllm-project/vllm#61117](https://github.com/vllm-project/vllm/issues/61117) [Bug]: CPU backend: C++ rejection_random_sample kernel accepts -1 placeholder drafts, so structured-output requests can sample from an unmasked row
-- [Bug] [vllm-project/vllm#61157](https://github.com/vllm-project/vllm/issues/61157) [Bug] GLM hybrid-SSM + MTP: deep-ctx agent session sharply degrades (fabricated tool args, self-amnesia) exactly when a concurrent request arrives — persists after #58454/#58368
+- [RFC] [vllm-project/vllm#62640](https://github.com/vllm-project/vllm/issues/62640) [RFC]: Improve MTP configuration warning
+- [Feature] [vllm-project/vllm#62694](https://github.com/vllm-project/vllm/issues/62694) [Feature]: [Spec Decode] Support model-based drafters (target hidden states) via custom_class
 
-### Uncategorized
+### Scheduler / Batching
 
-- [no-prefix] [sgl-project/sglang#43810](https://github.com/sgl-project/sglang/issues/43810) CI/CD Speed Up Optimizations
+- [Perf] [sgl-project/sglang#45351](https://github.com/sgl-project/sglang/issues/45351) [Perf] HiCache PP-sync drain makes the PP prefill scheduler lock-step across ranks
+- [Bug] [sgl-project/sglang#45357](https://github.com/sgl-project/sglang/issues/45357) [Bug] PD prefill PP8 + HiCache cache mode hangs: PP0–PP3 blocked in the HiCache PP-sync drain
+
+### Serving / OpenAI API / Streaming
+
+- [Bug] [vllm-project/vllm#62598](https://github.com/vllm-project/vllm/issues/62598) [Bug][Rust Frontend] Long conversations fail with HTTP 500 (chat template fuel limit)
