@@ -9,7 +9,7 @@
 
 # Tracking
 
-_4 issues tracked. Refreshed 2026-10-26 14:47 UTC._
+_4 issues tracked. Refreshed 2026-10-27 13:36 UTC._
 
 ## sgl-project/sglang#31424  [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
 
@@ -57,4 +57,5 @@ _4 issues tracked. Refreshed 2026-10-26 14:47 UTC._
 - 2026-08-29 08:35 🔗 cross-referenced by @akalin9507 — PR [https://github.com/vllm-project/vllm/pull/54327](https://github.com/vllm-project/vllm/pull/54327) (open)
 - 2026-09-01 13:22 🔗 cross-referenced by @effi-ofer — issue [https://github.com/vllm-project/vllm/issues/54777](https://github.com/vllm-project/vllm/issues/54777) (open)
 - 2026-09-01 13:52 🔗 cross-referenced by @akalin9507 — issue [https://github.com/vllm-project/vllm/issues/54779](https://github.com/vllm-project/vllm/issues/54779) (open)
+- 2026-10-27 01:53 💬 commented by @github-actions[bot] — This issue has been automatically marked as stale because it has not had any activity within 90 days
 - ⏳ **still open**
