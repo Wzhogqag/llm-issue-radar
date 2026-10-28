@@ -9,7 +9,7 @@
 
 # Tracking
 
-_4 issues tracked. Refreshed 2026-10-27 13:36 UTC._
+_4 issues tracked. Refreshed 2026-10-28 13:24 UTC._
 
 ## sgl-project/sglang#31424  [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
 
@@ -40,6 +40,7 @@ _4 issues tracked. Refreshed 2026-10-27 13:36 UTC._
 - 2026-08-17 03:14 💬 commented by @IgniteGo — Thanks for sharing this — really nice idea. Using the waiting queue as a demand signal for eviction 
 - 2026-08-29 17:24 🔗 cross-referenced by @SunnyZ24 — PR [https://github.com/vllm-project/vllm/pull/54366](https://github.com/vllm-project/vllm/pull/54366) (open)
 - 2026-09-26 11:32 🔗 cross-referenced by @xiejian66 — PR [https://github.com/vllm-project/vllm/pull/58837](https://github.com/vllm-project/vllm/pull/58837) (open)
+- 2026-10-27 21:54 🔗 cross-referenced by @yubofredwang — issue [https://github.com/vllm-project/vllm/issues/64150](https://github.com/vllm-project/vllm/issues/64150) (open)
 - ⏳ **still open**
 
 ## vllm-project/vllm#48504  [RFC]: GDS support for filesystem KV-cache offloading
