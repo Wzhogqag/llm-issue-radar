@@ -1,52 +1,62 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-10-28T13:24+00:00_
+_Last run: 2026-10-29T13:24+00:00_
 
-**8 issues** — sgl-project/sglang: 5, vllm-project/vllm: 3 — 🆕 **8 new** since last run
+**12 issues** — sgl-project/sglang: 4, vllm-project/vllm: 8 — 🆕 **12 new** since last run
 
 ## Contents
 
 - [Scheduler / Batching](#scheduler--batching) — 3
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
+- [Quantization](#quantization) — 3
 - [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [New Model Integration](#new-model-integration) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
+- [Performance / Memory / OOM](#performance--memory--oom) — 1
 - [Build / Install / Platform](#build--install--platform) — 1
 
 ## Scheduler / Batching
 
+### vllm-project/vllm
+
+- [Feature] 🆕 [#64440](https://github.com/vllm-project/vllm/issues/64440) [Feature]: [MRV2][DBO] Scoped eager decode overlap with attention-only LoRA
+- [Feature] 🆕 [#64422](https://github.com/vllm-project/vllm/issues/64422) [Feature]: [MRV2][DBO] Report executed microbatch counts and decision reasons
+- [Feature] 🆕 [#64460](https://github.com/vllm-project/vllm/issues/64460) [Feature]: KV-pool-saturated admission retries inflate decode TPOT ~2.3x: request automatic admission backoff
+
+## Quantization
+
 ### sgl-project/sglang
 
-- [RFC] 🆕 [#47021](https://github.com/sgl-project/sglang/issues/47021) [RFC]: Quota and global-eviction contract for HiCache L3 when the backend is a shared filesystem
-- [RFC] 🆕 [#47019](https://github.com/sgl-project/sglang/issues/47019) [RFC] Decouple Scheduler Control from Forward Submission
-- [other] 🆕 ⚠maintainer-authored [#46952](https://github.com/sgl-project/sglang/issues/46952) [HiCache] write_back eviction blocks the scheduler for hundreds of ms per call under steady load, lowering the prefix-cache hit rate compared with write_through
-
-## KV Cache / Connector / PD Disagg
+- [RFC] 🆕 ⚠maintainer-authored [#47170](https://github.com/sgl-project/sglang/issues/47170) [RFC] Model Independent Parallelism Layer Boundaries and Weight Loading
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#64175](https://github.com/vllm-project/vllm/issues/64175) [RFC]: Serve requests on top of an externally computed KV cache (PrecomputedKVConnector)
+- [RFC] 🆕 [#64508](https://github.com/vllm-project/vllm/issues/64508) [RFC]: Checkpoint-internal paging for hybrid recurrent state
+- [RFC] 🆕 ⚠maintainer-authored [#64418](https://github.com/vllm-project/vllm/issues/64418) [RFC]: Load plan — an engine-neutral API for sharded weight transfer
 
 ## Distributed / TP / PP / EP
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#47069](https://github.com/sgl-project/sglang/issues/47069) [Bug] dumper.step() is advanced per forward, so one EAGLE speculation round spans several dump steps
-
-## New Model Integration
-
-### vllm-project/vllm
-
-- [Feature] 🆕 [#64192](https://github.com/vllm-project/vllm/issues/64192) [Feature]: Add an NVIDIA RTX PRO 6000 Blackwell  deployment recipe for DeepSeek-V4.1-Flash
+- [Feature] 🆕 [#47207](https://github.com/sgl-project/sglang/issues/47207) [Feature] Evaluate a fused DeepSeek-V4.1 mHC boundary for SM90 TP2 low-token decode
 
 ## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#47039](https://github.com/sgl-project/sglang/issues/47039) [Bug] deepseekv4.1-flash-1017: The receiving length for data has decreased.
+- [Bug] 🆕 [#47213](https://github.com/sgl-project/sglang/issues/47213) [Bug] Qwen3.5 prefix-cache reuse changes logprobs with deterministic inference enabled
+- [Feature] 🆕 [#47226](https://github.com/sgl-project/sglang/issues/47226) [Feature] Accept extra_params on /v1/audio/speech like vLLM-Omni (Qwen3-TTS currently ignores it without an error)
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#64427](https://github.com/vllm-project/vllm/issues/64427) [Bug][Spec Decode] Model Runner V2 + DSpark at n=8: target degenerates to one repeated token while acceptance reports 87.5%
+
+## Performance / Memory / OOM
+
+### vllm-project/vllm
+
+- [Performance] 🆕 [#64446](https://github.com/vllm-project/vllm/issues/64446) [Performance]: Evaluate SM90 TP2 mHC boundary fusion under rotating weights
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#64226](https://github.com/vllm-project/vllm/issues/64226) [Bug]: Rust vllm-bench saves ramp-up runs as fixed-rate results
+- [Bug] 🆕 [#64489](https://github.com/vllm-project/vllm/issues/64489) [Bug]: vllm/vllm-openai:unlimited-ocr image cannot serve Unlimited-OCR model
