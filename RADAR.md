@@ -1,62 +1,60 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-10-29T13:24+00:00_
+_Last run: 2026-10-30T13:24+00:00_
 
-**12 issues** — sgl-project/sglang: 4, vllm-project/vllm: 8 — 🆕 **12 new** since last run
+**10 issues** — sgl-project/sglang: 2, vllm-project/vllm: 8 — 🆕 **10 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 3
-- [Quantization](#quantization) — 3
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
-- [Performance / Memory / OOM](#performance--memory--oom) — 1
-- [Build / Install / Platform](#build--install--platform) — 1
+- [Scheduler / Batching](#scheduler--batching) — 1
+- [Attention Backend](#attention-backend) — 2
+- [Quantization](#quantization) — 2
+- [New Model Integration](#new-model-integration) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 1
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
+- [Build / Install / Platform](#build--install--platform) — 2
 
 ## Scheduler / Batching
 
+### sgl-project/sglang
+
+- [no-prefix] 🆕 ⚠no-prefix [#47397](https://github.com/sgl-project/sglang/issues/47397) SGLANG_JIT_DEEPGEMM_FAST_WARMUP on DeepSeek-V4.1: 3-5x faster cold start, no runtime degradation detectable at chunked-prefill 16384
+
+## Attention Backend
+
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#64440](https://github.com/vllm-project/vllm/issues/64440) [Feature]: [MRV2][DBO] Scoped eager decode overlap with attention-only LoRA
-- [Feature] 🆕 [#64422](https://github.com/vllm-project/vllm/issues/64422) [Feature]: [MRV2][DBO] Report executed microbatch counts and decision reasons
-- [Feature] 🆕 [#64460](https://github.com/vllm-project/vllm/issues/64460) [Feature]: KV-pool-saturated admission retries inflate decode TPOT ~2.3x: request automatic admission backoff
+- [Bug] 🆕 [#64680](https://github.com/vllm-project/vllm/issues/64680) [Bug]: ROCM_AITER_FA crashes with draft_model/EAGLE drafters in extend_forward (None prefix in merge_attn_states; cp_mha_gather_cache illegal address)
+- [Bug] 🆕 [#64639](https://github.com/vllm-project/vllm/issues/64639) [Bug]: 0.30.0 kimi-k3 PD分离  使用MLA-Block5草稿模型版本接收率基本为0
 
 ## Quantization
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [RFC] 🆕 ⚠maintainer-authored [#47170](https://github.com/sgl-project/sglang/issues/47170) [RFC] Model Independent Parallelism Layer Boundaries and Weight Loading
+- [RFC] 🆕 [#64725](https://github.com/vllm-project/vllm/issues/64725) [RFC]: Integrating LeapQuant into vLLM — INT8 Quantization of GDN/KDA Linear Attention Recurrent States
+- [other] 🆕 ⚠maintainer-authored [#64632](https://github.com/vllm-project/vllm/issues/64632) [Tracking] Muse Spark Open Improvement
+
+## New Model Integration
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#64508](https://github.com/vllm-project/vllm/issues/64508) [RFC]: Checkpoint-internal paging for hybrid recurrent state
-- [RFC] 🆕 ⚠maintainer-authored [#64418](https://github.com/vllm-project/vllm/issues/64418) [RFC]: Load plan — an engine-neutral API for sharded weight transfer
-
-## Distributed / TP / PP / EP
-
-### sgl-project/sglang
-
-- [Feature] 🆕 [#47207](https://github.com/sgl-project/sglang/issues/47207) [Feature] Evaluate a fused DeepSeek-V4.1 mHC boundary for SM90 TP2 low-token decode
+- [Feature] 🆕 [#64713](https://github.com/vllm-project/vllm/issues/64713) [Feature]: Add an NVIDIA RTX PRO 6000 Blackwell deployment recipe for DeepSeek-V4-Flash-Vision-Exp
 
 ## Sampling / Speculative Decoding
 
+### vllm-project/vllm
+
+- [Bug] 🆕 [#64679](https://github.com/vllm-project/vllm/issues/64679) [Bug]: fuse_rope_kvcache breaks draft_model/EAGLE spec decode when the drafter's attention shape differs from the target's (ROCm)
+
+## Serving / OpenAI API / Streaming
+
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#47213](https://github.com/sgl-project/sglang/issues/47213) [Bug] Qwen3.5 prefix-cache reuse changes logprobs with deterministic inference enabled
-- [Feature] 🆕 [#47226](https://github.com/sgl-project/sglang/issues/47226) [Feature] Accept extra_params on /v1/audio/speech like vLLM-Omni (Qwen3-TTS currently ignores it without an error)
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#64427](https://github.com/vllm-project/vllm/issues/64427) [Bug][Spec Decode] Model Runner V2 + DSpark at n=8: target degenerates to one repeated token while acceptance reports 87.5%
-
-## Performance / Memory / OOM
-
-### vllm-project/vllm
-
-- [Performance] 🆕 [#64446](https://github.com/vllm-project/vllm/issues/64446) [Performance]: Evaluate SM90 TP2 mHC boundary fusion under rotating weights
+- [Bug] 🆕 [#47399](https://github.com/sgl-project/sglang/issues/47399) [Bug] [NPU] 图模式下走Fia v2算子，torch_npu.npu_fused_infer_attention_score_v2函数入参错误
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#64489](https://github.com/vllm-project/vllm/issues/64489) [Bug]: vllm/vllm-openai:unlimited-ocr image cannot serve Unlimited-OCR model
+- [Bug] 🆕 [#64714](https://github.com/vllm-project/vllm/issues/64714) [Bug]:
+- [Bug] 🆕 [#64664](https://github.com/vllm-project/vllm/issues/64664) [Bug][ROCm] vLLM fails to detect AMD GPU in WSL when AMDSMI cannot initialize
