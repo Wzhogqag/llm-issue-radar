@@ -1,88 +1,80 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-02T13:22+00:00_
+_Last run: 2026-11-03T13:22+00:00_
 
-**20 issues** — sgl-project/sglang: 1, vllm-project/vllm: 19 — 🆕 **20 new** since last run
+**18 issues** — sgl-project/sglang: 3, vllm-project/vllm: 15 — 🆕 **18 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 2
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
-- [Attention Backend](#attention-backend) — 1
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 5
+- [Attention Backend](#attention-backend) — 3
 - [Quantization](#quantization) — 1
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
-- [New Model Integration](#new-model-integration) — 2
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
-- [Performance / Memory / OOM](#performance--memory--oom) — 1
-- [Build / Install / Platform](#build--install--platform) — 6
-
-## Scheduler / Batching
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#65115](https://github.com/vllm-project/vllm/issues/65115) [Bug]: DeepSeek render parity — native appends EOS for continue_final_message, vllm-rs does not
-- [Bug] 🆕 [#65114](https://github.com/vllm-project/vllm/issues/65114) [Bug]: vllm-rs chat render and native render select opposite thinking modes when a thinking toggle is combined with a reasoning-effort control
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
+- [Build / Install / Platform](#build--install--platform) — 2
+- [Uncategorized](#uncategorized) — 1
 
 ## KV Cache / Connector / PD Disagg
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#48145](https://github.com/sgl-project/sglang/issues/48145) [Bug] Mooncake HiCache backup fails for Qwen3.8-Flash-Next-FP8
+
 ### vllm-project/vllm
 
-- [Performance] 🆕 [#65161](https://github.com/vllm-project/vllm/issues/65161) [Performance]: With EAGLE and the OffloadingConnector, a prefix-cache hit loads its dropped last block from the CPU tier
+- [Bug] 🆕 [#65378](https://github.com/vllm-project/vllm/issues/65378) [Bug]: Extensible KV cache undersizes the KV cache on integrated (UMA) GPUs, down to 0 blocks: free memory read with raw cudaMemGetInfo
+- [Bug] 🆕 [#65325](https://github.com/vllm-project/vllm/issues/65325) [Bug]: Requests queued during level-2 sleep run before `reload_weights` and return wrong output with HTTP 200
+- [Bug] 🆕 [#65324](https://github.com/vllm-project/vllm/issues/65324) [Bug]: Requests queued during level-2 sleep run before `reload_weights` and return wrong output with HTTP 200
+- [other] 🆕 [#65327](https://github.com/vllm-project/vllm/issues/65327) [Core]: DRY BlockPool.get_new_blocks with caching + metrics on/off variable factored out of the loop
 
 ## Attention Backend
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#48141](https://github.com/sgl-project/sglang/issues/48141) [Bug] MiniMax H3 cookbook silently downscales 1440p video requests to 768p
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65105](https://github.com/vllm-project/vllm/issues/65105) [Bug]: [ROCm] AITER MLA `paged_kv_indices` sized max_num_seqs x max_model_len (4 GiB per builder) pins a cached segment, Kimi-K3 DBO OOMs at startup
+- [Bug] 🆕 [#65387](https://github.com/vllm-project/vllm/issues/65387) [Bug]: TP workers wedge permanently in Triton kernel launch (GDN layer_norm_fwd) with idle GPUs; Qwen3.5 + MTP, v0.29.0
+- [other] 🆕 [#65359](https://github.com/vllm-project/vllm/issues/65359) [Proposal][Perf] Wire flashinfer's PcieIpcAllGatherWorkspace into CudaCommunicator.all_gather for latency-bound TP gathers
 
 ## Quantization
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#65070](https://github.com/vllm-project/vllm/issues/65070) [Bug]:  CPU WNA16 MoE cannot load poolside/Laguna-XS-2.1-INT4
+- [Bug] 🆕 [#48150](https://github.com/sgl-project/sglang/issues/48150) [Bug] fused_marlin_moe is not run-to-run deterministic on sm_90+ (atomic adds, moe_align_block_size token order); --enable-deterministic-inference does not cover it
 
 ## Distributed / TP / PP / EP
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#65121](https://github.com/vllm-project/vllm/issues/65121) [RFC]: DBO with the allgather_reducescatter all2all backend on CUDA
-- [RFC] 🆕 [#65122](https://github.com/vllm-project/vllm/issues/65122) [RFC]: Zero-copy DeepEP low-latency combine, safe under DBO
-
-## New Model Integration
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#65095](https://github.com/vllm-project/vllm/issues/65095) [Bug]: The message API doesn't support min_tokens for now
-- [RFC] 🆕 [#65120](https://github.com/vllm-project/vllm/issues/65120) [RFC]: DBO for the decoder of multimodal MoE models in Model Runner V2
+- [other] 🆕 [#65358](https://github.com/vllm-project/vllm/issues/65358) [Feature request] DeepGEMM MegaMoE: support SM120 (Blackwell workstation) GPUs
 
 ## Sampling / Speculative Decoding
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65139](https://github.com/vllm-project/vllm/issues/65139) [Bug]: b12x attention — CUDA illegal memory access at the first MTP verify step (cold-JIT `PagedForwardKernel`) on v0.33.0; regression from v0.32.0 (SM120, NVFP4 MoE, fp8 KV, chunked prefill, prefix caching, MTP spec decode)
-- [RFC] 🆕 [#65119](https://github.com/vllm-project/vllm/issues/65119) [RFC]: DBO for the MTP/EAGLE drafter forward in Model Runner V2
+- [Bug] 🆕 [#65401](https://github.com/vllm-project/vllm/issues/65401) [Bug]: get_top_k_tokens applies scaling and soft capping in the wrong order
+- [Bug] 🆕 [#65385](https://github.com/vllm-project/vllm/issues/65385) [Bug]: GDN Triton/FLA prefill gives wrong, non-deterministic results on Hopper (H20) with triton 3.6: `chunk_scaled_dot_kkt_fwd` autotune configs with BK < K and num_warps >= 4 are broken
+- [Bug] 🆕 [#65332](https://github.com/vllm-project/vllm/issues/65332) [Bug]: Large `n` (parallel sampling) in /v1/chat/completions causes severe cross-request latency
+- [no-prefix] 🆕 ⚠no-prefix [#65312](https://github.com/vllm-project/vllm/issues/65312) High-concurrency MTP on GLM-5.3 (H20 x8, batch 256): static K loses 10x; per-batch-size K table recovers it
 
 ## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65096](https://github.com/vllm-project/vllm/issues/65096) [Bug]: Unbounded startup wait holds --data-parallel-rpc-port; crashed frontend leaves orphaned processes holding accelerator memory and the shared API listen socket
-- [Bug] 🆕 [#65075](https://github.com/vllm-project/vllm/issues/65075) [Bug]: Bi-encoder scoring token limits fail with MistralTokenizer
-
-## Performance / Memory / OOM
-
-### sgl-project/sglang
-
-- [Bug] 🆕 [#47916](https://github.com/sgl-project/sglang/issues/47916) [Bug] [mamba/hybrid] MambaPool.copy_from gathers all source temporal states into one temporary (n x state_size) - CUDA OOM under parallel admission bursts
+- [Bug] 🆕 [#65328](https://github.com/vllm-project/vllm/issues/65328) [Bug]: shared streaming helper synthesizes delta_token_ids that serving never sends, changing engine behavior
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65106](https://github.com/vllm-project/vllm/issues/65106) [Bug]: [ROCm][Kimi-K3] DBO: MoE workspace locked smaller than the DP-gathered batch, first request fails
-- [Bug] 🆕 [#65074](https://github.com/vllm-project/vllm/issues/65074) [Bug]: MCP tool discovery drops tools after the first tools/list page
-- [Bug] 🆕 [#65073](https://github.com/vllm-project/vllm/issues/65073) [Bug]: Duplicate MCP server names advertise tools from a different execution server
-- [Bug] 🆕 [#65072](https://github.com/vllm-project/vllm/issues/65072) [Bug]: ASRDataset uses channel count as duration when filtering stereo audio bytes
-- [Bug] 🆕 [#65071](https://github.com/vllm-project/vllm/issues/65071) [Bug]: CustomDataset converts numeric-string prompts to integers before tokenization
-- [Feature] 🆕 [#65151](https://github.com/vllm-project/vllm/issues/65151) [Feature][ROCm]: Configurable HIP host wait policy for WSL GPU workers
+- [Bug] 🆕 [#65391](https://github.com/vllm-project/vllm/issues/65391) [Bug]: Resolve Triton kernel block sizes per platform instead of hardcoding them
+- [other] 🆕 [#65390](https://github.com/vllm-project/vllm/issues/65390) [ROCm] A text-only model needs torchvision, and you find out 15 minutes into JIT compilation
+
+## Uncategorized
+
+### vllm-project/vllm
+
+- [Feature] 🆕 [#65348](https://github.com/vllm-project/vllm/issues/65348) [Feature]: Rust frontend: allow fetching multimodal media from private/internal hosts
