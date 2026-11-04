@@ -1,80 +1,74 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-03T13:22+00:00_
+_Last run: 2026-11-04T13:22+00:00_
 
-**18 issues** — sgl-project/sglang: 3, vllm-project/vllm: 15 — 🆕 **18 new** since last run
+**12 issues** — sgl-project/sglang: 4, vllm-project/vllm: 8 — 🆕 **12 new** since last run
 
 ## Contents
 
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 5
-- [Attention Backend](#attention-backend) — 3
-- [Quantization](#quantization) — 1
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
+- [Quantization](#quantization) — 2
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
+- [New Model Integration](#new-model-integration) — 2
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
 - [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
-- [Build / Install / Platform](#build--install--platform) — 2
+- [Performance / Memory / OOM](#performance--memory--oom) — 1
 - [Uncategorized](#uncategorized) — 1
 
 ## KV Cache / Connector / PD Disagg
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#48145](https://github.com/sgl-project/sglang/issues/48145) [Bug] Mooncake HiCache backup fails for Qwen3.8-Flash-Next-FP8
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#65378](https://github.com/vllm-project/vllm/issues/65378) [Bug]: Extensible KV cache undersizes the KV cache on integrated (UMA) GPUs, down to 0 blocks: free memory read with raw cudaMemGetInfo
-- [Bug] 🆕 [#65325](https://github.com/vllm-project/vllm/issues/65325) [Bug]: Requests queued during level-2 sleep run before `reload_weights` and return wrong output with HTTP 200
-- [Bug] 🆕 [#65324](https://github.com/vllm-project/vllm/issues/65324) [Bug]: Requests queued during level-2 sleep run before `reload_weights` and return wrong output with HTTP 200
-- [other] 🆕 [#65327](https://github.com/vllm-project/vllm/issues/65327) [Core]: DRY BlockPool.get_new_blocks with caching + metrics on/off variable factored out of the loop
-
-## Attention Backend
-
-### sgl-project/sglang
-
-- [Bug] 🆕 [#48141](https://github.com/sgl-project/sglang/issues/48141) [Bug] MiniMax H3 cookbook silently downscales 1440p video requests to 768p
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#65387](https://github.com/vllm-project/vllm/issues/65387) [Bug]: TP workers wedge permanently in Triton kernel launch (GDN layer_norm_fwd) with idle GPUs; Qwen3.5 + MTP, v0.29.0
-- [other] 🆕 [#65359](https://github.com/vllm-project/vllm/issues/65359) [Proposal][Perf] Wire flashinfer's PcieIpcAllGatherWorkspace into CudaCommunicator.all_gather for latency-bound TP gathers
+- [RFC] 🆕 [#48344](https://github.com/sgl-project/sglang/issues/48344) [RFC] mem_cache: Cross-branch KV page splicing and cursor fork/rewind for hybrid models (Qwen3.5 / GDN)
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#48150](https://github.com/sgl-project/sglang/issues/48150) [Bug] fused_marlin_moe is not run-to-run deterministic on sm_90+ (atomic adds, moe_align_block_size token order); --enable-deterministic-inference does not cover it
-
-## Distributed / TP / PP / EP
+- [other] 🆕 ⚠maintainer-authored [#48311](https://github.com/sgl-project/sglang/issues/48311) [CI] diffusion: perf checks depend on which runner a job lands on, and in-job retries can't fix a slow host
 
 ### vllm-project/vllm
 
-- [other] 🆕 [#65358](https://github.com/vllm-project/vllm/issues/65358) [Feature request] DeepGEMM MegaMoE: support SM120 (Blackwell workstation) GPUs
+- [RFC] 🆕 [#65650](https://github.com/vllm-project/vllm/issues/65650) [RFC]: Using Backend-Owned KV Cache Runtime Shapes
+
+## Distributed / TP / PP / EP
+
+### sgl-project/sglang
+
+- [Feature] 🆕 [#48346](https://github.com/sgl-project/sglang/issues/48346) [Feature] dp-attention: the per-step H2D transfer of global_num_tokens_gpu is overwritten before anything reads it
+
+### vllm-project/vllm
+
+- [Performance] 🆕 [#65569](https://github.com/vllm-project/vllm/issues/65569) [Performance]: Batch-invariant mode on Hopper/Blackwell routes Linear layers to Triton although cuBLAS is already batch-invariant under the mode's settings
+
+## New Model Integration
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#65632](https://github.com/vllm-project/vllm/issues/65632) [Bug]: vLLM Kimi k3 KVV AMD GPU product quality issue (DeepSWE & BEAM)
+- [Feature] 🆕 [#65653](https://github.com/vllm-project/vllm/issues/65653) [Feature]: Support simultaneous Tool Calling and Structured Output via Grammar Union / Prefix Tree
 
 ## Sampling / Speculative Decoding
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65401](https://github.com/vllm-project/vllm/issues/65401) [Bug]: get_top_k_tokens applies scaling and soft capping in the wrong order
-- [Bug] 🆕 [#65385](https://github.com/vllm-project/vllm/issues/65385) [Bug]: GDN Triton/FLA prefill gives wrong, non-deterministic results on Hopper (H20) with triton 3.6: `chunk_scaled_dot_kkt_fwd` autotune configs with BK < K and num_warps >= 4 are broken
-- [Bug] 🆕 [#65332](https://github.com/vllm-project/vllm/issues/65332) [Bug]: Large `n` (parallel sampling) in /v1/chat/completions causes severe cross-request latency
-- [no-prefix] 🆕 ⚠no-prefix [#65312](https://github.com/vllm-project/vllm/issues/65312) High-concurrency MTP on GLM-5.3 (H20 x8, batch 256): static K loses 10x; per-batch-size K table recovers it
+- [Bug] 🆕 [#65644](https://github.com/vllm-project/vllm/issues/65644) [Bug]: Streaming final usage chunk intermittently omits metrics.speculative_decoding while spec-decode Prometheus counters advance
+- [Bug] 🆕 [#65592](https://github.com/vllm-project/vllm/issues/65592) [Bug]: /inference/v1/generate with "max_tokens": null bypasses default/override/platform output-token caps
 
 ## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65328](https://github.com/vllm-project/vllm/issues/65328) [Bug]: shared streaming helper synthesizes delta_token_ids that serving never sends, changing engine behavior
+- [Bug] 🆕 [#65662](https://github.com/vllm-project/vllm/issues/65662) [Bug]: v0.33.0 GitHub Release incorrectly points to v0.33.0rc3 tag
 
-## Build / Install / Platform
+## Performance / Memory / OOM
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65391](https://github.com/vllm-project/vllm/issues/65391) [Bug]: Resolve Triton kernel block sizes per platform instead of hardcoding them
-- [other] 🆕 [#65390](https://github.com/vllm-project/vllm/issues/65390) [ROCm] A text-only model needs torchvision, and you find out 15 minutes into JIT compilation
+- [Bug] 🆕 [#65564](https://github.com/vllm-project/vllm/issues/65564) [Bug]: Qwen3.5-9B forced named tool choice is ~11x slower on A100 with v0.27.1 than v0.31.0
 
 ## Uncategorized
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Feature] 🆕 [#65348](https://github.com/vllm-project/vllm/issues/65348) [Feature]: Rust frontend: allow fetching multimodal media from private/internal hosts
+- [Feature] 🆕 [#48348](https://github.com/sgl-project/sglang/issues/48348) [Feature]
