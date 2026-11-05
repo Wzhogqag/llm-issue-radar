@@ -1,74 +1,76 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-04T13:22+00:00_
+_Last run: 2026-11-05T13:22+00:00_
 
-**12 issues** — sgl-project/sglang: 4, vllm-project/vllm: 8 — 🆕 **12 new** since last run
+**17 issues** — sgl-project/sglang: 7, vllm-project/vllm: 10 — 🆕 **17 new** since last run
 
 ## Contents
 
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
-- [Quantization](#quantization) — 2
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
-- [New Model Integration](#new-model-integration) — 2
+- [Scheduler / Batching](#scheduler--batching) — 1
+- [Quantization](#quantization) — 6
+- [New Model Integration](#new-model-integration) — 1
 - [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
-- [Performance / Memory / OOM](#performance--memory--oom) — 1
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 5
+- [Build / Install / Platform](#build--install--platform) — 1
 - [Uncategorized](#uncategorized) — 1
 
-## KV Cache / Connector / PD Disagg
+## Scheduler / Batching
 
 ### sgl-project/sglang
 
-- [RFC] 🆕 [#48344](https://github.com/sgl-project/sglang/issues/48344) [RFC] mem_cache: Cross-branch KV page splicing and cursor fork/rewind for hybrid models (Qwen3.5 / GDN)
+- [Perf] 🆕 [#48623](https://github.com/sgl-project/sglang/issues/48623) [Perf] radix cache: each eviction rebuilds a heap over all evictable leaves
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [other] 🆕 ⚠maintainer-authored [#48311](https://github.com/sgl-project/sglang/issues/48311) [CI] diffusion: perf checks depend on which runner a job lands on, and in-job retries can't fix a slow host
+- [Bug] 🆕 [#48618](https://github.com/sgl-project/sglang/issues/48618) [Bug]
+- [RFC] 🆕 [#48582](https://github.com/sgl-project/sglang/issues/48582) [RFC] Integrate MindIE-SD as an Acceleration Library for SGLang Diffusion
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#65650](https://github.com/vllm-project/vllm/issues/65650) [RFC]: Using Backend-Owned KV Cache Runtime Shapes
-
-## Distributed / TP / PP / EP
-
-### sgl-project/sglang
-
-- [Feature] 🆕 [#48346](https://github.com/sgl-project/sglang/issues/48346) [Feature] dp-attention: the per-step H2D transfer of global_num_tokens_gpu is overwritten before anything reads it
-
-### vllm-project/vllm
-
-- [Performance] 🆕 [#65569](https://github.com/vllm-project/vllm/issues/65569) [Performance]: Batch-invariant mode on Hopper/Blackwell routes Linear layers to Triton although cuBLAS is already batch-invariant under the mode's settings
+- [Bug] 🆕 [#65907](https://github.com/vllm-project/vllm/issues/65907) [Bug]: v0.33.0: DeepSeek-V4.1 + DSpark speculative decoding OOMs at startup with `--gpu-memory-utilization=0.97` (worked in v0.32.0) — speculator CUDA-graph-capture allocation (~4 GiB in `sparse_attn_indexer`) not accounted for by memory profiling
+- [Bug] 🆕 [#65906](https://github.com/vllm-project/vllm/issues/65906) [Bug]: Qwen3.5-122B-A10B-FP8 GSM8K accuracy decreases at commit 0fae39a
+- [Bug] 🆕 [#65873](https://github.com/vllm-project/vllm/issues/65873) [Bug]: Nemotron-3.5-Super-VL-120B-A12B-NVFP4 native MTP fails to load: "start (0) + length (5376) exceeds dimension size (2688)"
+- [Bug] 🆕 [#65807](https://github.com/vllm-project/vllm/issues/65807) [Bug]: cyankiwi/Qwen3.8-27B-AWQ-INT4输出混乱
 
 ## New Model Integration
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65632](https://github.com/vllm-project/vllm/issues/65632) [Bug]: vLLM Kimi k3 KVV AMD GPU product quality issue (DeepSWE & BEAM)
-- [Feature] 🆕 [#65653](https://github.com/vllm-project/vllm/issues/65653) [Feature]: Support simultaneous Tool Calling and Structured Output via Grammar Union / Prefix Tree
+- [Feature] 🆕 [#65841](https://github.com/vllm-project/vllm/issues/65841) [Feature]: Support n > 1 sampling and multimodal processor kwargs in vllm.Inference
 
 ## Sampling / Speculative Decoding
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#48601](https://github.com/sgl-project/sglang/issues/48601) [Bug] Decode HiCache returns HTTP 500 when a shorter prefix has no Mamba checkpoint
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65644](https://github.com/vllm-project/vllm/issues/65644) [Bug]: Streaming final usage chunk intermittently omits metrics.speculative_decoding while spec-decode Prometheus counters advance
-- [Bug] 🆕 [#65592](https://github.com/vllm-project/vllm/issues/65592) [Bug]: /inference/v1/generate with "max_tokens": null bypasses default/override/platform output-token caps
+- [RFC] 🆕 [#65813](https://github.com/vllm-project/vllm/issues/65813) [RFC]: Add a Tree Speculative Decoding Framework
 
 ## Serving / OpenAI API / Streaming
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#48561](https://github.com/sgl-project/sglang/issues/48561) [Bug] DeepSeek V4.1: natural EOS with unclosed reasoning produces a successful empty answer
+- [Feature] 🆕 [#48581](https://github.com/sgl-project/sglang/issues/48581) [Feature] Honor chat-template stop strings when ChatCompletionRequest carries input_ids
+- [Feature] 🆕 [#48580](https://github.com/sgl-project/sglang/issues/48580) [Feature] Add per-request skip_detokenize option to sglang.api.v1.GenerateRequest
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65662](https://github.com/vllm-project/vllm/issues/65662) [Bug]: v0.33.0 GitHub Release incorrectly points to v0.33.0rc3 tag
+- [Bug] 🆕 [#65811](https://github.com/vllm-project/vllm/issues/65811) [Bug]: Qwen3.5-122B + LoRA crashes at startup: _inject_lora_into_fused_moe asserts TritonExperts, but FlashInferExperts is auto-selected
+- [RFC] 🆕 [#65797](https://github.com/vllm-project/vllm/issues/65797) [RFC]: Token-id parity with the Python frontend as a tested contract for the Rust frontend
 
-## Performance / Memory / OOM
+## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#65564](https://github.com/vllm-project/vllm/issues/65564) [Bug]: Qwen3.5-9B forced named tool choice is ~11x slower on A100 with v0.27.1 than v0.31.0
+- [Bug] 🆕 [#65793](https://github.com/vllm-project/vllm/issues/65793) [Bug]: DeepSeek-V4.1-Flash: some DP ranks of a multi-node DP/EP decode engine produce degenerate output (rank-sticky, reproduces without P/D transfer)
 
 ## Uncategorized
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Feature] 🆕 [#48348](https://github.com/sgl-project/sglang/issues/48348) [Feature]
+- [Feature] 🆕 ⚠maintainer-authored [#65886](https://github.com/vllm-project/vllm/issues/65886) [Feature]: Add gc-moe as an option for moe-backend
