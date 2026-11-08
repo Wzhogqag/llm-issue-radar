@@ -1,84 +1,54 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-07T13:21+00:00_
+_Last run: 2026-11-08T13:21+00:00_
 
-**19 issues** — sgl-project/sglang: 3, vllm-project/vllm: 16 — 🆕 **19 new** since last run
+**13 issues** — sgl-project/sglang: 4, vllm-project/vllm: 9 — 🆕 **13 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 1
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
-- [Attention Backend](#attention-backend) — 1
 - [Quantization](#quantization) — 3
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 3
 - [New Model Integration](#new-model-integration) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 4
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
 - [Build / Install / Platform](#build--install--platform) — 4
-
-## Scheduler / Batching
-
-### sgl-project/sglang
-
-- [Performance] 🆕 ⚠maintainer-authored [#49055](https://github.com/sgl-project/sglang/issues/49055) [Performance][Non-blocking] Rust server stack #48815 follow-ups
-
-## KV Cache / Connector / PD Disagg
-
-### vllm-project/vllm
-
-- [RFC] 🆕 [#66231](https://github.com/vllm-project/vllm/issues/66231) [RFC]: P/D disaggregation for continuous RL rollouts (S1): order-free, seconds-long weight-update pauses
-
-## Attention Backend
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#66232](https://github.com/vllm-project/vllm/issues/66232) [Bug][Perf]: W4A16 HummingLinearKernel is non-deterministic across processes and faster than the default Machete on H100 (sm_90)
 
 ## Quantization
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#66211](https://github.com/vllm-project/vllm/issues/66211) [Bug]: Compressed-tensors NVFP4/MXFP4 row-parallel layers load with other groups' block scales when the TP split cuts a scale group (Gemma-4-26B-A4B NVFP4 at TP=8: GSM8K 24% -> 1.4%)
-- [Bug] 🆕 [#66193](https://github.com/vllm-project/vllm/issues/66193) [Bug]: Extensible KV cache reserves the one-off FlashInfer autotune peak as a serving transient, cutting KV 2.4x under an explicit --gpu-memory-utilization (regression from #56492)
-- [no-prefix] 🆕 ⚠no-prefix [#66218](https://github.com/vllm-project/vllm/issues/66218) GLM-5.3-Flash FP4-Local in production on 2x RTX PRO 6000 (SM120): what's missing for a full community-main base?
+- [Bug] 🆕 [#49133](https://github.com/sgl-project/sglang/issues/49133) [Bug] Breakable prefill CUDA graph: short prefills padded to a capture bucket give different logprobs than eager (Qwen3.8-27B-NVFP4, hybrid GDN, v0.5.23)
+- [Bug] 🆕 [#49132](https://github.com/sgl-project/sglang/issues/49132) [Bug] Qwen3-VL vision encoder: full-size transient tensors (pos-embed blend `[4, patches, 1152]`, MLP `[patches, 4304]`) OOM memory-tight GPUs on large images; both can be computed in row chunks
+- [Feature] 🆕 [#49123](https://github.com/sgl-project/sglang/issues/49123) [Feature] moe: FlashInfer cuTile NVFP4 MoE as the default runner on SM12x
 
 ## Distributed / TP / PP / EP
 
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#66170](https://github.com/vllm-project/vllm/issues/66170) [Feature]: Enable and validate pipeline parallelism for Domyn Edge
+- [Bug] 🆕 [#66387](https://github.com/vllm-project/vllm/issues/66387) [Bug]: DFlash acceptance collapses at tensor parallel > 1 (MiMo-V2.6-Flash-MOPD, TP1 fine)
+- [Feature] 🆕 [#66301](https://github.com/vllm-project/vllm/issues/66301) [Feature]: Deploying vLLM with Ray on SLURM-based university HPC clusters
+- [RFC] 🆕 [#66290](https://github.com/vllm-project/vllm/issues/66290) [RFC]: Pipeline-parallel equivalence tests for every model that declares `SupportsPP`
 
 ## New Model Integration
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#49065](https://github.com/sgl-project/sglang/issues/49065) [Bug] ComfyUI SGLD loader: Fun ControlNet on Qwen-Image 2.1 fails with AttributeError
-
-## Sampling / Speculative Decoding
-
-### sgl-project/sglang
-
-- [Bug] 🆕 [#48964](https://github.com/sgl-project/sglang/issues/48964) [Bug] GLM-5.3-Flash: engine state corrupted after a 1M-token request on v0.5.23 (MTP accept rate 0.00, all subsequent requests degenerate); v0.5.22 clean
-
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#66250](https://github.com/vllm-project/vllm/issues/66250) [Bug]: phi-2 crashes with CUDA illegal memory access during compile/warmup at size 32
-- [Bug] 🆕 [#66244](https://github.com/vllm-project/vllm/issues/66244) [Bug]: Qwen2.5-0.5B crashes with CUDA illegal memory access during initialization warmup
+- [Bug] 🆕 [#66300](https://github.com/vllm-project/vllm/issues/66300) [Bug]: llama3.2_pythonic and toolace chat templates render string arguments unquoted, so the pythonic parser drops the call
 
 ## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#66182](https://github.com/vllm-project/vllm/issues/66182) [Bug]: Step3ReasoningParser.extract_content_ids excludes think_end_token at last index
-- [Bug] 🆕 [#66180](https://github.com/vllm-project/vllm/issues/66180) [Bug]: xLAM non-streaming tool parser drops single tool call object in <tool_call> tags
-- [Bug] 🆕 [#66178](https://github.com/vllm-project/vllm/issues/66178) [Bug]: Granite20bFCToolParser streaming misses tool calls when preceded by content
-- [Bug] 🆕 [#66173](https://github.com/vllm-project/vllm/issues/66173) [Bug]: Pythonic tool parsers silently drop calls with Python reserved keywords as parameter names
+- [Bug] 🆕 [#66392](https://github.com/vllm-project/vllm/issues/66392) [Bug]: /v1/systemone caps Clef-Flash choice questions at 26 options, though the joint-schema read uses no labels
+- [Bug] 🆕 [#66298](https://github.com/vllm-project/vllm/issues/66298) [Bug]: gemma3_pythonic chat template renders tool call arguments with no separator, so the pythonic parser rejects the whole call
 
 ## Build / Install / Platform
 
+### sgl-project/sglang
+
+- [Bug] 🆕 [#49108](https://github.com/sgl-project/sglang/issues/49108) [Bug] Rust extension loader: cargo --version probe can deadlock in launcher spawn context (defensive timeout suggestion)
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#66242](https://github.com/vllm-project/vllm/issues/66242) [Bug]:  Phi-2 crashes with CUDA illegal memory access during compile/warmup at size 32
-- [Bug] 🆕 [#66239](https://github.com/vllm-project/vllm/issues/66239) [Bug][KV Offload] FS tier reports EIO instead of ENOSPC when the disk fills
-- [Bug] 🆕 [#66195](https://github.com/vllm-project/vllm/issues/66195) [Bug]: Block-FP8 Triton fused_moe_kernel fails to compile with Triton 3.9 since #64760 (`too many indices for tensor of rank 0` at `b_scale[None, :]`)
-- [Bug] 🆕 [#66192](https://github.com/vllm-project/vllm/issues/66192) [Bug]: SM100 default prefill CUDA-graph grid (up to 8192 tokens, #63406) adds ~5 GiB/GPU graph memory and breaks max_model_len=256000 startup for Qwen3.8-2.4T-A95B-FP8 TP16 on GB200
+- [Bug] 🆕 [#66288](https://github.com/vllm-project/vllm/issues/66288) [Bug]: Qwen3.5 RMSNorm JIT-compiles FlashInfer kernels on sm75 (T4)
+- [Bug] 🆕 [#66293](https://github.com/vllm-project/vllm/issues/66293) [Bug]: vllm/vllm-openai:muse-spark-open needs to be rebuilt with the issue fixed in #62374
+- [no-prefix] 🆕 ⚠no-prefix [#66345](https://github.com/vllm-project/vllm/issues/66345) `llguidance` is an unconditional dependency and is loaded by `from vllm import LLM`; it blocks install and import on glibc < 2.31
