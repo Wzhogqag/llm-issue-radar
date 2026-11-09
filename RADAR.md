@@ -1,54 +1,54 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-08T13:21+00:00_
+_Last run: 2026-11-09T13:22+00:00_
 
-**13 issues** — sgl-project/sglang: 4, vllm-project/vllm: 9 — 🆕 **13 new** since last run
+**10 issues** — sgl-project/sglang: 4, vllm-project/vllm: 6 — 🆕 **10 new** since last run
 
 ## Contents
 
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
 - [Quantization](#quantization) — 3
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 3
-- [New Model Integration](#new-model-integration) — 1
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
-- [Build / Install / Platform](#build--install--platform) — 4
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
+- [Performance / Memory / OOM](#performance--memory--oom) — 2
+- [Build / Install / Platform](#build--install--platform) — 1
+
+## KV Cache / Connector / PD Disagg
+
+### vllm-project/vllm
+
+- [RFC] 🆕 [#66556](https://github.com/vllm-project/vllm/issues/66556) [RFC]: Define an Optional In-Tree Integration Path for Hardware Backends
+- [RFC] 🆕 ⚠maintainer-authored [#66570](https://github.com/vllm-project/vllm/issues/66570) [RFC]: Async CPU tier setup for OffloadingConnector
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#49133](https://github.com/sgl-project/sglang/issues/49133) [Bug] Breakable prefill CUDA graph: short prefills padded to a capture bucket give different logprobs than eager (Qwen3.8-27B-NVFP4, hybrid GDN, v0.5.23)
-- [Bug] 🆕 [#49132](https://github.com/sgl-project/sglang/issues/49132) [Bug] Qwen3-VL vision encoder: full-size transient tensors (pos-embed blend `[4, patches, 1152]`, MLP `[patches, 4304]`) OOM memory-tight GPUs on large images; both can be computed in row chunks
-- [Feature] 🆕 [#49123](https://github.com/sgl-project/sglang/issues/49123) [Feature] moe: FlashInfer cuTile NVFP4 MoE as the default runner on SM12x
-
-## Distributed / TP / PP / EP
+- [Feature] 🆕 [#49296](https://github.com/sgl-project/sglang/issues/49296) [Feature] flashinfer: Split the extend into ragged and paged passes under full prefill CUDA graphs with an FP8 KV cache
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#66387](https://github.com/vllm-project/vllm/issues/66387) [Bug]: DFlash acceptance collapses at tensor parallel > 1 (MiMo-V2.6-Flash-MOPD, TP1 fine)
-- [Feature] 🆕 [#66301](https://github.com/vllm-project/vllm/issues/66301) [Feature]: Deploying vLLM with Ray on SLURM-based university HPC clusters
-- [RFC] 🆕 [#66290](https://github.com/vllm-project/vllm/issues/66290) [RFC]: Pipeline-parallel equivalence tests for every model that declares `SupportsPP`
+- [Bug] 🆕 [#66573](https://github.com/vllm-project/vllm/issues/66573) [Bug]: Qwen3.5 `qwen3_5.py` embedding drops `quant_config` — GGUF embeddings fall back to dense
+- [RFC] 🆕 [#66491](https://github.com/vllm-project/vllm/issues/66491) [RFC]: Packed-weight INT4 GEMM (W4A16 / W4A8) for RDNA4 (gfx1200/gfx1201)
 
-## New Model Integration
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#66300](https://github.com/vllm-project/vllm/issues/66300) [Bug]: llama3.2_pythonic and toolace chat templates render string arguments unquoted, so the pythonic parser drops the call
-
-## Serving / OpenAI API / Streaming
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#66392](https://github.com/vllm-project/vllm/issues/66392) [Bug]: /v1/systemone caps Clef-Flash choice questions at 26 options, though the joint-schema read uses no labels
-- [Bug] 🆕 [#66298](https://github.com/vllm-project/vllm/issues/66298) [Bug]: gemma3_pythonic chat template renders tool call arguments with no separator, so the pythonic parser rejects the whole call
-
-## Build / Install / Platform
+## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#49108](https://github.com/sgl-project/sglang/issues/49108) [Bug] Rust extension loader: cargo --version probe can deadlock in launcher spawn context (defensive timeout suggestion)
+- [Bug] 🆕 [#49295](https://github.com/sgl-project/sglang/issues/49295) [Bug] Breakable prefill CUDA graphs return wrong, non-repeatable prompt logprobs for short prompts on Qwen3.8-2.4T-A95B-NVFP4 (B300)
+- [no-prefix] 🆕 ⚠no-prefix [#49274](https://github.com/sgl-project/sglang/issues/49274) Silent deterministic output corruption: first token id 0 ("!") then [PAD] (id 163839) loop, spec accept-length pinned at 1.00, zero errors — Kimi-K3.1-Pro (hybrid mamba + DFlash2 draft) on AMD MI300X/AITER, fp8 KV, v0.5.23.dev20261104 (e67b2062e2)
+
+## Performance / Memory / OOM
+
+### sgl-project/sglang
+
+- [Feature] 🆕 [#49257](https://github.com/sgl-project/sglang/issues/49257) [Feature][RFC] STANDALONE PD: homogeneous TP=2 handoff and rank-consistent seed rejection
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#66288](https://github.com/vllm-project/vllm/issues/66288) [Bug]: Qwen3.5 RMSNorm JIT-compiles FlashInfer kernels on sm75 (T4)
-- [Bug] 🆕 [#66293](https://github.com/vllm-project/vllm/issues/66293) [Bug]: vllm/vllm-openai:muse-spark-open needs to be rebuilt with the issue fixed in #62374
-- [no-prefix] 🆕 ⚠no-prefix [#66345](https://github.com/vllm-project/vllm/issues/66345) `llguidance` is an unconditional dependency and is loaded by `from vllm import LLM`; it blocks install and import on glibc < 2.31
+- [no-prefix] 🆕 ⚠no-prefix [#66515](https://github.com/vllm-project/vllm/issues/66515) enable_gqa=True can be 2.59x slower than materializing the KV cache - silent MATH-backend fallback at decode
+
+## Build / Install / Platform
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#66525](https://github.com/vllm-project/vllm/issues/66525) [Bug]: Gemma4 suppression-token cache causes UnexpectedTracerError on TPU
