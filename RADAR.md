@@ -1,58 +1,79 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-11T13:22+00:00_
+_Last run: 2026-11-12T13:23+00:00_
 
-**11 issues** — sgl-project/sglang: 1, vllm-project/vllm: 10 — 🆕 **11 new** since last run
+**14 issues** — sgl-project/sglang: 6, vllm-project/vllm: 8 — 🆕 **14 new** since last run
 
 ## Contents
 
 - [Scheduler / Batching](#scheduler--batching) — 1
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
-- [Attention Backend](#attention-backend) — 2
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
-- [Performance / Memory / OOM](#performance--memory--oom) — 2
-- [Uncategorized](#uncategorized) — 1
+- [Attention Backend](#attention-backend) — 1
+- [Quantization](#quantization) — 2
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 3
+- [Performance / Memory / OOM](#performance--memory--oom) — 1
+- [Build / Install / Platform](#build--install--platform) — 1
+- [Uncategorized](#uncategorized) — 2
 
 ## Scheduler / Batching
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Feature] 🆕 [#66990](https://github.com/vllm-project/vllm/issues/66990) [Feature]: EC events: publish encoder cache presence and eviction from the EC connector
-
-## KV Cache / Connector / PD Disagg
-
-### vllm-project/vllm
-
-- [Feature] 🆕 [#66947](https://github.com/vllm-project/vllm/issues/66947) [Feature]: [KV Connector] Configure Mooncake Mamba snapshot write intervals
-- [RFC] 🆕 [#66949](https://github.com/vllm-project/vllm/issues/66949) [RFC]: DWDP: Distributed Weight Data Parallelism for MoE Prefill
-- [RFC] 🆕 [#66942](https://github.com/vllm-project/vllm/issues/66942) [RFC]: KV Trace monitoring
+- [Bug] 🆕 [#50073](https://github.com/sgl-project/sglang/issues/50073) [Bug] collective_rpc unreliable
 
 ## Attention Backend
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#67028](https://github.com/vllm-project/vllm/issues/67028) [Bug][KV Offload]: canonical_layout refuses to start with FlashInfer on pre-Blackwell GPUs: kernel-split blocks fail the canonical shape check
-- [Feature] 🆕 [#66960](https://github.com/vllm-project/vllm/issues/66960) [Feature]: Sparse-MLA (DSA) attention on SM80/Ampere (A100): no selectable backend since the Triton fallback removal — SM80 DSA models hard-fail at engine init
+- [RFC] 🆕 [#67176](https://github.com/vllm-project/vllm/issues/67176) [RFC]: UltraQuant: the scale constant c = 0.156 is MSE-optimal before the UE8M0 snap, not after; c ≈ 0.2 cuts KV-quantization KL by 40–56% at no cost
+
+## Quantization
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#50030](https://github.com/sgl-project/sglang/issues/50030) [Bug] --enable-hisparse fails at start-up for GLM-5.3-Flash: 'HybridLinearKVPool' object has no attribute 'register_mapping'
+
+### vllm-project/vllm
+
+- [other] 🆕 [#67169](https://github.com/vllm-project/vllm/issues/67169) [ROCm][AMD] MiniMax-M3.1-Flash gfx950 / MI355X Performance Optimization (vLLM)
+
+## Distributed / TP / PP / EP
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#50103](https://github.com/sgl-project/sglang/issues/50103) [Bug] Qwen3-VL on Hopper: the default prefill_decode_interval=22 lowers request throughput on long-prompt and text traffic (interval 0 is 9.5–36% faster)
+
+## Sampling / Speculative Decoding
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#50037](https://github.com/sgl-project/sglang/issues/50037) [Bug] Qwen3.5 long-context prefill can produce NaNs in the Blackwell CuTe DSL GDN inverse kernel
+- [Feature] 🆕 [#50087](https://github.com/sgl-project/sglang/issues/50087) [Feature] Non-intrusive dumps cannot distinguish draft vs target model under DSPARK (both are TARGET_VERIFY)
 
 ## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#66939](https://github.com/vllm-project/vllm/issues/66939) [Bug]: kimi_k2 truncated tool-call markers corrupt arguments and function names, and leak into content
-- [RFC] 🆕 [#66974](https://github.com/vllm-project/vllm/issues/66974) [RFC]: Shared stream conformance cases for `vllm bench serve` and `vllm-bench`
+- [Bug] 🆕 [#67137](https://github.com/vllm-project/vllm/issues/67137) [Bug]: `vllm launch render` accepts `--lora-modules` but returns 404 for the adapter name on `/render` and `/derender`
+- [Feature] 🆕 [#67231](https://github.com/vllm-project/vllm/issues/67231) [Feature]:  Support Hugging Face Tokenizers v1
+- [RFC] 🆕 [#67197](https://github.com/vllm-project/vllm/issues/67197) [RFC]: Resource bound for the `/tokenize` endpoint
 
 ## Performance / Memory / OOM
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#49796](https://github.com/sgl-project/sglang/issues/49796) [Bug] Qwen-VL image preprocessing OOMs on GPU: 2.87x peak from torch.cat(processed_images) plus a cache that never returns memory
-
 ### vllm-project/vllm
 
-- [no-prefix] 🆕 ⚠no-prefix [#67012](https://github.com/vllm-project/vllm/issues/67012) Weight loading: warn (optionally fail) when a single-file checkpoint coexists with an index/shard set in a local directory
+- [Bug] 🆕 [#67183](https://github.com/vllm-project/vllm/issues/67183) [Bug]: Regression from #47692 - `--data-parallel-start-rank 0` with `data_parallel_size == 1` crashes at startup ("data_parallel_external_lb can only be set when data_parallel_size > 1")
+
+## Build / Install / Platform
+
+### sgl-project/sglang
+
+- [no-prefix] 🆕 ⚠no-prefix ⚠maintainer-authored [#50045](https://github.com/sgl-project/sglang/issues/50045) SGLang 1.0 Release Tracker
 
 ## Uncategorized
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#67017](https://github.com/vllm-project/vllm/issues/67017) [Bug]: The hard judgment of IMAGE_PLACEHOLDER is not elegant enough in Deepseekv4.1-flash on version of 0.33.0
+- [Feature] 🆕 [#67204](https://github.com/vllm-project/vllm/issues/67204) [Feature]: Add a workload-aware E+PD sizing example
+- [Feature] 🆕 [#67170](https://github.com/vllm-project/vllm/issues/67170) [Feature]:

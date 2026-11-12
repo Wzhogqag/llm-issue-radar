@@ -9,7 +9,7 @@
 
 # Tracking
 
-_4 issues tracked. Refreshed 2026-11-11 13:22 UTC._
+_4 issues tracked. Refreshed 2026-11-12 13:23 UTC._
 
 ## sgl-project/sglang#31424  [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
 
@@ -22,14 +22,15 @@ _4 issues tracked. Refreshed 2026-11-11 13:22 UTC._
 
 ## vllm-project/vllm#48489  [Bug]: Deferred block-free path loses per-group eviction ordering for hybrid KV cache configs
 
-⏳ Status: **open** — <https://github.com/vllm-project/vllm/issues/48489>
+✅ Status: **closed** (`not_planned`) — <https://github.com/vllm-project/vllm/issues/48489>
 
 - 2026-07-13 11:55 🆕 opened by @muhammadfawaz1 — as `CONTRIBUTOR`
 - 2026-07-13 11:55 🏷 labeled by @muhammadfawaz1 — `bug`
 - 2026-07-13 21:00 💬 commented by @woosebastian — working on this
 - 2026-07-13 21:20 🔗 cross-referenced by @woosebastian — PR [https://github.com/vllm-project/vllm/pull/48532](https://github.com/vllm-project/vllm/pull/48532) (open)
 - 2026-10-12 02:03 💬 commented by @github-actions[bot] — This issue has been automatically marked as stale because it has not had any activity within 90 days
-- ⏳ **still open**
+- 2026-11-12 01:36 💬 commented by @github-actions[bot] — This issue has been automatically closed due to inactivity. Please feel free to reopen if you feel i
+- 2026-11-12 01:36 ✅ closed by @github-actions[bot] — as `not_planned`
 
 ## vllm-project/vllm#48485  [RFC]: Waiting-Queue-Informed LRU for Prefix Cache Eviction
 
