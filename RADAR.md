@@ -1,80 +1,74 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-14T13:22+00:00_
+_Last run: 2026-11-15T13:22+00:00_
 
-**21 issues** — sgl-project/sglang: 18, vllm-project/vllm: 3 — 🆕 **21 new** since last run
+**12 issues** — sgl-project/sglang: 6, vllm-project/vllm: 6 — 🆕 **10 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 3
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
-- [Attention Backend](#attention-backend) — 2
-- [Quantization](#quantization) — 3
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 5
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 4
-- [Build / Install / Platform](#build--install--platform) — 2
+- [Scheduler / Batching](#scheduler--batching) — 1
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
+- [Attention Backend](#attention-backend) — 1
+- [Quantization](#quantization) — 2
+- [New Model Integration](#new-model-integration) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
+- [Performance / Memory / OOM](#performance--memory--oom) — 2
+- [Build / Install / Platform](#build--install--platform) — 1
 
 ## Scheduler / Batching
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Bug] 🆕 [#50416](https://github.com/sgl-project/sglang/issues/50416) [Bug] Muse Spark: the hook's `SGLANG_OPT_UNIFIED_CACHE_FREE_OUT_OF_WINDOW_SLOTS=False` default collapses the prefix cache when SWA memory is tight
-- [Feature] 🆕 [#50479](https://github.com/sgl-project/sglang/issues/50479) [Feature][MeetUp][NPU][Docs][Qwen3.8-27B] Add long-context memory tuning guidance for Qwen3.8-27B on Ascend 910B
-- [other] 🆕 [#50478](https://github.com/sgl-project/sglang/issues/50478) [MeetUp][Docs][NPU] Qwen3.8-27B BF16 and W8A8 Test Results on Ascend 910B
+- [Performance] 🆕 [#67674](https://github.com/vllm-project/vllm/issues/67674) [Performance]: `--prefix-match-unit` recovers hybrid-model prefix hits on multi-turn and agent traces, but on the Triton/FLA GDN backend it costs about 30 ms of TTFT on almost every request
 
 ## KV Cache / Connector / PD Disagg
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Feature] 🆕 [#50405](https://github.com/sgl-project/sglang/issues/50405) [Feature] Receive requests during model forward to overlap DFS KV prefetch
-- [other] 🆕 [#50461](https://github.com/sgl-project/sglang/issues/50461) [MeetUp][Docs][NPU] Qwen3.8-27B MeetUp Test Results for BF16&W8A8 on Ascend 910B
+- [Bug] 🆕 [#67692](https://github.com/vllm-project/vllm/issues/67692) [Bug]: Unauthenticated P2P Offload Exposes Full CPU KV Cache to Arbitrary Peers
 
 ## Attention Backend
 
 ### sgl-project/sglang
 
-- [no-prefix] 🆕 ⚠no-prefix [#50499](https://github.com/sgl-project/sglang/issues/50499) dspark_accept SoftmaxTemp.execute (flashinfer branch) returns NaN rows on GB10 in 6/17 cold starts — cross-ref flashinfer#9486
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#67630](https://github.com/vllm-project/vllm/issues/67630) [Bug][Perf]: flashinfer_autotune / _dummy_run never calls compute_logits, leaving FP8 LM-head GEMM un-autotuned
+- [no-prefix] ⚠no-prefix [#50499](https://github.com/sgl-project/sglang/issues/50499) dspark_accept SoftmaxTemp.execute (flashinfer branch) returns NaN rows on GB10 in 6/17 cold starts — cross-ref flashinfer#9486
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#50429](https://github.com/sgl-project/sglang/issues/50429) [Bug] Weight updates crash the scheduler for dense Marlin layers (GPTQ, AWQ, compressed-tensors W4A16, FP8 on sm86)
-- [Feature] 🆕 [#50421](https://github.com/sgl-project/sglang/issues/50421) [Feature]  [MeetUp][NPU] Qwen3.8-27B（virtual machine）Meetup Task
-- [other] 🆕 [#50488](https://github.com/sgl-project/sglang/issues/50488) [NPU][Qwen3.8-27B] Docs: Add A2 (910B3) deployment guidance, 128K prefix-cache best practice, and fix testing instructions
+- [Bug] 🆕 [#50521](https://github.com/sgl-project/sglang/issues/50521) [Bug][Humming] FP16 Stream-K GEMM produces NaNs for an exact-zero result
+
+### vllm-project/vllm
+
+- [RFC] 🆕 [#67769](https://github.com/vllm-project/vllm/issues/67769) [RFC]: MLP-only pruning of unconsumed rows in the final dense Llama layer
+
+## New Model Integration
+
+### vllm-project/vllm
+
+- [no-prefix] 🆕 ⚠no-prefix [#67683](https://github.com/vllm-project/vllm/issues/67683) Feature request: a documented, supported pattern for fast weight synchronization between an RL trainer and vLLM rollout workers
 
 ## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [Feature] 🆕 [#50497](https://github.com/sgl-project/sglang/issues/50497) [Feature] EAGLE tree verify without per-node state snapshots for GDN layers
-- [Feature] 🆕 [#50411](https://github.com/sgl-project/sglang/issues/50411) [Feature] [MeetUp][NPU] DeepSeek-V4-Flash: document reproducible shared-prefix TPOT evaluation
-- [other] 🆕 [#50450](https://github.com/sgl-project/sglang/issues/50450) [MeetUp][NPU][Docs] Qwen3.8-27B on Ascend A2: consolidated deployment and evaluation findings
-- [other] 🆕 [#50423](https://github.com/sgl-project/sglang/issues/50423) [MeetUp][NPU][DeepSeek-V4-Flash-0731]  Add DeepSeek-V4-Flash 950PR/DT performance recipe
+- [RFC] 🆕 [#50547](https://github.com/sgl-project/sglang/issues/50547) [RFC] pd: Let decode compute the prompt tail and sample the first token, for any model
+- [Feature] [#50497](https://github.com/sgl-project/sglang/issues/50497) [Feature] EAGLE tree verify without per-node state snapshots for GDN layers
 
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#67552](https://github.com/vllm-project/vllm/issues/67552) [Feature]: Carry repetition_detection and extra_args on vllm.Inference GenerateRequest
+- [Bug] 🆕 [#67755](https://github.com/vllm-project/vllm/issues/67755) [Bug]: Tekken Mistral tokenizers garble emoji and other multi-byte characters when special tokens are kept
 
-## Serving / OpenAI API / Streaming
+## Performance / Memory / OOM
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#50516](https://github.com/sgl-project/sglang/issues/50516) [Bug] Forward the upstream Retry-After header in OpenAI gateway responses
-- [Bug] 🆕 [#50424](https://github.com/sgl-project/sglang/issues/50424) [Bug] Native serving benchmark counts a context-length stream error as a successful request
-- [Bug] 🆕 [#50422](https://github.com/sgl-project/sglang/issues/50422) [Bug] Spark2.5 rounds large integer tool arguments
-- [Feature] 🆕 [#50408](https://github.com/sgl-project/sglang/issues/50408) [Feature] glm-5.3: Encode message content as ordinary text in the built-in GLM-5.3 chat template
+- [Bug] 🆕 [#50577](https://github.com/sgl-project/sglang/issues/50577) [Bug] DFlash auxiliary CUDA graphs retain per-batch-size buffers, causing excessive GPU memory growth
+- [Bug] 🆕 [#50566](https://github.com/sgl-project/sglang/issues/50566) [Bug][Humming backend] Tree K-partial reduction reports divergent barriers under synccheck
 
 ## Build / Install / Platform
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#50443](https://github.com/sgl-project/sglang/issues/50443) [Bug] [NPU][MeetUp][Qwen3.8-27B] Output silently truncated to 1 token when KV pool is smaller than input length (hybrid model, 128K on A2 32GB)
-
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#67551](https://github.com/vllm-project/vllm/issues/67551) [Feature]: Enable libtorch-ABI-stable vLLM ROCm wheels
+- [RFC] 🆕 [#67696](https://github.com/vllm-project/vllm/issues/67696) [RFC]: CPU Backend support for VLLM_BATCH_INVARIANT=1
