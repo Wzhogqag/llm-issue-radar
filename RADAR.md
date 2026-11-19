@@ -1,81 +1,65 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-18T13:22+00:00_
+_Last run: 2026-11-19T13:22+00:00_
 
-**19 issues** — sgl-project/sglang: 5, vllm-project/vllm: 14 — 🆕 **19 new** since last run
+**12 issues** — sgl-project/sglang: 2, vllm-project/vllm: 10 — 🆕 **12 new** since last run
 
 ## Contents
 
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
-- [Attention Backend](#attention-backend) — 6
-- [Quantization](#quantization) — 3
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 2
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
+- [Scheduler / Batching](#scheduler--batching) — 2
+- [Attention Backend](#attention-backend) — 2
+- [Quantization](#quantization) — 1
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 1
 - [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
-- [Build / Install / Platform](#build--install--platform) — 2
+- [Build / Install / Platform](#build--install--platform) — 4
 
-## KV Cache / Connector / PD Disagg
+## Scheduler / Batching
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#68343](https://github.com/vllm-project/vllm/issues/68343) [Bug][Rust Frontend] NIXL metrics silently dropped due to Python/Rust NixlStats schema mismatch (9 vs 7 fields)
-- [Bug] 🆕 [#68316](https://github.com/vllm-project/vllm/issues/68316) [Bug]: Raw OOM with misleading hint when model weights nearly fill the GPU (lost "not enough GPU memory" message)
+- [Bug] 🆕 [#68610](https://github.com/vllm-project/vllm/issues/68610) [Bug]: With TP>1, `vllm:num_requests_waiting` briefly includes requests the scheduler hasn't seen yet (since #65466)
+- [RFC] 🆕 [#68678](https://github.com/vllm-project/vllm/issues/68678) [RFC]: [KV Offload] Batched, serializable connector-manager interface
 
 ## Attention Backend
 
-### sgl-project/sglang
-
-- [Perf] 🆕 [#51208](https://github.com/sgl-project/sglang/issues/51208) [Perf][NVIDIA] GDN decode on SM120 stays on Triton by default and reaches only ~23% of the bandwidth roofline; flashinfer already ships cc=120 fused decode kernels
-
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#68416](https://github.com/vllm-project/vllm/issues/68416) [Bug]: recurrent delta-rule kernels read the wrong state slots for strided index tables
-- [Bug] 🆕 [#68415](https://github.com/vllm-project/vllm/issues/68415) [Bug]: fused_recurrent_kda allocates the wrong output shape when key and value sizes differ
-- [Bug] 🆕 [#68414](https://github.com/vllm-project/vllm/issues/68414) [Bug]: chunk_gated_delta_rule skips every sequence after a zero-length sequence in cu_seqlens
-- [Bug] 🆕 [#68413](https://github.com/vllm-project/vllm/issues/68413) [Bug]: decode_attention_fwd reads the wrong KV head when the GQA group is above 16 and not a multiple of 16
-- [no-prefix] 🆕 ⚠no-prefix [#68410](https://github.com/vllm-project/vllm/issues/68410) Triton backend rejects fp8_per_token_head KV cache on SM 8.x: the guard is one dtype predicate too wide
+- [Bug] 🆕 [#68668](https://github.com/vllm-project/vllm/issues/68668) [Bug]: [HiSparse] GLM-5.3-Flash with fp8_ds_mla KV fails at the first prefill on Hopper (AssertionError in HiSparseMLAIndexGroup._prefill_gather_plan)
+- [no-prefix] 🆕 ⚠no-prefix [#68695](https://github.com/vllm-project/vllm/issues/68695) DFlash/LiLiCorr speculator CUDA-graph capture segfault on GB10 (sm_121)
 
 ## Quantization
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#51184](https://github.com/sgl-project/sglang/issues/51184) [Bug] CUDA graph replay returns degenerate output (all token id 0) on sm_120 with NVFP4 + tilelang DSA + Mamba hybrid
-
 ### vllm-project/vllm
 
-- [other] 🆕 [#68336](https://github.com/vllm-project/vllm/issues/68336) [Compatibility] Qwen3.6 MoE CT INT4 checkpoint stores a packed `shared_expert_gate`, but vLLM expects `weight`
-- [other] 🆕 [#68312](https://github.com/vllm-project/vllm/issues/68312) [ROCm][AMD] MiniMax-M3.1-Flash gfx950 / MI355X Performance Optimization (vLLM)
+- [Bug] 🆕 [#68647](https://github.com/vllm-project/vllm/issues/68647) [Bug]: DSV4.1 Model weight memory increased from ~47 GiB to ~60 GiB per GPU between two nightlies (11.12 nightly and 11.18 nightly) H100
 
 ## Distributed / TP / PP / EP
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#68412](https://github.com/vllm-project/vllm/issues/68412) [Bug]: causal_conv1d_fn writes before the state tensor for pad_slot_id=-1
-- [RFC] 🆕 ⚠maintainer-authored [#68341](https://github.com/vllm-project/vllm/issues/68341) [RFC]: Optional weight staging and trainer-managed pause for weight transfer engines
+- [Bug] 🆕 [#68595](https://github.com/vllm-project/vllm/issues/68595) [Bug]: `/resume` while the engine is asleep (sleep level 1) kills EngineCore: "ValueError: Pointer argument cannot be accessed from Triton (cpu tensor?)"
 
 ## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [no-prefix] 🆕 ⚠no-prefix [#51175](https://github.com/sgl-project/sglang/issues/51175) Speculative state reservation on hybrid-GDN targets scales with draft length; a block-16 draft does not fit on 72 GB
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#68411](https://github.com/vllm-project/vllm/issues/68411) [Bug]: apply_top_k_top_p_triton keeps the whole row when top-p normalization underflows
-- [Bug] 🆕 [#68324](https://github.com/vllm-project/vllm/issues/68324) [Bug]: Incremental detokenizers drop a trailing U+FFFD at end of generation
+- [Bug] 🆕 [#51531](https://github.com/sgl-project/sglang/issues/51531) [Bug] `--mamba-ssm-dtype bfloat16` costs ~8 points on long-reasoning MATH-500 with Qwen3.5-9B (float16 does not); GSM8K-style checks miss it
 
 ## Serving / OpenAI API / Streaming
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Bug] 🆕 [#51218](https://github.com/sgl-project/sglang/issues/51218) [Bug] Legacy HTTP P/D router truncates SSE when a tool argument contains data: [DONE]
+- [Bug] 🆕 [#68619](https://github.com/vllm-project/vllm/issues/68619) [Bug]: null values in a --config YAML file are passed as the string "None"
 
 ## Build / Install / Platform
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#51223](https://github.com/sgl-project/sglang/issues/51223) [Bug] /v1/responses subtracts 2 from max_output_tokens and rejects max_output_tokens=1
+- [Bug] 🆕 ⚠maintainer-authored [#51480](https://github.com/sgl-project/sglang/issues/51480) [Bug] sgl-deep-gemm PyPI wheels are built with CUDA 13.0, which compiles out DeepGEMM's CUDA >= 13.4 paths (in-CTA-norm Mega mHC on Rubin)
 
 ### vllm-project/vllm
 
-- [Feature] 🆕 [#68322](https://github.com/vllm-project/vllm/issues/68322) [Feature]: Add reasoning_content for message output content
+- [Bug] 🆕 [#68692](https://github.com/vllm-project/vllm/issues/68692) [Bug]: Structured output does not see reasoning end at a tool-call opener for deepseek_v4 / deepseek_v41 (multi-token) and inkling
+- [Bug] 🆕 [#68669](https://github.com/vllm-project/vllm/issues/68669) [Bug]: [HiSparse][P/D] HiSparse on the decode instance fails for hybrid models (GLM-5.3-Flash): Mixed-device KV registration is only supported for MLA models without Mamba layers
+- [Bug] 🆕 [#68625](https://github.com/vllm-project/vllm/issues/68625) [Bug]: CPU offloading fails at startup with AttributeError: module 'os' has no attribute 'memfd_create' (uv-managed Python)
