@@ -1,79 +1,63 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-22T13:22+00:00_
+_Last run: 2026-11-23T13:24+00:00_
 
-**14 issues** — sgl-project/sglang: 5, vllm-project/vllm: 9 — 🆕 **14 new** since last run
+**13 issues** — sgl-project/sglang: 5, vllm-project/vllm: 8 — 🆕 **13 new** since last run
 
 ## Contents
 
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 1
-- [Attention Backend](#attention-backend) — 2
-- [Quantization](#quantization) — 3
+- [Quantization](#quantization) — 4
 - [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 3
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 2
+- [New Model Integration](#new-model-integration) — 2
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
 - [Build / Install / Platform](#build--install--platform) — 1
 - [Uncategorized](#uncategorized) — 1
-
-## KV Cache / Connector / PD Disagg
-
-### vllm-project/vllm
-
-- [Feature] 🆕 [#69237](https://github.com/vllm-project/vllm/issues/69237) [Feature]: Process checkpoint support for the native CPU KV offload connector (OffloadingConnector)
-
-## Attention Backend
-
-### sgl-project/sglang
-
-- [Bug] 🆕 [#52274](https://github.com/sgl-project/sglang/issues/52274) [Bug] gemma4: Vision attention ignores the padding mask on fa3 / fa4 / triton_attn
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#69228](https://github.com/vllm-project/vllm/issues/69228) [Bug]: Intermittent CUDA OOM in DCP a2a combine fallback (`_dcp_a2a_send_recv_buffers`) at high concurrency with short prompts — Kimi-K3.1-Pro, TP8 + DCP8, `gpu-memory-utilization 0.97`
 
 ## Quantization
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#52318](https://github.com/sgl-project/sglang/issues/52318) [Bug] Qwen3-Omni: vision and audio layers are built under names the quantization ignore list never matches, so cyankiwi/Qwen3-Omni-30B-A3B-Instruct-AWQ-4bit fails to start
+- [other] 🆕 [#52523](https://github.com/sgl-project/sglang/issues/52523) [NPU] [Roadmap] Optimization of GLM-5.2 (DSA / sparse-MLA) inference on Ascend NPU
+- [other] 🆕 [#52574](https://github.com/sgl-project/sglang/issues/52574) [NPU] [Roadmap] DeepSeek-V4.1 Ascend Development & Optimization
+- [no-prefix] 🆕 ⚠no-prefix [#52506](https://github.com/sgl-project/sglang/issues/52506) DSPARK draft MoE crashes on SM120: HybridFp8NvFp4Config unconditionally uses TRT-LLM-gen (sm100-only cubins) for MTP layers
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#69183](https://github.com/vllm-project/vllm/issues/69183) [Bug]: compressed-tensors W4A8 int (CompressedTensorsWNA8Int) serves W4A16 on SM86: Marlin takes the layer, and with Humming forced, the groupwise fallback drops the int8 input
-- [Feature] 🆕 [#69156](https://github.com/vllm-project/vllm/issues/69156) [Feature]: Inkling 2 Mini on Ampere/Ada (SM80/86/89)
+- [Bug] 🆕 [#69377](https://github.com/vllm-project/vllm/issues/69377) [Bug][XPU][INC] ARK weight post-processing fragments the allocator (~9.5 GiB reserved, unused); Qwen3.6-27B-int4-AutoRound cannot boot on one 32 GB B70
 
 ## Distributed / TP / PP / EP
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Perf] 🆕 [#52213](https://github.com/sgl-project/sglang/issues/52213) [Perf] hicache: unconditional _all_reduce_attn_groups in the drain collective when the linker is idle
+- [Bug] 🆕 [#69320](https://github.com/vllm-project/vllm/issues/69320) [Bug]: Transformers backend: OmniASR fails at startup because `padding_mask` is kept on CPU but forwarded to `get_audio_features`
+
+## New Model Integration
+
+### vllm-project/vllm
+
+- [Feature] 🆕 [#69417](https://github.com/vllm-project/vllm/issues/69417) [Feature]: Support RWKV-7 (Goose) as a model plugin via the V1 Mamba state cache
+- [Feature] 🆕 [#69391](https://github.com/vllm-project/vllm/issues/69391) [Feature]: Add native block-diffusion support for Clover-35B-A3B-Preview
 
 ## Sampling / Speculative Decoding
 
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#52215](https://github.com/sgl-project/sglang/issues/52215) [Bug][CP] DeepSeek-V4.1-Flash pre_from_prev + CP8: vision MoE router input_ids shape mismatch in moe_fused_gate (a2a=none)
+- [Bug] 🆕 [#52543](https://github.com/sgl-project/sglang/issues/52543) [Bug] multimodal_gen: Unfiltered `diffusers_kwargs` in `POST /v1/videos` allows validation bypass and GPU OOM
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#69154](https://github.com/vllm-project/vllm/issues/69154) [Bug]: GLM-5.3-Flash + MTP + prefix caching on v0.34.0 (B200, TP4): silent constant-token degeneration ("locklock…"), MTP acceptance collapses to 0, persists for requests sharing the prefix
-- [Performance] 🆕 [#69152](https://github.com/vllm-project/vllm/issues/69152) [Performance]: Fused CUDA GDN MTP decode kernel stores a full recurrent state per draft token
-
-## Serving / OpenAI API / Streaming
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#69241](https://github.com/vllm-project/vllm/issues/69241) [Bug]: Parser engine tool parsers (granite, llama3_json, inkling): arguments sent as a JSON-encoded string stream as '' but are returned without streaming
-- [Bug] 🆕 [#69161](https://github.com/vllm-project/vllm/issues/69161) [Bug]: olmo3 tool parser: text before <function_calls> is dropped (stream=false) or the tool call is lost (stream=true)
+- [Performance] 🆕 [#69418](https://github.com/vllm-project/vllm/issues/69418) [Performance]: Synchronized attention-page growth causes decode preemption on Qwen3.5 without MTP
+- [Performance] 🆕 [#69408](https://github.com/vllm-project/vllm/issues/69408) [Performance]: Parallel sampling (n>1) is 10–14% slower in v0.34.0 than v0.28.0; n=1 unchanged
+- [Perf] 🆕 [#69375](https://github.com/vllm-project/vllm/issues/69375) [Perf][Spec Decode] Support draft windows above 8 tokens in GDN/KDA spec-decode kernels (T=9 for DSpark, T=16 for DFlash/DSpine)
 
 ## Build / Install / Platform
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [Bug] 🆕 [#52191](https://github.com/sgl-project/sglang/issues/52191) [Bug] Diffusion orchestrator: deeply nested result frame escapes per-request handler and stops routing loop
+- [Bug] 🆕 [#69350](https://github.com/vllm-project/vllm/issues/69350) [Bug]: FlashInfer 0.7.6rc1 compatibility blocked by cuDNN Frontend <1.33 cap
 
 ## Uncategorized
 
-### vllm-project/vllm
+### sgl-project/sglang
 
-- [Bug] 🆕 [#69173](https://github.com/vllm-project/vllm/issues/69173) [Bug]: hy_v4 tool parser returns an argument as a string when its schema uses allOf
+- [Feature] 🆕 [#52555](https://github.com/sgl-project/sglang/issues/52555) [Feature] How to use DeepEP transfer Engram fragments likely DeepInfer?
