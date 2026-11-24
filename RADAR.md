@@ -1,63 +1,65 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-23T13:24+00:00_
+_Last run: 2026-11-24T13:22+00:00_
 
-**13 issues** — sgl-project/sglang: 5, vllm-project/vllm: 8 — 🆕 **13 new** since last run
+**12 issues** — sgl-project/sglang: 4, vllm-project/vllm: 8 — 🆕 **12 new** since last run
 
 ## Contents
 
-- [Quantization](#quantization) — 4
-- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
-- [New Model Integration](#new-model-integration) — 2
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 4
-- [Build / Install / Platform](#build--install--platform) — 1
-- [Uncategorized](#uncategorized) — 1
+- [Scheduler / Batching](#scheduler--batching) — 4
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
+- [Quantization](#quantization) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 1
+- [Performance / Memory / OOM](#performance--memory--oom) — 2
+- [Build / Install / Platform](#build--install--platform) — 2
+
+## Scheduler / Batching
+
+### sgl-project/sglang
+
+- [Bug] 🆕 [#52854](https://github.com/sgl-project/sglang/issues/52854) [Bug] Scheduler deadlocks silently on VLM request admission with --mm-feature-transport cuda_ipc (TP>1): permanent engine hang, health-check restart
+- [Bug] 🆕 [#52761](https://github.com/sgl-project/sglang/issues/52761) [Bug] [Diffusion] MiniMax-H3-Image does not start on a 24 GB GPU + 32 GB host (plain command and derived 4090 recipe)
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#69612](https://github.com/vllm-project/vllm/issues/69612) [Bug]: MoRIIO WRITE producer: preempted request's deferred write submits reallocated blocks
+- [RFC] 🆕 [#69635](https://github.com/vllm-project/vllm/issues/69635) [RFC]: Engine-side time-to-first-token forecast for routers
+
+## KV Cache / Connector / PD Disagg
+
+### sgl-project/sglang
+
+- [Feature] 🆕 [#52823](https://github.com/sgl-project/sglang/issues/52823) [Feature] HiCache: choose between L3 fetch and prefill from estimated completion times
+
+### vllm-project/vllm
+
+- [other] 🆕 [#69662](https://github.com/vllm-project/vllm/issues/69662) [KVConnector] Fall back to legacy IPC when the extensible KV cache is unavailable
 
 ## Quantization
 
-### sgl-project/sglang
-
-- [other] 🆕 [#52523](https://github.com/sgl-project/sglang/issues/52523) [NPU] [Roadmap] Optimization of GLM-5.2 (DSA / sparse-MLA) inference on Ascend NPU
-- [other] 🆕 [#52574](https://github.com/sgl-project/sglang/issues/52574) [NPU] [Roadmap] DeepSeek-V4.1 Ascend Development & Optimization
-- [no-prefix] 🆕 ⚠no-prefix [#52506](https://github.com/sgl-project/sglang/issues/52506) DSPARK draft MoE crashes on SM120: HybridFp8NvFp4Config unconditionally uses TRT-LLM-gen (sm100-only cubins) for MTP layers
-
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#69377](https://github.com/vllm-project/vllm/issues/69377) [Bug][XPU][INC] ARK weight post-processing fragments the allocator (~9.5 GiB reserved, unused); Qwen3.6-27B-int4-AutoRound cannot boot on one 32 GB B70
-
-## Distributed / TP / PP / EP
-
-### vllm-project/vllm
-
-- [Bug] 🆕 [#69320](https://github.com/vllm-project/vllm/issues/69320) [Bug]: Transformers backend: OmniASR fails at startup because `padding_mask` is kept on CPU but forwarded to `get_audio_features`
-
-## New Model Integration
-
-### vllm-project/vllm
-
-- [Feature] 🆕 [#69417](https://github.com/vllm-project/vllm/issues/69417) [Feature]: Support RWKV-7 (Goose) as a model plugin via the V1 Mamba state cache
-- [Feature] 🆕 [#69391](https://github.com/vllm-project/vllm/issues/69391) [Feature]: Add native block-diffusion support for Clover-35B-A3B-Preview
+- [Bug] 🆕 [#69657](https://github.com/vllm-project/vllm/issues/69657) [Bug] rotary_embedding crashes the process with SIGFPE when num_tokens == 0 (0/0 at pos_encoding_kernels.cu:144)
 
 ## Sampling / Speculative Decoding
 
+### vllm-project/vllm
+
+- [RFC] 🆕 [#69568](https://github.com/vllm-project/vllm/issues/69568) [RFC]: Grammar-as-a-Drafter (GaaD): Composing Grammar-Forced Tokens with Speculative Decoding
+
+## Performance / Memory / OOM
+
 ### sgl-project/sglang
 
-- [Bug] 🆕 [#52543](https://github.com/sgl-project/sglang/issues/52543) [Bug] multimodal_gen: Unfiltered `diffusers_kwargs` in `POST /v1/videos` allows validation bypass and GPU OOM
+- [Feature] 🆕 [#52762](https://github.com/sgl-project/sglang/issues/52762) [Feature] diffusion: Q4 roadmap proposal: fast MiniMax-H3 image ↔ video switching on consumer GPUs
 
 ### vllm-project/vllm
 
-- [Performance] 🆕 [#69418](https://github.com/vllm-project/vllm/issues/69418) [Performance]: Synchronized attention-page growth causes decode preemption on Qwen3.5 without MTP
-- [Performance] 🆕 [#69408](https://github.com/vllm-project/vllm/issues/69408) [Performance]: Parallel sampling (n>1) is 10–14% slower in v0.34.0 than v0.28.0; n=1 unchanged
-- [Perf] 🆕 [#69375](https://github.com/vllm-project/vllm/issues/69375) [Perf][Spec Decode] Support draft windows above 8 tokens in GDN/KDA spec-decode kernels (T=9 for DSpark, T=16 for DFlash/DSpine)
+- [RFC] 🆕 [#69590](https://github.com/vllm-project/vllm/issues/69590) [RFC] Fault Tolerance for RL Workloads in vLLM
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#69350](https://github.com/vllm-project/vllm/issues/69350) [Bug]: FlashInfer 0.7.6rc1 compatibility blocked by cuDNN Frontend <1.33 cap
-
-## Uncategorized
-
-### sgl-project/sglang
-
-- [Feature] 🆕 [#52555](https://github.com/sgl-project/sglang/issues/52555) [Feature] How to use DeepEP transfer Engram fragments likely DeepInfer?
+- [Bug] 🆕 [#69663](https://github.com/vllm-project/vllm/issues/69663) [Bug]: activation/gating ops accept non-contiguous inputs and silently compute wrong results; strided outputs leave unwritten cells and corrupt the parent buffer
+- [Bug] 🆕 [#69661](https://github.com/vllm-project/vllm/issues/69661) [Bug]: --otlp-traces-endpoint sends no spans when another integration owns the global tracer provider
