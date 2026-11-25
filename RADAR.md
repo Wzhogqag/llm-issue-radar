@@ -1,65 +1,67 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-24T13:22+00:00_
+_Last run: 2026-11-25T13:24+00:00_
 
-**12 issues** — sgl-project/sglang: 4, vllm-project/vllm: 8 — 🆕 **12 new** since last run
+**14 issues** — sgl-project/sglang: 3, vllm-project/vllm: 11 — 🆕 **14 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 4
-- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 2
-- [Quantization](#quantization) — 1
-- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 1
-- [Performance / Memory / OOM](#performance--memory--oom) — 2
-- [Build / Install / Platform](#build--install--platform) — 2
+- [Scheduler / Batching](#scheduler--batching) — 2
+- [Quantization](#quantization) — 3
+- [New Model Integration](#new-model-integration) — 1
+- [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
+- [Build / Install / Platform](#build--install--platform) — 3
+- [Uncategorized](#uncategorized) — 2
 
 ## Scheduler / Batching
 
-### sgl-project/sglang
-
-- [Bug] 🆕 [#52854](https://github.com/sgl-project/sglang/issues/52854) [Bug] Scheduler deadlocks silently on VLM request admission with --mm-feature-transport cuda_ipc (TP>1): permanent engine hang, health-check restart
-- [Bug] 🆕 [#52761](https://github.com/sgl-project/sglang/issues/52761) [Bug] [Diffusion] MiniMax-H3-Image does not start on a 24 GB GPU + 32 GB host (plain command and derived 4090 recipe)
-
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#69612](https://github.com/vllm-project/vllm/issues/69612) [Bug]: MoRIIO WRITE producer: preempted request's deferred write submits reallocated blocks
-- [RFC] 🆕 [#69635](https://github.com/vllm-project/vllm/issues/69635) [RFC]: Engine-side time-to-first-token forecast for routers
-
-## KV Cache / Connector / PD Disagg
-
-### sgl-project/sglang
-
-- [Feature] 🆕 [#52823](https://github.com/sgl-project/sglang/issues/52823) [Feature] HiCache: choose between L3 fetch and prefill from estimated completion times
-
-### vllm-project/vllm
-
-- [other] 🆕 [#69662](https://github.com/vllm-project/vllm/issues/69662) [KVConnector] Fall back to legacy IPC when the extensible KV cache is unavailable
+- [RFC] 🆕 [#69888](https://github.com/vllm-project/vllm/issues/69888) [RFC]: CPU Offloading Tier: Best-Effort KV Hint Retention
+- [RFC] 🆕 [#69844](https://github.com/vllm-project/vllm/issues/69844) [RFC][Multimodal]: Preemptible vision encoding via zero-cross-frame micro-chunking and layer-boundary yields on colocated GPUs
 
 ## Quantization
 
+### sgl-project/sglang
+
+- [other] 🆕 [#53062](https://github.com/sgl-project/sglang/issues/53062) [Refactor] WIP features in PR50205
+
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#69657](https://github.com/vllm-project/vllm/issues/69657) [Bug] rotary_embedding crashes the process with SIGFPE when num_tokens == 0 (0/0 at pos_encoding_kernels.cu:144)
+- [RFC] 🆕 [#69876](https://github.com/vllm-project/vllm/issues/69876) [RFC]: Memory-neutral NVFP4 x FP8 MoE on Hopper: on-the-fly decode from Marlin tensors
+- [RFC] 🆕 [#69854](https://github.com/vllm-project/vllm/issues/69854) [RFC]: Low-Rank Recurrent State Compression for Mamba2 Hybrid Models (SPARE)
+
+## New Model Integration
+
+### vllm-project/vllm
+
+- [RFC] 🆕 [#69827](https://github.com/vllm-project/vllm/issues/69827) [RFC]: Extend automatic NUMA binding to additional accelerator platforms
 
 ## Sampling / Speculative Decoding
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#69568](https://github.com/vllm-project/vllm/issues/69568) [RFC]: Grammar-as-a-Drafter (GaaD): Composing Grammar-Forced Tokens with Speculative Decoding
+- [other] 🆕 [#69832](https://github.com/vllm-project/vllm/issues/69832) [Doc/UX] The --async-scheduling x speculative-decoding restriction is undocumented and its two failure modes are asymmetric
+- [RFC] 🆕 [#69895](https://github.com/vllm-project/vllm/issues/69895) [RFC]: Qwen3.6-27B DMTP speculative decoding with native MTP and DFlash2
 
-## Performance / Memory / OOM
-
-### sgl-project/sglang
-
-- [Feature] 🆕 [#52762](https://github.com/sgl-project/sglang/issues/52762) [Feature] diffusion: Q4 roadmap proposal: fast MiniMax-H3 image ↔ video switching on consumer GPUs
+## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#69590](https://github.com/vllm-project/vllm/issues/69590) [RFC] Fault Tolerance for RL Workloads in vLLM
+- [Bug] 🆕 [#69791](https://github.com/vllm-project/vllm/issues/69791) [Bug]: Malformed message-level input on the DeepSeek-V4 and V4.1 chat encoders returns HTTP 500 instead of 400
 
 ## Build / Install / Platform
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#69663](https://github.com/vllm-project/vllm/issues/69663) [Bug]: activation/gating ops accept non-contiguous inputs and silently compute wrong results; strided outputs leave unwritten cells and corrupt the parent buffer
-- [Bug] 🆕 [#69661](https://github.com/vllm-project/vllm/issues/69661) [Bug]: --otlp-traces-endpoint sends no spans when another integration owns the global tracer provider
+- [Bug] 🆕 [#69902](https://github.com/vllm-project/vllm/issues/69902) [Bug]: I'm using the CPU version of vLLM, and the memory usage keeps growing continuously. Has anyone else encountered this issue
+- [Bug] 🆕 [#69897](https://github.com/vllm-project/vllm/issues/69897) [Bug][XPU] Memory query remains free == total after allocations on WSL2, inflating KV cache budget
+- [Bug] 🆕 [#69839](https://github.com/vllm-project/vllm/issues/69839) [Bug][ROCm] num_compute_units() is half the card's CU count on gfx1201, so grid-sized ops run at half occupancy (4.3x measured)
+
+## Uncategorized
+
+### sgl-project/sglang
+
+- [other] 🆕 [#53122](https://github.com/sgl-project/sglang/issues/53122) [Question] Public kernel and benchmark for Strata Figure 5 (H200 GPU-assisted KV I/O)
+- [Feature] 🆕 [#53066](https://github.com/sgl-project/sglang/issues/53066) [Feature] Discover individual workers from headless Service DNS in sgl-router
