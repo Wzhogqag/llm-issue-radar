@@ -1,67 +1,78 @@
 # LLM Serving Issue Radar
 
-_Last run: 2026-11-25T13:24+00:00_
+_Last run: 2026-11-26T13:23+00:00_
 
-**14 issues** — sgl-project/sglang: 3, vllm-project/vllm: 11 — 🆕 **14 new** since last run
+**16 issues** — sgl-project/sglang: 2, vllm-project/vllm: 14 — 🆕 **16 new** since last run
 
 ## Contents
 
-- [Scheduler / Batching](#scheduler--batching) — 2
-- [Quantization](#quantization) — 3
-- [New Model Integration](#new-model-integration) — 1
+- [Scheduler / Batching](#scheduler--batching) — 1
+- [KV Cache / Connector / PD Disagg](#kv-cache--connector--pd-disagg) — 3
+- [Quantization](#quantization) — 2
+- [Distributed / TP / PP / EP](#distributed--tp--pp--ep) — 1
 - [Sampling / Speculative Decoding](#sampling--speculative-decoding) — 2
-- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 1
+- [Serving / OpenAI API / Streaming](#serving--openai-api--streaming) — 3
+- [Performance / Memory / OOM](#performance--memory--oom) — 1
 - [Build / Install / Platform](#build--install--platform) — 3
-- [Uncategorized](#uncategorized) — 2
 
 ## Scheduler / Batching
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#69888](https://github.com/vllm-project/vllm/issues/69888) [RFC]: CPU Offloading Tier: Best-Effort KV Hint Retention
-- [RFC] 🆕 [#69844](https://github.com/vllm-project/vllm/issues/69844) [RFC][Multimodal]: Preemptible vision encoding via zero-cross-frame micro-chunking and layer-boundary yields on colocated GPUs
+- [RFC] 🆕 [#70060](https://github.com/vllm-project/vllm/issues/70060) [RFC]: Extend Mamba Internal Prefill Checkpoints to Non-Final Chunks
+
+## KV Cache / Connector / PD Disagg
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#70055](https://github.com/vllm-project/vllm/issues/70055) [Bug]: HiSparse completes a wasted host import after the request is aborted
+- [Bug] 🆕 [#70043](https://github.com/vllm-project/vllm/issues/70043) [Bug]: Inkling 2: copies of a prompt in one batch differ run to run with prefix caching on
+- [RFC] 🆕 [#70051](https://github.com/vllm-project/vllm/issues/70051) [RFC]: Async Pre-Allocation Wait State in Scheduler for External KV Transfer and Lookup
 
 ## Quantization
 
-### sgl-project/sglang
+### vllm-project/vllm
 
-- [other] 🆕 [#53062](https://github.com/sgl-project/sglang/issues/53062) [Refactor] WIP features in PR50205
+- [Feature] 🆕 [#70061](https://github.com/vllm-project/vllm/issues/70061) [Feature]: Opt-in fixed-order LoRA shrink reduction without global batch-invariant mode
+- [RFC] 🆕 [#70046](https://github.com/vllm-project/vllm/issues/70046) [RFC]: Zero-VRAM progressive bit-sliced (2+2+4) sparse FP8 MoE backend for FusedMoEExpertsModular
+
+## Distributed / TP / PP / EP
 
 ### vllm-project/vllm
 
-- [RFC] 🆕 [#69876](https://github.com/vllm-project/vllm/issues/69876) [RFC]: Memory-neutral NVFP4 x FP8 MoE on Hopper: on-the-fly decode from Marlin tensors
-- [RFC] 🆕 [#69854](https://github.com/vllm-project/vllm/issues/69854) [RFC]: Low-Rank Recurrent State Compression for Mamba2 Hybrid Models (SPARE)
-
-## New Model Integration
-
-### vllm-project/vllm
-
-- [RFC] 🆕 [#69827](https://github.com/vllm-project/vllm/issues/69827) [RFC]: Extend automatic NUMA binding to additional accelerator platforms
+- [Performance] 🆕 [#70041](https://github.com/vllm-project/vllm/issues/70041) [Performance]: Cross-NUMA API tokenization increases TTFT on DeepSeek-V4-Pro with Ray
 
 ## Sampling / Speculative Decoding
 
+### sgl-project/sglang
+
+- [other] 🆕 [#53343](https://github.com/sgl-project/sglang/issues/53343) [Question] debug_utils/dumper: how to group dumps per step when a draft model has no root forward()
+
 ### vllm-project/vllm
 
-- [other] 🆕 [#69832](https://github.com/vllm-project/vllm/issues/69832) [Doc/UX] The --async-scheduling x speculative-decoding restriction is undocumented and its two failure modes are asymmetric
-- [RFC] 🆕 [#69895](https://github.com/vllm-project/vllm/issues/69895) [RFC]: Qwen3.6-27B DMTP speculative decoding with native MTP and DFlash2
+- [Bug] 🆕 [#70098](https://github.com/vllm-project/vllm/issues/70098) [Bug]: Rust frontend silently accepts `thinking_token_budget` when no reasoning config is set
 
 ## Serving / OpenAI API / Streaming
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#69791](https://github.com/vllm-project/vllm/issues/69791) [Bug]: Malformed message-level input on the DeepSeek-V4 and V4.1 chat encoders returns HTTP 500 instead of 400
+- [Bug] 🆕 [#70056](https://github.com/vllm-project/vllm/issues/70056) [Bug]: Mistral parser emits blank tool names followed by orphaned streaming argument deltas
+- [Bug] 🆕 [#70053](https://github.com/vllm-project/vllm/issues/70053) [Bug]: /v1/responses` streaming crashes with `ValidationError: ResponseFunctionToolCallItem.name ... NoneType` when a tool-call state is opened from a delta without `function.name
+- [no-prefix] 🆕 ⚠no-prefix [#70049](https://github.com/vllm-project/vllm/issues/70049) FusedMoE default loader skips e_score_correction_bias and misses the router parameter alias
 
-## Build / Install / Platform
+## Performance / Memory / OOM
 
 ### vllm-project/vllm
 
-- [Bug] 🆕 [#69902](https://github.com/vllm-project/vllm/issues/69902) [Bug]: I'm using the CPU version of vLLM, and the memory usage keeps growing continuously. Has anyone else encountered this issue
-- [Bug] 🆕 [#69897](https://github.com/vllm-project/vllm/issues/69897) [Bug][XPU] Memory query remains free == total after allocations on WSL2, inflating KV cache budget
-- [Bug] 🆕 [#69839](https://github.com/vllm-project/vllm/issues/69839) [Bug][ROCm] num_compute_units() is half the card's CU count on gfx1201, so grid-sized ops run at half occupancy (4.3x measured)
+- [Feature] 🆕 [#70057](https://github.com/vllm-project/vllm/issues/70057) [Feature]: DFlash2 best-first tree verification for Qwen3.5/GDN on Model Runner V2
 
-## Uncategorized
+## Build / Install / Platform
 
 ### sgl-project/sglang
 
-- [other] 🆕 [#53122](https://github.com/sgl-project/sglang/issues/53122) [Question] Public kernel and benchmark for Strata Figure 5 (H200 GPU-assisted KV I/O)
-- [Feature] 🆕 [#53066](https://github.com/sgl-project/sglang/issues/53066) [Feature] Discover individual workers from headless Service DNS in sgl-router
+- [other] 🆕 ⚠maintainer-authored [#53341](https://github.com/sgl-project/sglang/issues/53341) [CI] Nightly Docker images not published since 2026-11-22: build runners moirai-a10-runner-0 and labubu stopped picking up jobs
+
+### vllm-project/vllm
+
+- [Bug] 🆕 [#70127](https://github.com/vllm-project/vllm/issues/70127) [Bug][XPU] Qwen3.6-35B-A3B MXFP4: more dropped items in long json_schema outputs after #64687
+- [Bug] 🆕 [#70054](https://github.com/vllm-project/vllm/issues/70054) [Bug]: Rust frontend (vllm-rs) silently hangs on unbounded ZMQ input send while /health continues returning 200 OK
