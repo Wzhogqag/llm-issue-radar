@@ -9,7 +9,7 @@
 
 # Tracking
 
-_4 issues tracked. Refreshed 2026-11-26 13:23 UTC._
+_4 issues tracked. Refreshed 2026-11-27 13:22 UTC._
 
 ## sgl-project/sglang#31424  [Perf] Speed up HiCache host buffer allocation: use `MAP_PRIVATE` + `madvise` instead of `MAP_SHARED | MAP_POPULATE`
 
@@ -42,11 +42,12 @@ _4 issues tracked. Refreshed 2026-11-26 13:23 UTC._
 - 2026-08-29 17:24 🔗 cross-referenced by @SunnyZ24 — PR [https://github.com/vllm-project/vllm/pull/54366](https://github.com/vllm-project/vllm/pull/54366) (open)
 - 2026-09-26 11:32 🔗 cross-referenced by @xiejian66 — PR [https://github.com/vllm-project/vllm/pull/58837](https://github.com/vllm-project/vllm/pull/58837) (open)
 - 2026-10-27 21:54 🔗 cross-referenced by @yubofredwang — issue [https://github.com/vllm-project/vllm/issues/64150](https://github.com/vllm-project/vllm/issues/64150) (open)
+- 2026-11-27 01:39 💬 commented by @github-actions[bot] — This issue has been automatically marked as stale because it has not had any activity within 90 days
 - ⏳ **still open**
 
 ## vllm-project/vllm#48504  [RFC]: GDS support for filesystem KV-cache offloading
 
-⏳ Status: **open** — <https://github.com/vllm-project/vllm/issues/48504>
+✅ Status: **closed** (`not_planned`) — <https://github.com/vllm-project/vllm/issues/48504>
 
 - 2026-07-13 16:19 🆕 opened by @maheshrbapatu — as `NONE`
 - 2026-07-14 18:59 🔗 cross-referenced by @maheshrbapatu — PR [https://github.com/maheshrbapatu/vllm/pull/2](https://github.com/maheshrbapatu/vllm/pull/2) (open)
@@ -60,4 +61,5 @@ _4 issues tracked. Refreshed 2026-11-26 13:23 UTC._
 - 2026-09-01 13:22 🔗 cross-referenced by @effi-ofer — issue [https://github.com/vllm-project/vllm/issues/54777](https://github.com/vllm-project/vllm/issues/54777) (open)
 - 2026-09-01 13:52 🔗 cross-referenced by @akalin9507 — issue [https://github.com/vllm-project/vllm/issues/54779](https://github.com/vllm-project/vllm/issues/54779) (open)
 - 2026-10-27 01:53 💬 commented by @github-actions[bot] — This issue has been automatically marked as stale because it has not had any activity within 90 days
-- ⏳ **still open**
+- 2026-11-27 01:39 💬 commented by @github-actions[bot] — This issue has been automatically closed due to inactivity. Please feel free to reopen if you feel i
+- 2026-11-27 01:39 ✅ closed by @github-actions[bot] — as `not_planned`
